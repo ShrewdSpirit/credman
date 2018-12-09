@@ -1,0 +1,30 @@
+
+- add
+    - profile <"profile name"> [password options]
+    - site <"site"> [field flags="value"] [-p/-profile="profile name"] [password options]
+
+- del/delete
+    - profile <"profile name">
+    - site <"site"> [-p/-profile="profile name"]
+
+- ren/rename
+    - profile <"profile name"> <"new name">
+    - site <"site"> <"new name"> [-p/-profile="profile name"]
+
+- passwd
+    - profile <"profile name"> [password options]
+    - site <"site"> [-p/-profile="profile name"] [password options]
+
+- edit [edits a site] <"site"> <field flag="new value"> [-p/-profile="profile name"]
+
+- get [gets a specific field of a site] <"site"> <field flags> [-p/-profile="profile name"]
+
+- list [lists all fields for a site] <"site"> [-p/-profile="profile name"]
+
+- default [sets default profile] <"profile">
+
+- remote
+    - set <"address"> <--password="remote password"> [-p/-profile="profile name"]
+    - sync [-p/-profile="profile name"]
+
+- serve
