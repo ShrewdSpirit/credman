@@ -1,6 +1,21 @@
 package cmd
 
-import "github.com/spf13/cobra"
+import (
+	"bytes"
+	"errors"
+	"fmt"
+	"math/rand"
+	"os"
+	"path"
+	"strings"
+	"syscall"
+	"time"
+
+	"golang.org/x/crypto/ssh/terminal"
+
+	"github.com/mitchellh/go-homedir"
+	"github.com/spf13/cobra"
+)
 
 type PasswordCase int
 type PasswordMix int
@@ -51,7 +66,7 @@ func PasswordValidatePmix(cmd *cobra.Command) bool {
 	if err != nil {
 		return false
 	}
-	return f == "letter" || f == "digit" || f == "mix"
+	return f == "letter" || f == "digit" || f == "both"
 }
 
 func PasswordGetPmix(cmd *cobra.Command) PasswordMix {
@@ -68,7 +83,7 @@ func PasswordGetPmix(cmd *cobra.Command) PasswordMix {
 	}
 }
 
-func UsePasswordGenerator(cmd *cobra.Command) bool {
+func UsesPasswordGenerator(cmd *cobra.Command) bool {
 	f, err := cmd.Flags().GetBool("pgen")
 	if err != nil {
 		return false
@@ -76,6 +91,110 @@ func UsePasswordGenerator(cmd *cobra.Command) bool {
 	return f
 }
 
+func GetPassword(cmd *cobra.Command) (string, error) {
+	if UsesPasswordGenerator(cmd) {
+		// generate
+		if !PasswordValidatePcase(cmd) {
+			pcase, _ := cmd.Flags().GetString("pcase")
+			return "", errors.New(fmt.Sprintf("Invalid password case: %s", pcase))
+		}
+		if !PasswordValidatePmix(cmd) {
+			pmix, _ := cmd.Flags().GetString("pmix")
+			return "", errors.New(fmt.Sprintf("Invalid password mix: %s", pmix))
+		}
+		plen, err := cmd.Flags().GetUint8("plen")
+		if err != nil {
+			return "", err
+		}
+		pcase := PasswordGetPcase(cmd)
+		pmix := PasswordGetPmix(cmd)
+		pw := GeneratePassword(plen, pcase, pmix)
+		return pw, nil
+	}
+
+	// prompt
+	fmt.Print("Password: ")
+	passwordBytes, err := terminal.ReadPassword(int(syscall.Stdin))
+	fmt.Println()
+	if err != nil {
+		return "", err
+	}
+	password := strings.TrimSpace(string(passwordBytes))
+
+	fmt.Print("Repeat password: ")
+	repeatPasswordBytes, err := terminal.ReadPassword(int(syscall.Stdin))
+	fmt.Println()
+	if err != nil {
+		return "", err
+	}
+	repeatPassword := strings.TrimSpace(string(repeatPasswordBytes))
+
+	if password != repeatPassword {
+		return "", errors.New("Passwords doesn't match")
+	}
+
+	return password, nil
+}
+
+var lowerLetters = "abcdefghijklmnopqrstuv"
+var upperLetters = "ABCDEFGHIJKLMNOPQRSTUV"
+var digitLetters = "0123456789"
+
+func GeneratePassword(plen byte, pcase PasswordCase, pmix PasswordMix) string {
+	gen := func(dict string) string {
+		src := rand.NewSource(time.Now().UnixNano())
+		b := []byte(dict)
+		l := int64(len(b))
+		buf := bytes.Buffer{}
+		i := byte(0)
+		for ; i < plen; i++ {
+			buf.WriteByte(b[src.Int63()%l])
+		}
+		return buf.String()
+	}
+
+	switch pmix {
+	case PasswordMixLetter:
+		switch pcase {
+		case PasswordCaseLower:
+			return gen(lowerLetters)
+		case PasswordCaseUpper:
+			return gen(upperLetters)
+		case PasswordCaseBoth:
+			return gen(lowerLetters + upperLetters)
+		}
+	case PasswordMixBoth:
+		switch pcase {
+		case PasswordCaseLower:
+			return gen(digitLetters + lowerLetters)
+		case PasswordCaseUpper:
+			return gen(digitLetters + upperLetters)
+		case PasswordCaseBoth:
+			return gen(digitLetters + lowerLetters + upperLetters)
+		}
+	case PasswordMixDigit:
+		return gen(digitLetters)
+	}
+
+	return ""
+}
+
 func ProfileAddFlags(cmd *cobra.Command) {
 	cmd.Flags().StringP("profile", "p", "default", "Specifies which profile to use")
+}
+
+var ProfilesDir string
+
+func CheckDataDir() {
+	home, _ := homedir.Dir()
+	dataDir := path.Join(home, ".credman")
+	stat, err := os.Stat(dataDir)
+	if err != nil {
+		os.Mkdir(dataDir, os.ModePerm)
+	} else if !stat.IsDir() {
+		os.Remove(dataDir)
+		os.Mkdir(dataDir, os.ModePerm)
+	}
+	ProfilesDir = path.Join(dataDir, "profiles")
+	os.Mkdir(ProfilesDir, os.ModePerm)
 }
