@@ -14,20 +14,21 @@ type UserProfile struct {
 	Content []byte // encrypted binary data of Profile
 }
 
-func GetUserProfile(profileDir, name string) (p *UserProfile, err error) {
+func GetUserProfile(profileDir, name string) (*UserProfile, error) {
 	profileFilename := path.Join(profileDir, name+".json")
-	if _, err = os.Stat(profileFilename); err != nil {
-		return
+	if _, err := os.Stat(profileFilename); err != nil {
+		return nil, nil
 	}
 
-	var data []byte
-	if data, err = ioutil.ReadFile(profileFilename); err != nil {
-		return
+	data, err := ioutil.ReadFile(profileFilename)
+	if err != nil {
+		return nil, err
 	}
 
+	p := &UserProfile{}
 	err = json.Unmarshal(data, p)
 
-	return
+	return p, err
 }
 
 func NewUserProfile(profileDir, name, password string) error {

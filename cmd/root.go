@@ -7,7 +7,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-var cfgFile string
+var Verbose bool
 
 var rootCmd = &cobra.Command{
 	Use:   "credman",
@@ -16,6 +16,10 @@ var rootCmd = &cobra.Command{
 
 Use 'credman help password' to see how to use password options.`,
 	Version: "0.1.0",
+}
+
+func init() {
+	rootCmd.PersistentFlags().BoolVarP(&Verbose, "verbose", "v", false, "Prints verbose information")
 }
 
 func Execute() {

@@ -15,9 +15,16 @@ var addprofileCmd = &cobra.Command{
 	Args:    cobra.ExactArgs(1),
 	Run: func(cmd *cobra.Command, args []string) {
 		profileName := args[0]
-		_, err := config.GetUserProfile(ProfilesDir, profileName)
-		if err == nil {
-			fmt.Printf("Profile %s exists\n", profileName)
+
+		if Verbose {
+			fmt.Println("Checking profile's existence")
+		}
+		profile, err := config.GetUserProfile(ProfilesDir, profileName)
+		if profile != nil && err == nil {
+			fmt.Printf("Profile '%s' exists\n", profileName)
+			return
+		} else if err != nil {
+			fmt.Printf("Failed checking profile '%s': %s\n", profileName, err)
 			return
 		}
 
@@ -27,7 +34,11 @@ var addprofileCmd = &cobra.Command{
 			return
 		}
 
+		if Verbose {
+			fmt.Println("Creating new profile")
+		}
 		config.NewUserProfile(ProfilesDir, profileName, password)
+		fmt.Printf("Profile '%s' has been added\n", profileName)
 	},
 }
 
