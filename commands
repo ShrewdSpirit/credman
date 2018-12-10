@@ -19,7 +19,10 @@
 
 - get [gets a specific field of a site] <"site"> <field flags> [-p/-profile="profile name"]
 
-- list [lists all fields for a site] <"site"> [-p/-profile="profile name"]
+- list
+    - sites [-p/-profile="profile name"]
+    - profiles
+    - site <"site"> [-p/-profile="profile name"]
 
 - default [sets default profile] <"profile">
 
@@ -28,3 +31,12 @@
     - sync [-p/-profile="profile name"]
 
 - serve
+
+
+password options:
+- if none is given, credman prompts user for password
+- --pgen
+- --plen=number
+- --pcase=lower/upper/both
+- --pmix=letter/digit/both
+- default: --plen=12 --pcase=both --pmix=both
