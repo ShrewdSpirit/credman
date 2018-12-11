@@ -5,17 +5,16 @@ import (
 	"errors"
 	"fmt"
 	"math/rand"
-	"os"
-	"path"
 	"strings"
 	"syscall"
 	"time"
 
 	"golang.org/x/crypto/ssh/terminal"
 
-	"github.com/mitchellh/go-homedir"
 	"github.com/spf13/cobra"
 )
+
+var ProfilesDir string
 
 type PasswordCase int
 type PasswordMix int
@@ -181,20 +180,4 @@ func GeneratePassword(plen byte, pcase PasswordCase, pmix PasswordMix) string {
 
 func ProfileAddFlags(cmd *cobra.Command) {
 	cmd.Flags().StringP("profile", "p", "default", "Specifies which profile to use")
-}
-
-var ProfilesDir string
-
-func CheckDataDir() {
-	home, _ := homedir.Dir()
-	dataDir := path.Join(home, ".credman")
-	stat, err := os.Stat(dataDir)
-	if err != nil {
-		os.Mkdir(dataDir, os.ModePerm)
-	} else if !stat.IsDir() {
-		os.Remove(dataDir)
-		os.Mkdir(dataDir, os.ModePerm)
-	}
-	ProfilesDir = path.Join(dataDir, "profiles")
-	os.Mkdir(ProfilesDir, os.ModePerm)
 }

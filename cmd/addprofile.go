@@ -38,7 +38,12 @@ var addprofileCmd = &cobra.Command{
 			fmt.Println("Creating new profile")
 		}
 		config.NewUserProfile(ProfilesDir, profileName, password)
-		fmt.Printf("Profile '%s' has been added\n", profileName)
+		fmt.Printf("Profile '%s' has been added with password '%s'\n", profileName, password)
+
+		if len(config.AppConfig.DefaultProfile) == 0 {
+			config.AppConfig.DefaultProfile = profileName
+			fmt.Printf("Profile '%s' has been set as default profile\n", profileName)
+		}
 	},
 }
 
