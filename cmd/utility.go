@@ -179,5 +179,28 @@ func GeneratePassword(plen byte, pcase PasswordCase, pmix PasswordMix) string {
 }
 
 func ProfileAddFlags(cmd *cobra.Command) {
-	cmd.Flags().StringP("profile", "p", "default", "Specifies which profile to use")
+	cmd.Flags().StringP("profile", "p", "", "Specifies which profile to use")
+}
+
+func SiteAddFieldFlags(cmd *cobra.Command, isBool bool) {
+	if isBool {
+		cmd.Flags().Bool("password", false, "Gets password field")
+		cmd.Flags().Bool("email", false, "Gets email field")
+		cmd.Flags().Bool("username", false, "Gets username field")
+		cmd.Flags().Bool("notes", false, "Gets notes field")
+		cmd.Flags().Bool("secq1", false, "Gets first security question")
+		cmd.Flags().Bool("secq2", false, "Gets second security question")
+		cmd.Flags().Bool("secq3", false, "Gets third security question")
+		cmd.Flags().Bool("secq4", false, "Gets forth security question")
+		cmd.Flags().Bool("secq5", false, "Gets fifth security question")
+	} else {
+		cmd.Flags().String("email", "", "Sets email field")
+		cmd.Flags().String("username", "", "Sets username field")
+		cmd.Flags().String("notes", "", "Sets notes field")
+		cmd.Flags().String("secq1", "", "Sets first security question")
+		cmd.Flags().String("secq2", "", "Sets second security question")
+		cmd.Flags().String("secq3", "", "Sets third security question")
+		cmd.Flags().String("secq4", "", "Sets forth security question")
+		cmd.Flags().String("secq5", "", "Sets fifth security question")
+	}
 }

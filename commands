@@ -15,7 +15,7 @@
     - profile <"profile name"> [password options]
     - site <"site"> [-p/-profile="profile name"] [password options]
 
-- edit [edits a site] <"site"> <field flag="new value"> [-p/-profile="profile name"]
+- edit [edits a site] <"site"> <field flags="new value"> [-p/-profile="profile name"]
 
 - get [gets a specific field of a site] <"site"> <field flags> [-p/-profile="profile name"]
 

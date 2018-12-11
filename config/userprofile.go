@@ -1,8 +1,6 @@
 package config
 
 import (
-	"crypto/sha256"
-	"encoding/base64"
 	"encoding/json"
 	"io/ioutil"
 	"os"
@@ -46,12 +44,6 @@ func NewUserProfile(profileDir, name, password string) error {
 	}
 
 	return nil
-}
-
-func hash(value string) string {
-	h := sha256.Sum256([]byte(value))
-	b := []byte(h[:])
-	return base64.StdEncoding.EncodeToString(b)
 }
 
 func (s *UserProfile) CheckPassword(password string) bool {
