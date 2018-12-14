@@ -1,6 +1,6 @@
 
 - add
-    - profile <"profile name"> [password options]
+    - profile <"profile name">
     - site <"site"> [field flags="value"] [-p/-profile="profile name"] [password options]
 
 - del/delete

@@ -19,12 +19,79 @@ var addsiteCmd = &cobra.Command{
 		if profileName == "" {
 			profileName = config.AppConfig.DefaultProfile
 		}
+		if profileName == "" {
+			fmt.Println("Create a profile first")
+			return
+		}
 
-		userProfile, err := config.GetUserProfile(ProfilesDir, profileName)
-		if userProfile == nil && err == nil {
+		fmt.Printf("Adding site '%s' to profile '%s'\n", siteName, profileName)
+
+		profile, err := config.GetProfile(ProfilesDir, profileName)
+		if profile == nil && err == nil {
 			fmt.Printf("No such profile '%s'\n", profileName)
 			return
 		}
+
+		profilePassword, err := PromptPassword("Profile password")
+		if err != nil {
+			fmt.Println(err)
+			return
+		}
+
+		if Verbose {
+			fmt.Println("Decrypting profile")
+		}
+		err = profile.Decrypt(profilePassword)
+		if err != nil {
+			fmt.Println(err)
+			return
+		}
+
+		if Verbose {
+			fmt.Println("Checking site's existence")
+		}
+		if profile.SiteExist(siteName) {
+			fmt.Printf("Site '%s' exists\n", siteName)
+			return
+		}
+
+		password, err := GetPassword(cmd, "Site password")
+		if err != nil {
+			fmt.Println(err)
+			return
+		}
+
+		if Verbose {
+			fmt.Println("Creating site")
+		}
+		site, err := config.NewSite(siteName, password, cmd)
+		if err != nil {
+			fmt.Println(err)
+			return
+		}
+
+		if Verbose {
+			fmt.Println("Adding site to profile's list")
+		}
+		profile.AddSite(site)
+
+		if Verbose {
+			fmt.Println("Encrypting profile")
+		}
+		if err := profile.Encrypt(profilePassword); err != nil {
+			fmt.Println(err)
+			return
+		}
+
+		if Verbose {
+			fmt.Println("Saving profile")
+		}
+		if err := profile.Save(ProfilesDir); err != nil {
+			fmt.Println(err)
+			return
+		}
+
+		fmt.Printf("Site '%s' has been added\n", siteName)
 	},
 }
 

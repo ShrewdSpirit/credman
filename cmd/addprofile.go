@@ -19,7 +19,7 @@ var addprofileCmd = &cobra.Command{
 		if Verbose {
 			fmt.Println("Checking profile's existence")
 		}
-		profile, err := config.GetUserProfile(ProfilesDir, profileName)
+		profile, err := config.GetProfile(ProfilesDir, profileName)
 		if profile != nil && err == nil {
 			fmt.Printf("Profile '%s' exists\n", profileName)
 			return
@@ -28,7 +28,7 @@ var addprofileCmd = &cobra.Command{
 			return
 		}
 
-		password, err := GetPassword(cmd)
+		password, err := GetPassword(cmd, "")
 		if err != nil {
 			fmt.Println(err)
 			return
@@ -37,8 +37,8 @@ var addprofileCmd = &cobra.Command{
 		if Verbose {
 			fmt.Println("Creating new profile")
 		}
-		config.NewUserProfile(ProfilesDir, profileName, password)
-		fmt.Printf("Profile '%s' has been added with password '%s'\n", profileName, password)
+		config.NewProfile(ProfilesDir, profileName, password)
+		fmt.Printf("Profile '%s' has been added\n", profileName)
 
 		if len(config.AppConfig.DefaultProfile) == 0 {
 			config.AppConfig.DefaultProfile = profileName
@@ -49,6 +49,5 @@ var addprofileCmd = &cobra.Command{
 
 func init() {
 	addCmd.AddCommand(addprofileCmd)
-	PasswordAddFlags(addprofileCmd)
 	ProfileAddFlags(addprofileCmd)
 }

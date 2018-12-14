@@ -90,8 +90,24 @@ func UsesPasswordGenerator(cmd *cobra.Command) bool {
 	return f
 }
 
-func GetPassword(cmd *cobra.Command) (string, error) {
-	if UsesPasswordGenerator(cmd) {
+func PromptPassword(prompt string) (string, error) {
+	fmt.Printf("%s: ", prompt)
+	passwordBytes, err := terminal.ReadPassword(int(syscall.Stdin))
+	fmt.Println()
+	if err != nil {
+		return "", err
+	}
+	password := strings.TrimSpace(string(passwordBytes))
+
+	if len(password) >= 32 {
+		return "", errors.New("Password can't be longer than 32 characters")
+	}
+
+	return password, nil
+}
+
+func GetPassword(cmd *cobra.Command, prompt string) (string, error) {
+	if cmd != nil && UsesPasswordGenerator(cmd) {
 		// generate
 		if !PasswordValidatePcase(cmd) {
 			pcase, _ := cmd.Flags().GetString("pcase")
@@ -105,28 +121,27 @@ func GetPassword(cmd *cobra.Command) (string, error) {
 		if err != nil {
 			return "", err
 		}
+		if plen >= 32 {
+			return "", errors.New("Password can't be longer than 32 characters")
+		}
+
 		pcase := PasswordGetPcase(cmd)
 		pmix := PasswordGetPmix(cmd)
 		pw := GeneratePassword(plen, pcase, pmix)
 		return pw, nil
 	}
 
-	// prompt
-	fmt.Print("Password: ")
-	passwordBytes, err := terminal.ReadPassword(int(syscall.Stdin))
-	fmt.Println()
+	if prompt == "" {
+		prompt = "Password"
+	}
+	password, err := PromptPassword(prompt)
 	if err != nil {
 		return "", err
 	}
-	password := strings.TrimSpace(string(passwordBytes))
-
-	fmt.Print("Repeat password: ")
-	repeatPasswordBytes, err := terminal.ReadPassword(int(syscall.Stdin))
-	fmt.Println()
+	repeatPassword, err := PromptPassword("Repeat password")
 	if err != nil {
 		return "", err
 	}
-	repeatPassword := strings.TrimSpace(string(repeatPasswordBytes))
 
 	if password != repeatPassword {
 		return "", errors.New("Passwords doesn't match")
