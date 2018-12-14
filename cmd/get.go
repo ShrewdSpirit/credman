@@ -7,6 +7,8 @@ import (
 	"github.com/spf13/cobra"
 )
 
+var GetShort bool
+
 var getCmd = &cobra.Command{
 	Use:   "get",
 	Args:  cobra.ExactArgs(1),
@@ -54,10 +56,6 @@ var getCmd = &cobra.Command{
 		}
 
 		copy, _ := cmd.Flags().GetBool("copy")
-		if err != nil {
-			fmt.Println(err)
-			return
-		}
 
 		getEmail, _ := cmd.Flags().GetBool("email")
 		getUsername, _ := cmd.Flags().GetBool("username")
@@ -119,56 +117,58 @@ var getCmd = &cobra.Command{
 				fmt.Println("No field is selected")
 			}
 		} else {
-			fmt.Printf("Fields of site '%s':\n", siteName)
+			if !GetShort {
+				fmt.Printf("Fields of site '%s':\n", siteName)
+			}
 			printedOneField := false
 
 			if getEmail {
-				fmt.Printf("Email: %s\n", site.Email)
+				SiteGetPrint("Email", site.Email)
 				printedOneField = true
 			}
 			if getUsername {
-				fmt.Printf("Username: %s\n", site.Username)
+				SiteGetPrint("Username", site.Username)
 				printedOneField = true
 			}
 			if getPassword {
-				fmt.Printf("Password: %s\n", site.Password)
+				SiteGetPrint("Password", site.Password)
 				printedOneField = true
 			}
 			if getNotes {
-				fmt.Printf("Notes: %s\n", site.Notes)
+				SiteGetPrint("Notes", site.Notes)
 				printedOneField = true
 			}
 			if getSecq1 {
-				fmt.Printf("Security question 1: %s\n", site.SecurityQuestions[0])
+				SiteGetPrint("Security question 1", site.SecurityQuestions[0])
 				printedOneField = true
 			}
 			if getSecq2 {
-				fmt.Printf("Security question 2: %s\n", site.SecurityQuestions[1])
+				SiteGetPrint("Security question 2", site.SecurityQuestions[1])
 				printedOneField = true
 			}
 			if getSecq3 {
-				fmt.Printf("Security question 3: %s\n", site.SecurityQuestions[2])
+				SiteGetPrint("Security question 3", site.SecurityQuestions[2])
 				printedOneField = true
 			}
 			if getSecq4 {
-				fmt.Printf("Security question 4: %s\n", site.SecurityQuestions[3])
+				SiteGetPrint("Security question 4", site.SecurityQuestions[3])
 				printedOneField = true
 			}
 			if getSecq5 {
-				fmt.Printf("Security question 5: %s\n", site.SecurityQuestions[4])
+				SiteGetPrint("Security question 5", site.SecurityQuestions[4])
 				printedOneField = true
 			}
 
 			if !printedOneField {
-				fmt.Printf("Email: %s\n", site.Email)
-				fmt.Printf("Username: %s\n", site.Username)
-				fmt.Printf("Password: %s\n", site.Password)
-				fmt.Printf("Notes: %s\n", site.Notes)
-				fmt.Printf("Security question 1: %s\n", site.SecurityQuestions[0])
-				fmt.Printf("Security question 2: %s\n", site.SecurityQuestions[1])
-				fmt.Printf("Security question 3: %s\n", site.SecurityQuestions[2])
-				fmt.Printf("Security question 4: %s\n", site.SecurityQuestions[3])
-				fmt.Printf("Security question 5: %s\n", site.SecurityQuestions[4])
+				SiteGetPrint("Email", site.Email)
+				SiteGetPrint("Username", site.Username)
+				SiteGetPrint("Password", site.Password)
+				SiteGetPrint("Notes", site.Notes)
+				SiteGetPrint("Security question 1", site.SecurityQuestions[0])
+				SiteGetPrint("Security question 2", site.SecurityQuestions[1])
+				SiteGetPrint("Security question 3", site.SecurityQuestions[2])
+				SiteGetPrint("Security question 4", site.SecurityQuestions[3])
+				SiteGetPrint("Security question 5", site.SecurityQuestions[4])
 			}
 		}
 	},
@@ -180,4 +180,5 @@ func init() {
 	SiteAddFieldFlags(getCmd, true)
 
 	getCmd.Flags().BoolP("copy", "c", false, "Copy the single field get value to clipboard")
+	getCmd.Flags().BoolVarP(&GetShort, "short", "s", false, "Omits all extra strings for output and only prints the field values")
 }

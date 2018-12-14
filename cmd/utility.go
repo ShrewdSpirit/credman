@@ -225,7 +225,22 @@ func SiteGetCopy(sitename, fieldname, value string) error {
 	if err := clipboard.WriteAll(value); err != nil {
 		return err
 	}
-	fmt.Printf("%s of '%s' has been copied to clipboard\n", fieldname, sitename)
+
+	if !GetShort {
+		fmt.Printf("%s of '%s' has been copied to clipboard\n", fieldname, sitename)
+	}
 
 	return nil
+}
+
+func SiteGetPrint(fieldname, value string) {
+	if len(value) == 0 {
+		return
+	}
+
+	if GetShort {
+		fmt.Println(value)
+	} else {
+		fmt.Printf("%s: %s\n", fieldname, value)
+	}
 }
