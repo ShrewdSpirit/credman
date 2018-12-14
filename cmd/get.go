@@ -60,7 +60,7 @@ var getCmd = &cobra.Command{
 		getEmail, _ := cmd.Flags().GetBool("email")
 		getUsername, _ := cmd.Flags().GetBool("username")
 		getPassword, _ := cmd.Flags().GetBool("password")
-		fields, _ := cmd.Flags().GetStringArray("fields")
+		fields, _ := cmd.Flags().GetStringSlice("fields")
 
 		if copy {
 			if getEmail {
@@ -79,7 +79,7 @@ var getCmd = &cobra.Command{
 					return
 				}
 			} else if len(fields) > 0 {
-				field := fields[0]
+				field := strings.TrimSpace(fields[0])
 				value, ok := site.Fields[field]
 				field = strings.Title(field)
 				if !ok {
@@ -111,6 +111,7 @@ var getCmd = &cobra.Command{
 			}
 
 			for _, field := range fields {
+				field = strings.TrimSpace(field)
 				value, _ := site.Fields[field]
 				doPrint(strings.Title(field), value)
 				printedOneField = true

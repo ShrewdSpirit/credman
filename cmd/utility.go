@@ -202,7 +202,7 @@ func AddFlagsSiteFields(cmd *cobra.Command, isBool bool) {
 		cmd.Flags().Bool("password", false, "Gets password field")
 		cmd.Flags().BoolP("email", "e", false, "Gets email field")
 		cmd.Flags().BoolP("username", "u", false, "Gets username field")
-		cmd.Flags().StringArrayP("fields", "f", nil, "Gets custom field")
+		cmd.Flags().StringSliceP("fields", "f", nil, "Gets custom field")
 	} else {
 		cmd.Flags().StringP("email", "e", "", "Sets email field")
 		cmd.Flags().StringP("username", "u", "", "Sets username field")
