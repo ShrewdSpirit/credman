@@ -28,7 +28,7 @@ type Profile struct {
 func GetProfile(profileDir, name string) (*Profile, error) {
 	profileFilename := path.Join(profileDir, name+".json")
 	if _, err := os.Stat(profileFilename); err != nil {
-		return nil, nil
+		return nil, err
 	}
 
 	data, err := ioutil.ReadFile(profileFilename)

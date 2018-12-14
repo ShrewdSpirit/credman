@@ -10,7 +10,6 @@ import (
 var addprofileCmd = &cobra.Command{
 	Use:     "profile",
 	Short:   "Adds a new profile",
-	Long:    "Adds a new profile",
 	Example: "credman add profile myprofile",
 	Args:    cobra.ExactArgs(1),
 	Run: func(cmd *cobra.Command, args []string) {

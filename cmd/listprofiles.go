@@ -22,6 +22,7 @@ var listprofilesCmd = &cobra.Command{
 			return
 		}
 
+		fmt.Println("Profiles:")
 		for _, profile := range profiles {
 			if profile.IsDir() {
 				continue

@@ -22,7 +22,6 @@ import (
 var addCmd = &cobra.Command{
 	Use:   "add",
 	Short: "Adds a new profile/site",
-	Long:  "Adds a new profile/site",
 }
 
 func init() {
