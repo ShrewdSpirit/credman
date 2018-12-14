@@ -12,7 +12,7 @@
     - site <"site"> <"new name"> [-p/-profile="profile name"]
 
 - passwd
-    - profile <"profile name"> [password options]
+    - profile <"profile name">
     - site <"site"> [-p/-profile="profile name"] [password options]
 
 - edit [edits a site] <"site"> <field flags="new value"> [-p/-profile="profile name"]
@@ -39,4 +39,4 @@ password options:
 - --plen=number
 - --pcase=lower/upper/both
 - --pmix=letter/digit/both
-- default: --plen=12 --pcase=both --pmix=both
+- default: --plen=16 --pcase=both --pmix=both

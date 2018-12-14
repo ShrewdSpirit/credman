@@ -33,7 +33,7 @@ const (
 
 func PasswordAddFlags(cmd *cobra.Command) {
 	cmd.Flags().Bool("pgen", false, "Use password generator")
-	cmd.Flags().Uint8("plen", 12, "Password generator's password length")
+	cmd.Flags().Uint8("plen", 16, "Password generator's password length")
 	cmd.Flags().String("pcase", "both", "Password generator's character case: lower/upper/both")
 	cmd.Flags().String("pmix", "both", "Password generator's characters type: letter/digit/both")
 }

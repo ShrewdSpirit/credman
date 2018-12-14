@@ -14,7 +14,8 @@ var rootCmd = &cobra.Command{
 	Short: "Simple yet powerful credential/password manager",
 	Long: `Simple yet powerful credential/password manager with remote sync.
 
-Use 'credman help password' to see how to use password options.`,
+Use 'credman help password' to see how to use password options.
+Use 'credman help fields to see what fields you can set for a site.`,
 	Version: "0.1.0",
 }
 
