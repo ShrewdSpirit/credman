@@ -200,22 +200,12 @@ func AddFlagsProfileName(cmd *cobra.Command) {
 func AddFlagsSiteFields(cmd *cobra.Command, isBool bool) {
 	if isBool {
 		cmd.Flags().Bool("password", false, "Gets password field")
-		cmd.Flags().Bool("email", false, "Gets email field")
-		cmd.Flags().Bool("username", false, "Gets username field")
-		cmd.Flags().Bool("notes", false, "Gets notes field")
-		cmd.Flags().Bool("secq1", false, "Gets first security question")
-		cmd.Flags().Bool("secq2", false, "Gets second security question")
-		cmd.Flags().Bool("secq3", false, "Gets third security question")
-		cmd.Flags().Bool("secq4", false, "Gets forth security question")
-		cmd.Flags().Bool("secq5", false, "Gets fifth security question")
+		cmd.Flags().BoolP("email", "e", false, "Gets email field")
+		cmd.Flags().BoolP("username", "u", false, "Gets username field")
+		cmd.Flags().StringArrayP("fields", "f", nil, "Gets custom field")
 	} else {
-		cmd.Flags().String("email", "", "Sets email field")
-		cmd.Flags().String("username", "", "Sets username field")
-		cmd.Flags().String("notes", "", "Sets notes field")
-		cmd.Flags().String("secq1", "", "Sets first security question")
-		cmd.Flags().String("secq2", "", "Sets second security question")
-		cmd.Flags().String("secq3", "", "Sets third security question")
-		cmd.Flags().String("secq4", "", "Sets forth security question")
-		cmd.Flags().String("secq5", "", "Sets fifth security question")
+		cmd.Flags().StringP("email", "e", "", "Sets email field")
+		cmd.Flags().StringP("username", "u", "", "Sets username field")
+		cmd.Flags().StringToStringP("fields", "f", nil, "Custom fields")
 	}
 }

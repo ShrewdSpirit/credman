@@ -12,7 +12,7 @@ var addsiteCmd = &cobra.Command{
 	Args:    cobra.ExactArgs(1),
 	Short:   "Adds a new site",
 	Long:    "Adds a new site",
-	Example: `credman add site website.com --email="mymail@m.com"`,
+	Example: `credman add site website.com --email="mymail@m.com" --fields=seed=abc,security=mydognameisbap`,
 	Run: func(cmd *cobra.Command, args []string) {
 		siteName := args[0]
 

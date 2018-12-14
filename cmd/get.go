@@ -2,13 +2,12 @@ package cmd
 
 import (
 	"fmt"
+	"strings"
 
 	"github.com/ShrewdSpirit/credman/config"
 	"github.com/atotto/clipboard"
 	"github.com/spf13/cobra"
 )
-
-var GetShort bool
 
 var getCmd = &cobra.Command{
 	Use:   "get",
@@ -61,56 +60,33 @@ var getCmd = &cobra.Command{
 		getEmail, _ := cmd.Flags().GetBool("email")
 		getUsername, _ := cmd.Flags().GetBool("username")
 		getPassword, _ := cmd.Flags().GetBool("password")
-		getNotes, _ := cmd.Flags().GetBool("notes")
-		getSecq1, _ := cmd.Flags().GetBool("secq1")
-		getSecq2, _ := cmd.Flags().GetBool("secq2")
-		getSecq3, _ := cmd.Flags().GetBool("secq3")
-		getSecq4, _ := cmd.Flags().GetBool("secq4")
-		getSecq5, _ := cmd.Flags().GetBool("secq5")
+		fields, _ := cmd.Flags().GetStringArray("fields")
 
 		if copy {
 			if getEmail {
-				if err := doCopy(siteName, "Email", site.Email); err != nil {
+				if err := doCopy(siteName, "Email", site.Fields["email"]); err != nil {
 					fmt.Println(err)
 					return
 				}
 			} else if getUsername {
-				if err := doCopy(siteName, "Username", site.Username); err != nil {
+				if err := doCopy(siteName, "Username", site.Fields["username"]); err != nil {
 					fmt.Println(err)
 					return
 				}
 			} else if getPassword {
-				if err := doCopy(siteName, "Password", site.Password); err != nil {
+				if err := doCopy(siteName, "Password", site.Fields["password"]); err != nil {
 					fmt.Println(err)
 					return
 				}
-			} else if getNotes {
-				if err := doCopy(siteName, "Notes", site.Notes); err != nil {
-					fmt.Println(err)
+			} else if len(fields) > 0 {
+				field := fields[0]
+				value, ok := site.Fields[field]
+				field = strings.Title(field)
+				if !ok {
+					fmt.Printf("Invalid field '%s'\n", field)
 					return
 				}
-			} else if getSecq1 {
-				if err := doCopy(siteName, "Security question 1", site.SecurityQuestions[0]); err != nil {
-					fmt.Println(err)
-					return
-				}
-			} else if getSecq2 {
-				if err := doCopy(siteName, "Security question 2", site.SecurityQuestions[1]); err != nil {
-					fmt.Println(err)
-					return
-				}
-			} else if getSecq3 {
-				if err := doCopy(siteName, "Security question 3", site.SecurityQuestions[2]); err != nil {
-					fmt.Println(err)
-					return
-				}
-			} else if getSecq4 {
-				if err := doCopy(siteName, "Security question 4", site.SecurityQuestions[3]); err != nil {
-					fmt.Println(err)
-					return
-				}
-			} else if getSecq5 {
-				if err := doCopy(siteName, "Security question 5", site.SecurityQuestions[4]); err != nil {
+				if err := doCopy(siteName, field, value); err != nil {
 					fmt.Println(err)
 					return
 				}
@@ -118,58 +94,32 @@ var getCmd = &cobra.Command{
 				fmt.Println("No field is selected")
 			}
 		} else {
-			if !GetShort {
-				fmt.Printf("Fields of site '%s':\n", siteName)
-			}
+			fmt.Printf("Fields of site '%s':\n", siteName)
 			printedOneField := false
 
 			if getEmail {
-				doPrint("Email", site.Email)
+				doPrint("Email", site.Fields["email"])
 				printedOneField = true
 			}
 			if getUsername {
-				doPrint("Username", site.Username)
+				doPrint("Username", site.Fields["username"])
 				printedOneField = true
 			}
 			if getPassword {
-				doPrint("Password", site.Password)
+				doPrint("Password", site.Fields["password"])
 				printedOneField = true
 			}
-			if getNotes {
-				doPrint("Notes", site.Notes)
-				printedOneField = true
-			}
-			if getSecq1 {
-				doPrint("Security question 1", site.SecurityQuestions[0])
-				printedOneField = true
-			}
-			if getSecq2 {
-				doPrint("Security question 2", site.SecurityQuestions[1])
-				printedOneField = true
-			}
-			if getSecq3 {
-				doPrint("Security question 3", site.SecurityQuestions[2])
-				printedOneField = true
-			}
-			if getSecq4 {
-				doPrint("Security question 4", site.SecurityQuestions[3])
-				printedOneField = true
-			}
-			if getSecq5 {
-				doPrint("Security question 5", site.SecurityQuestions[4])
+
+			for _, field := range fields {
+				value, _ := site.Fields[field]
+				doPrint(strings.Title(field), value)
 				printedOneField = true
 			}
 
 			if !printedOneField {
-				doPrint("Email", site.Email)
-				doPrint("Username", site.Username)
-				doPrint("Password", site.Password)
-				doPrint("Notes", site.Notes)
-				doPrint("Security question 1", site.SecurityQuestions[0])
-				doPrint("Security question 2", site.SecurityQuestions[1])
-				doPrint("Security question 3", site.SecurityQuestions[2])
-				doPrint("Security question 4", site.SecurityQuestions[3])
-				doPrint("Security question 5", site.SecurityQuestions[4])
+				for field, value := range site.Fields {
+					doPrint(strings.Title(field), value)
+				}
 			}
 		}
 	},
@@ -181,17 +131,19 @@ func init() {
 	AddFlagsSiteFields(getCmd, true)
 
 	getCmd.Flags().BoolP("copy", "c", false, "Copy the single field get value to clipboard")
-	getCmd.Flags().BoolVarP(&GetShort, "short", "s", false, "Omits all extra strings for output and only prints the field values")
 }
 
 func doCopy(sitename, fieldname, value string) error {
+	if len(value) == 0 {
+		fmt.Printf("No value for field '%s' of '%s' is set\n", fieldname, sitename)
+		return nil
+	}
+
 	if err := clipboard.WriteAll(value); err != nil {
 		return err
 	}
 
-	if !GetShort {
-		fmt.Printf("%s of '%s' has been copied to clipboard\n", fieldname, sitename)
-	}
+	fmt.Printf("%s of '%s' has been copied to clipboard\n", fieldname, sitename)
 
 	return nil
 }
@@ -200,10 +152,5 @@ func doPrint(fieldname, value string) {
 	if len(value) == 0 {
 		return
 	}
-
-	if GetShort {
-		fmt.Println(value)
-	} else {
-		fmt.Printf("%s: %s\n", fieldname, value)
-	}
+	fmt.Printf("%s: %s\n", fieldname, value)
 }

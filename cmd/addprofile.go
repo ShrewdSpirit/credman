@@ -2,6 +2,7 @@ package cmd
 
 import (
 	"fmt"
+	"os"
 
 	"github.com/ShrewdSpirit/credman/config"
 	"github.com/spf13/cobra"
@@ -22,7 +23,7 @@ var addprofileCmd = &cobra.Command{
 		if profile != nil && err == nil {
 			fmt.Printf("Profile '%s' exists\n", profileName)
 			return
-		} else if err != nil {
+		} else if err != nil && !os.IsNotExist(err) {
 			fmt.Printf("Failed checking profile '%s': %s\n", profileName, err)
 			return
 		}
