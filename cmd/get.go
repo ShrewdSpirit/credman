@@ -9,6 +9,7 @@ import (
 
 var getCmd = &cobra.Command{
 	Use:   "get",
+	Args:  cobra.ExactArgs(1),
 	Short: "Gets specified fields of a site or all fields if none is specified",
 	Run: func(cmd *cobra.Command, args []string) {
 		siteName := args[0]
