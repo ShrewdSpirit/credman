@@ -48,5 +48,5 @@ var addprofileCmd = &cobra.Command{
 
 func init() {
 	addCmd.AddCommand(addprofileCmd)
-	ProfileAddFlags(addprofileCmd)
+	AddFlagsProfileName(addprofileCmd)
 }

@@ -97,7 +97,7 @@ var addsiteCmd = &cobra.Command{
 
 func init() {
 	addCmd.AddCommand(addsiteCmd)
-	PasswordAddFlags(addsiteCmd)
-	ProfileAddFlags(addsiteCmd)
-	SiteAddFieldFlags(addsiteCmd, false)
+	AddFlagsPassword(addsiteCmd)
+	AddFlagsProfileName(addsiteCmd)
+	AddFlagsSiteFields(addsiteCmd, false)
 }

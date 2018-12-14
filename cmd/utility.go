@@ -11,7 +11,6 @@ import (
 
 	"golang.org/x/crypto/ssh/terminal"
 
-	"github.com/atotto/clipboard"
 	"github.com/spf13/cobra"
 )
 
@@ -31,13 +30,6 @@ const (
 	PasswordMixLetter PasswordMix = 1
 	PasswordMixDigit  PasswordMix = 2
 )
-
-func PasswordAddFlags(cmd *cobra.Command) {
-	cmd.Flags().Bool("pgen", false, "Use password generator")
-	cmd.Flags().Uint8("plen", 16, "Password generator's password length")
-	cmd.Flags().String("pcase", "both", "Password generator's character case: lower/upper/both")
-	cmd.Flags().String("pmix", "both", "Password generator's characters type: letter/digit/both")
-}
 
 func PasswordValidatePcase(cmd *cobra.Command) bool {
 	f, err := cmd.Flags().GetString("pcase")
@@ -194,11 +186,18 @@ func GeneratePassword(plen byte, pcase PasswordCase, pmix PasswordMix) string {
 	return ""
 }
 
-func ProfileAddFlags(cmd *cobra.Command) {
+func AddFlagsPassword(cmd *cobra.Command) {
+	cmd.Flags().Bool("pgen", false, "Use password generator")
+	cmd.Flags().Uint8("plen", 16, "Password generator's password length")
+	cmd.Flags().String("pcase", "both", "Password generator's character case: lower/upper/both")
+	cmd.Flags().String("pmix", "both", "Password generator's characters type: letter/digit/both")
+}
+
+func AddFlagsProfileName(cmd *cobra.Command) {
 	cmd.Flags().StringP("profile", "p", "", "Specifies which profile to use")
 }
 
-func SiteAddFieldFlags(cmd *cobra.Command, isBool bool) {
+func AddFlagsSiteFields(cmd *cobra.Command, isBool bool) {
 	if isBool {
 		cmd.Flags().Bool("password", false, "Gets password field")
 		cmd.Flags().Bool("email", false, "Gets email field")
@@ -218,29 +217,5 @@ func SiteAddFieldFlags(cmd *cobra.Command, isBool bool) {
 		cmd.Flags().String("secq3", "", "Sets third security question")
 		cmd.Flags().String("secq4", "", "Sets forth security question")
 		cmd.Flags().String("secq5", "", "Sets fifth security question")
-	}
-}
-
-func SiteGetCopy(sitename, fieldname, value string) error {
-	if err := clipboard.WriteAll(value); err != nil {
-		return err
-	}
-
-	if !GetShort {
-		fmt.Printf("%s of '%s' has been copied to clipboard\n", fieldname, sitename)
-	}
-
-	return nil
-}
-
-func SiteGetPrint(fieldname, value string) {
-	if len(value) == 0 {
-		return
-	}
-
-	if GetShort {
-		fmt.Println(value)
-	} else {
-		fmt.Printf("%s: %s\n", fieldname, value)
 	}
 }

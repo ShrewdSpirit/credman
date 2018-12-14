@@ -53,5 +53,5 @@ var listsitesCmd = &cobra.Command{
 
 func init() {
 	listCmd.AddCommand(listsitesCmd)
-	ProfileAddFlags(listsitesCmd)
+	AddFlagsProfileName(listsitesCmd)
 }

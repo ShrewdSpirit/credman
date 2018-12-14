@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"github.com/ShrewdSpirit/credman/config"
+	"github.com/atotto/clipboard"
 	"github.com/spf13/cobra"
 )
 
@@ -69,47 +70,47 @@ var getCmd = &cobra.Command{
 
 		if copy {
 			if getEmail {
-				if err := SiteGetCopy(siteName, "Email", site.Email); err != nil {
+				if err := doCopy(siteName, "Email", site.Email); err != nil {
 					fmt.Println(err)
 					return
 				}
 			} else if getUsername {
-				if err := SiteGetCopy(siteName, "Username", site.Username); err != nil {
+				if err := doCopy(siteName, "Username", site.Username); err != nil {
 					fmt.Println(err)
 					return
 				}
 			} else if getPassword {
-				if err := SiteGetCopy(siteName, "Password", site.Password); err != nil {
+				if err := doCopy(siteName, "Password", site.Password); err != nil {
 					fmt.Println(err)
 					return
 				}
 			} else if getNotes {
-				if err := SiteGetCopy(siteName, "Notes", site.Notes); err != nil {
+				if err := doCopy(siteName, "Notes", site.Notes); err != nil {
 					fmt.Println(err)
 					return
 				}
 			} else if getSecq1 {
-				if err := SiteGetCopy(siteName, "Security question 1", site.SecurityQuestions[0]); err != nil {
+				if err := doCopy(siteName, "Security question 1", site.SecurityQuestions[0]); err != nil {
 					fmt.Println(err)
 					return
 				}
 			} else if getSecq2 {
-				if err := SiteGetCopy(siteName, "Security question 2", site.SecurityQuestions[1]); err != nil {
+				if err := doCopy(siteName, "Security question 2", site.SecurityQuestions[1]); err != nil {
 					fmt.Println(err)
 					return
 				}
 			} else if getSecq3 {
-				if err := SiteGetCopy(siteName, "Security question 3", site.SecurityQuestions[2]); err != nil {
+				if err := doCopy(siteName, "Security question 3", site.SecurityQuestions[2]); err != nil {
 					fmt.Println(err)
 					return
 				}
 			} else if getSecq4 {
-				if err := SiteGetCopy(siteName, "Security question 4", site.SecurityQuestions[3]); err != nil {
+				if err := doCopy(siteName, "Security question 4", site.SecurityQuestions[3]); err != nil {
 					fmt.Println(err)
 					return
 				}
 			} else if getSecq5 {
-				if err := SiteGetCopy(siteName, "Security question 5", site.SecurityQuestions[4]); err != nil {
+				if err := doCopy(siteName, "Security question 5", site.SecurityQuestions[4]); err != nil {
 					fmt.Println(err)
 					return
 				}
@@ -123,52 +124,52 @@ var getCmd = &cobra.Command{
 			printedOneField := false
 
 			if getEmail {
-				SiteGetPrint("Email", site.Email)
+				doPrint("Email", site.Email)
 				printedOneField = true
 			}
 			if getUsername {
-				SiteGetPrint("Username", site.Username)
+				doPrint("Username", site.Username)
 				printedOneField = true
 			}
 			if getPassword {
-				SiteGetPrint("Password", site.Password)
+				doPrint("Password", site.Password)
 				printedOneField = true
 			}
 			if getNotes {
-				SiteGetPrint("Notes", site.Notes)
+				doPrint("Notes", site.Notes)
 				printedOneField = true
 			}
 			if getSecq1 {
-				SiteGetPrint("Security question 1", site.SecurityQuestions[0])
+				doPrint("Security question 1", site.SecurityQuestions[0])
 				printedOneField = true
 			}
 			if getSecq2 {
-				SiteGetPrint("Security question 2", site.SecurityQuestions[1])
+				doPrint("Security question 2", site.SecurityQuestions[1])
 				printedOneField = true
 			}
 			if getSecq3 {
-				SiteGetPrint("Security question 3", site.SecurityQuestions[2])
+				doPrint("Security question 3", site.SecurityQuestions[2])
 				printedOneField = true
 			}
 			if getSecq4 {
-				SiteGetPrint("Security question 4", site.SecurityQuestions[3])
+				doPrint("Security question 4", site.SecurityQuestions[3])
 				printedOneField = true
 			}
 			if getSecq5 {
-				SiteGetPrint("Security question 5", site.SecurityQuestions[4])
+				doPrint("Security question 5", site.SecurityQuestions[4])
 				printedOneField = true
 			}
 
 			if !printedOneField {
-				SiteGetPrint("Email", site.Email)
-				SiteGetPrint("Username", site.Username)
-				SiteGetPrint("Password", site.Password)
-				SiteGetPrint("Notes", site.Notes)
-				SiteGetPrint("Security question 1", site.SecurityQuestions[0])
-				SiteGetPrint("Security question 2", site.SecurityQuestions[1])
-				SiteGetPrint("Security question 3", site.SecurityQuestions[2])
-				SiteGetPrint("Security question 4", site.SecurityQuestions[3])
-				SiteGetPrint("Security question 5", site.SecurityQuestions[4])
+				doPrint("Email", site.Email)
+				doPrint("Username", site.Username)
+				doPrint("Password", site.Password)
+				doPrint("Notes", site.Notes)
+				doPrint("Security question 1", site.SecurityQuestions[0])
+				doPrint("Security question 2", site.SecurityQuestions[1])
+				doPrint("Security question 3", site.SecurityQuestions[2])
+				doPrint("Security question 4", site.SecurityQuestions[3])
+				doPrint("Security question 5", site.SecurityQuestions[4])
 			}
 		}
 	},
@@ -176,9 +177,33 @@ var getCmd = &cobra.Command{
 
 func init() {
 	rootCmd.AddCommand(getCmd)
-	ProfileAddFlags(getCmd)
-	SiteAddFieldFlags(getCmd, true)
+	AddFlagsProfileName(getCmd)
+	AddFlagsSiteFields(getCmd, true)
 
 	getCmd.Flags().BoolP("copy", "c", false, "Copy the single field get value to clipboard")
 	getCmd.Flags().BoolVarP(&GetShort, "short", "s", false, "Omits all extra strings for output and only prints the field values")
+}
+
+func doCopy(sitename, fieldname, value string) error {
+	if err := clipboard.WriteAll(value); err != nil {
+		return err
+	}
+
+	if !GetShort {
+		fmt.Printf("%s of '%s' has been copied to clipboard\n", fieldname, sitename)
+	}
+
+	return nil
+}
+
+func doPrint(fieldname, value string) {
+	if len(value) == 0 {
+		return
+	}
+
+	if GetShort {
+		fmt.Println(value)
+	} else {
+		fmt.Printf("%s: %s\n", fieldname, value)
+	}
 }
