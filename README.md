@@ -9,11 +9,6 @@ Features:
 - Auto generate password
 - Sync with custom server
 
-# TODO
-- [ ] Implement all subcommands
-- [ ] Change fields to add any custom fields to sites
-- [ ] Implement server sync
-
 # Usage
 Credman works on Linux, OSX and all Windows versions.
 It requires 'xsel' or 'xclip' to be installed on Linux.
