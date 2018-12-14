@@ -26,8 +26,11 @@ var addsiteCmd = &cobra.Command{
 
 		fmt.Printf("Adding site '%s' to profile '%s'\n", siteName, profileName)
 
+		if Verbose {
+			fmt.Println("Reading profile")
+		}
 		profile, err := config.GetProfile(ProfilesDir, profileName)
-		if profile == nil && err == nil {
+		if profile == nil && err != nil {
 			fmt.Printf("No such profile '%s'\n", profileName)
 			return
 		}
@@ -64,11 +67,7 @@ var addsiteCmd = &cobra.Command{
 		if Verbose {
 			fmt.Println("Creating site")
 		}
-		site, err := config.NewSite(siteName, password, cmd)
-		if err != nil {
-			fmt.Println(err)
-			return
-		}
+		site := config.NewSite(siteName, password, cmd)
 
 		if Verbose {
 			fmt.Println("Adding site to profile's list")
