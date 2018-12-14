@@ -120,3 +120,12 @@ func (s *Profile) SiteExist(name string) bool {
 	}
 	return false
 }
+
+func (s *Profile) Site(name string) *Site {
+	for _, site := range s.Sites.List {
+		if site.Name == name {
+			return site
+		}
+	}
+	return nil
+}

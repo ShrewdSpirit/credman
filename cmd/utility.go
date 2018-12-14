@@ -11,6 +11,7 @@ import (
 
 	"golang.org/x/crypto/ssh/terminal"
 
+	"github.com/atotto/clipboard"
 	"github.com/spf13/cobra"
 )
 
@@ -218,4 +219,13 @@ func SiteAddFieldFlags(cmd *cobra.Command, isBool bool) {
 		cmd.Flags().String("secq4", "", "Sets forth security question")
 		cmd.Flags().String("secq5", "", "Sets fifth security question")
 	}
+}
+
+func SiteGetCopy(sitename, fieldname, value string) error {
+	if err := clipboard.WriteAll(value); err != nil {
+		return err
+	}
+	fmt.Printf("%s of '%s' has been copied to clipboard\n", fieldname, sitename)
+
+	return nil
 }
