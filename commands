@@ -22,7 +22,6 @@
 - list
     - sites [-p/-profile="profile name"]
     - profiles
-    - site <"site"> [-p/-profile="profile name"]
 
 - default [sets default profile] <"profile">
 
