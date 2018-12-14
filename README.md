@@ -32,19 +32,7 @@ You can use `-p="profile"` to set a specific profile for site or omit to use def
 All credman configs and profiles will be created at user's home directory under .credman directory.
 
 You can add/delete/rename/change password and change default profile.
-Check `credman --help` for a detailed help.
-
-## Fields
-All fields will be added to a site if specified (password field is required). Here's a complete list of fields:
-- email
-- username
-- notes
-- secqX where X is numbers from 1 to 5 for security questions
-
-## Passwords
-Credman can generate a password for each site you add or you can set your own password. The `--pgen` flag will generate a password with default settings.
-You can do `credman help password` to see a list of password generator options. If you don't pass the `--pgen flag, credman will prompt you for a password.
-Passwords for profiles should be entered by user and they will not be generated. If you lose your password or forget it, there will be no way to get it back!
+Check `credman help` for a detailed help.
 
 ## Sync Servers
 Credman supports sync servers to keep your passwords synced everywhere securely.
