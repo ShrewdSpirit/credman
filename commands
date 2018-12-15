@@ -33,6 +33,8 @@
 
 - [ ] git
 
+- [ ] gui
+
 
 password options:
 - if none is given, credman prompts user for password

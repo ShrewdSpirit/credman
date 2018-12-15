@@ -9,6 +9,12 @@ Features:
 - Auto generate password
 - Sync with custom server
 
+# Installation
+I'll add release binaries as soon as I implement all the features.
+You can build from source by installing [Go](https://golang.org/) and then running:
+`go -u github.com/ShrewdSpirit/credman`
+`go install github.com/ShrewdSpirit/credman`
+
 # Usage
 Credman works on Linux, OSX and all Windows versions.
 It requires 'xsel' or 'xclip' to be installed on Linux.
