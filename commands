@@ -3,17 +3,17 @@
     - [x] profile <"profile name">
     - [x] site <"site"> [field flags="value"] [-p/-profile="profile name"] [password options]
 
-- del/delete
-    - profile <"profile name">
-    - site <"site"> [-p/-profile="profile name"]
+- [ ]del/delete
+    - [ ] profile <"profile name">
+    - [ ] site <"site"> [-p/-profile="profile name"]
 
-- ren/rename
-    - profile <"profile name"> <"new name">
-    - site <"site"> <"new name"> [-p/-profile="profile name"]
+- [ ] ren/rename
+    - [ ] profile <"profile name"> <"new name">
+    - [ ] site <"site"> <"new name"> [-p/-profile="profile name"]
 
-- passwd
-    - profile <"profile name">
-    - site <"site"> [-p/-profile="profile name"] [password options]
+- [-] passwd
+    - [x] profile <"profile name">
+    - [ ] site <"site"> [-p/-profile="profile name"] [password options]
 
 - [x] edit [edits a site] <"site"> <field flags="new value"> [-p/-profile="profile name"]
 

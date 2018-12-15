@@ -11,7 +11,7 @@ import (
 	"io"
 )
 
-func hash(value string) string {
+func Hash(value string) string {
 	h := sha256.Sum256([]byte(value))
 	b := []byte(h[:])
 	return base64.StdEncoding.EncodeToString(b)

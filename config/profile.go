@@ -50,7 +50,7 @@ func GetProfile(profileDir, name string) (*Profile, error) {
 
 func NewProfile(profileDir, name, password string) error {
 	p := &Profile{
-		Hash: hash(password),
+		Hash: Hash(password),
 	}
 	jsonContent, err := json.Marshal(p)
 	if err != nil {
@@ -76,7 +76,7 @@ func (s *Profile) Save(profileDir string) error {
 }
 
 func (s *Profile) CheckPassword(password string) bool {
-	return s.Hash == hash(password)
+	return s.Hash == Hash(password)
 }
 
 func (s *Profile) Encrypt(password string) (err error) {
