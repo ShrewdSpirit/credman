@@ -94,7 +94,7 @@ var getCmd = &cobra.Command{
 				fmt.Println("No field is selected")
 			}
 		} else {
-			fmt.Printf("Fields of site '%s':\n", siteName)
+			fmt.Printf("Site '%s':\n", siteName)
 			printedOneField := false
 
 			if getEmail {
@@ -153,5 +153,5 @@ func doPrint(fieldname, value string) {
 	if len(value) == 0 {
 		return
 	}
-	fmt.Printf("%s: %s\n", fieldname, value)
+	fmt.Printf(" |  %s: %s\n", fieldname, value)
 }
