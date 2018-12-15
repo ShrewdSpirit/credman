@@ -6,7 +6,24 @@ import (
 	"io/ioutil"
 	"os"
 	"path"
+	"sort"
 )
+
+type SiteListSorter struct {
+	List []*Site
+}
+
+func (s SiteListSorter) Len() int {
+	return len(s.List)
+}
+
+func (s SiteListSorter) Swap(i, j int) {
+	s.List[i], s.List[j] = s.List[j], s.List[i]
+}
+
+func (s SiteListSorter) Less(i, j int) bool {
+	return s.List[i].Name < s.List[j].Name
+}
 
 type SiteList struct {
 	List []*Site
@@ -16,6 +33,12 @@ func newSiteList() SiteList {
 	return SiteList{
 		List: make([]*Site, 0),
 	}
+}
+
+func (s *SiteList) Sort() []*Site {
+	sortList := SiteListSorter{s.List}
+	sort.Sort(sortList)
+	return sortList.List
 }
 
 type Profile struct {

@@ -45,7 +45,8 @@ var listsitesCmd = &cobra.Command{
 		}
 
 		fmt.Printf("Sites of '%s':\n", profileName)
-		for _, site := range profile.Sites.List {
+		sorted := profile.Sites.Sort()
+		for _, site := range sorted {
 			fmt.Println(site.Name)
 		}
 	},
