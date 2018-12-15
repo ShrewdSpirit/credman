@@ -8,6 +8,8 @@ Features:
 - Multiple fields per site/serivce
 - Auto generate password
 - Sync with custom server
+- Cross platform
+- Easy usage
 
 # Installation
 I'll add release binaries as soon as I implement all the features.
@@ -40,5 +42,12 @@ All credman configs and profiles will be created at user's home directory under 
 You can add/delete/rename/change password and change default profile.
 Check `credman help` for a detailed help.
 
-## Sync Servers
+## Sync
 Credman supports sync servers to keep your passwords synced everywhere securely.
+In future I'll add git support.
+
+# TODO
+- [ ] **WIP** Implement local management
+- [ ] GUI frontend
+- [ ] Custom server sync
+- [ ] Git sync

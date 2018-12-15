@@ -32,14 +32,3 @@
 - [ ] serve
 
 - [ ] git
-
-- [ ] gui
-
-
-password options:
-- if none is given, credman prompts user for password
-- --pgen
-- --plen=number
-- --pcase=lower/upper/both
-- --pmix=letter/digit/both
-- default: --plen=16 --pcase=both --pmix=both
