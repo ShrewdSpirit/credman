@@ -1,7 +1,7 @@
 
-- add
-    - profile <"profile name">
-    - site <"site"> [field flags="value"] [-p/-profile="profile name"] [password options]
+- [x] add
+    - [x] profile <"profile name">
+    - [x] site <"site"> [field flags="value"] [-p/-profile="profile name"] [password options]
 
 - del/delete
     - profile <"profile name">
@@ -15,21 +15,23 @@
     - profile <"profile name">
     - site <"site"> [-p/-profile="profile name"] [password options]
 
-- edit [edits a site] <"site"> <field flags="new value"> [-p/-profile="profile name"]
+- [x] edit [edits a site] <"site"> <field flags="new value"> [-p/-profile="profile name"]
 
-- get [gets a specific field of a site] <"site"> <field flags> [-p/-profile="profile name"]
+- [x] get [gets a specific field of a site] <"site"> <field flags> [-p/-profile="profile name"]
 
-- list
-    - sites [-p/-profile="profile name"]
-    - profiles
+- [x] list
+    - [x] sites [-p/-profile="profile name"]
+    - [x] profiles
 
-- default [sets default profile] <"profile">
+- [x] default [sets default profile] <"profile">
 
-- remote
-    - set <"address"> <--password="remote password"> [-p/-profile="profile name"]
-    - sync [-p/-profile="profile name"]
+- [ ] remote
+    - [ ] set <"address"> <--password="remote password"> [-p/-profile="profile name"]
+    - [ ] sync [-p/-profile="profile name"]
 
-- serve
+- [ ] serve
+
+- [ ] git
 
 
 password options:
