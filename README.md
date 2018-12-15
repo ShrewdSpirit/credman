@@ -11,13 +11,13 @@ Features:
 - Cross platform
 - Easy usage
 
-# Installation
+## Installation
 I'll add release binaries as soon as I implement all the features.
 You can build from source by installing [Go](https://golang.org/) and then running:
 `go -u github.com/ShrewdSpirit/credman`
 `go install github.com/ShrewdSpirit/credman`
 
-# Usage
+## Usage
 Credman works on Linux, OSX and all Windows versions.
 It requires 'xsel' or 'xclip' to be installed on Linux.
 
@@ -42,12 +42,10 @@ All credman configs and profiles will be created at user's home directory under 
 You can add/delete/rename/change password and change default profile.
 Check `credman help` for a detailed help.
 
-## Sync
-Credman supports sync servers to keep your passwords synced everywhere securely.
-In future I'll add git support.
-
-# TODO
+## TODO
 - [ ] **WIP** Implement local management
+- [ ] Pattern matching for site/profile names
+- [ ] Colorful output!
 - [ ] GUI frontend
 - [ ] Custom server sync
 - [ ] Git sync
