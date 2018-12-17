@@ -43,9 +43,9 @@ You can add/delete/rename/change password and change default profile.
 Check `credman help` for a detailed help.
 
 ## TODO
-- [ ] **WIP** Implement local management
-- [ ] Pattern matching for site/profile names
-- [ ] Colorful output!
+- [x] Implement local management
+- [x] Pattern matching for site/profile names
+- [x] Colorful output!
 - [ ] GUI frontend
 - [ ] Custom server sync
 - [ ] Git sync
