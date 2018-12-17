@@ -3,8 +3,9 @@ CredMan
 A simple and secure credential management with sync capability.
 
 Features:
-- AES encryption
 - Multiple profiles
+- AES256 encryption of profile data
+- SHA256 hasing for profile password
 - Multiple fields per site/serivce
 - Auto generate password
 - Sync with custom server
@@ -24,7 +25,7 @@ It requires 'xsel' or 'xclip' to be installed on Linux.
 
 First you must create a profile to store your sites in:
 
-`credman add profile "profile name"`
+`credman profile add "profile name"`
 
 It will prompt you for password. Enter a secure one and hit enter.
 
@@ -33,14 +34,17 @@ Commands that deal with sites require you to specify a profile name with '-p' op
 
 Next step is to add a site/service:
 
-`credman add site "site name" --email="my email" --username="my username" --pgen`
+`credman site add "site name" --field=email="my email" --field=username="my username" --password-generate`
+OR
+`credman s a 'site name' -f=email='my email' -g`
 
 It will create a site inside default profile with email, username and an auto generated password.
 You can use `-p="profile"` to set a specific profile for site or omit to use default profile.
+Site's fields are optional data that you can add to store extra stuff for each site.
 
 All credman configs and profiles will be created at user's home directory under .credman directory.
 
-You can add/delete/rename/change password and change default profile.
+You can add/delete/rename/change password for each site and profile.
 Check `credman help` for a detailed help.
 
 ## TODO
