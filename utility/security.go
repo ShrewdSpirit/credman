@@ -19,11 +19,7 @@ func Hash(value string) string {
 
 func padKey(key []byte) []byte {
 	k := len(key)
-	if k < 16 {
-		return append(key, bytes.Repeat([]byte{byte(k)}, 16-k)...)
-	} else if k < 24 {
-		return append(key, bytes.Repeat([]byte{byte(k)}, 24-k)...)
-	} else if k < 32 {
+	if k < 32 {
 		return append(key, bytes.Repeat([]byte{byte(k)}, 32-k)...)
 	}
 
