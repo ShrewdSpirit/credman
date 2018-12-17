@@ -1,34 +1,24 @@
+site/s add/a <name> [profile] [fields] [password options]
+site/s remove/rm <name> [profile]
+site/s rename/rn <name> <new name> [profile]
+site/s set/s <name> [fields] [password options] [profile]
+site/s list/l [pattern] [profile]
+site/s get/g <name> [fields] [profile] [-c]
 
-- [x] add
-    - [x] profile <"profile name">
-    - [x] site <"site"> [field flags="value"] [-p/-profile="profile name"] [password options]
+gen
 
-- [ ]del/delete
-    - [ ] profile <"profile name">
-    - [ ] site <"site"> [-p/-profile="profile name"]
+profile/p add/a <name>
+profile/p remove/rm <name>
+profile/p rename/rn <name> <new name>
+profile/p passwd/pw <name>
+profile/p default/d [name]
+profile/p list/l
 
-- [ ] ren/rename
-    - [ ] profile <"profile name"> <"new name">
-    - [ ] site <"site"> <"new name"> [-p/-profile="profile name"]
+remote/r set/s <address> [profile]
+remote/r sync/u [profile]
 
-- [x] passwd
-    - [x] profile <"profile name">
-    - [x] site <"site"> [-p/-profile="profile name"] [password options]
+serve
 
-- [x] edit [edits a site] <"site"> <field flags="new value"> [-p/-profile="profile name"]
-
-- [x] get [gets a specific field of a site] <"site"> <field flags> [-p/-profile="profile name"]
-
-- [x] list
-    - [x] sites [-p/-profile="profile name"]
-    - [x] profiles
-
-- [x] default [sets default profile] <"profile">
-
-- [ ] remote
-    - [ ] set <"address"> <--password="remote password"> [-p/-profile="profile name"]
-    - [ ] sync [-p/-profile="profile name"]
-
-- [ ] serve
-
-- [ ] git
+git init <profile>
+git push [profile]
+git pull [profile]

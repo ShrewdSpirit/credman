@@ -4,28 +4,42 @@ import (
 	"os"
 	"path"
 
+	"github.com/ShrewdSpirit/credman/utility"
+
+	"github.com/ShrewdSpirit/credman/data"
+
 	"github.com/ShrewdSpirit/credman/cmd"
-	"github.com/ShrewdSpirit/credman/config"
 	homedir "github.com/mitchellh/go-homedir"
 )
 
 func checkDataDir() {
 	home, _ := homedir.Dir()
-	dataDir := path.Join(home, ".credman")
-	stat, err := os.Stat(dataDir)
+	data.DataDir = path.Join(home, ".credman")
+
+	stat, err := os.Stat(data.DataDir)
 	if err != nil {
-		os.Mkdir(dataDir, os.ModePerm)
+		os.Mkdir(data.DataDir, os.ModePerm)
 	} else if !stat.IsDir() {
-		os.Remove(dataDir)
-		os.Mkdir(dataDir, os.ModePerm)
+		os.Remove(data.DataDir)
+		os.Mkdir(data.DataDir, os.ModePerm)
 	}
-	cmd.ProfilesDir = path.Join(dataDir, "profiles")
-	os.Mkdir(cmd.ProfilesDir, os.ModePerm)
+
+	data.ProfilesDir = path.Join(data.DataDir, "profiles")
+	os.Mkdir(data.ProfilesDir, os.ModePerm)
 }
 
 func main() {
 	checkDataDir()
-	config.LoadConfig()
+
+	if err := data.LoadConfiguration(); err != nil {
+		utility.LogError("Failed to load config", err)
+		return
+	}
+
 	cmd.Execute()
-	config.SaveConfig()
+
+	if err := data.SaveConfiguration(); err != nil {
+		utility.LogError("Failed to save config", err)
+		return
+	}
 }
