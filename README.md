@@ -10,6 +10,7 @@ Features:
 - Sync with custom server
 - Cross platform
 - Easy usage
+- Only one encrypted file per profile that you can carry around!
 
 ## Installation
 I'll add release binaries as soon as I implement all the features.
@@ -47,5 +48,5 @@ Check `credman help` for a detailed help.
 - [x] Pattern matching for site/profile names
 - [x] Colorful output!
 - [ ] GUI frontend
-- [ ] Custom server sync
+- [ ] **WIP** Custom server sync
 - [ ] Git sync
