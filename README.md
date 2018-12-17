@@ -5,7 +5,7 @@ A simple and secure credential management with sync capability.
 Features:
 - Multiple profiles
 - AES256 encryption of profile data
-- SHA256 hasing for profile password
+- SHA256 hashing for profile password
 - Multiple fields per site/serivce
 - Auto generate password
 - Sync with custom server
