@@ -92,12 +92,14 @@ var sitePcase string
 var sitePmix []string
 var siteGetCopy bool
 var siteSetPassword bool
+var siteAddNoPassword bool
 
 func init() {
 	rootCmd.AddCommand(siteCmd)
 	utility.FlagsAddProfileName(siteCmd)
 
 	siteCmd.AddCommand(siteAddCmd)
+	siteAddCmd.Flags().BoolVarP(&siteAddNoPassword, "no-password", "n", false, "Doesn't prompt for site password. Useful for sites that you don't want any password for.")
 	siteFlagsFields(siteAddCmd, false)
 	siteFlagsPasswordOptions(siteAddCmd)
 
@@ -217,10 +219,14 @@ func siteAdd(siteName string) {
 	}
 
 	site := data.NewSite(siteName)
-	password, err := generatePassword()
-	if err != nil {
-		utility.LogError("Site creation failed", err)
-		return
+	var password string
+	if !siteAddNoPassword {
+		var err error
+		password, err = generatePassword()
+		if err != nil {
+			utility.LogError("Site creation failed", err)
+			return
+		}
 	}
 
 	site.Fields["password"] = password
