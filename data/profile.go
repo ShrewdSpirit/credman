@@ -25,9 +25,10 @@ type ProfileMeta struct {
 }
 
 type Profile struct {
-	Hash    string `json:"h"`
-	Meta    []byte `json:"m"`
-	Version string `json:"v"`
+	Hash       string `json:"h"`
+	Meta       []byte `json:"m"`
+	Version    string `json:"v"`
+	SitesBytes []byte `json:"s"`
 
 	Name        string      `json:"-"`
 	ProfileMeta ProfileMeta `json:"-"`
@@ -53,10 +54,10 @@ func NewProfile(name, password string) *Profile {
 
 func LoadProfile(name, password string) (p *Profile, err error) {
 	key := []byte(password)
-	profileDir := path.Join(ProfilesDir, name)
+	profileFile := path.Join(ProfilesDir, name)
 
 	var profileBytes []byte
-	if profileBytes, err = ioutil.ReadFile(path.Join(profileDir, "profile.json")); err != nil {
+	if profileBytes, err = ioutil.ReadFile(profileFile); err != nil {
 		return
 	}
 
@@ -82,14 +83,10 @@ func LoadProfile(name, password string) (p *Profile, err error) {
 		return
 	}
 
-	var sitesBytes []byte
-	if sitesBytes, err = ioutil.ReadFile(path.Join(profileDir, "sites")); err != nil {
+	if p.SitesBytes, err = utility.Decrypt(key, p.SitesBytes); err != nil {
 		return
 	}
-	if sitesBytes, err = utility.Decrypt(key, sitesBytes); err != nil {
-		return
-	}
-	if err = json.Unmarshal(sitesBytes, &p.Sites); err != nil {
+	if err = json.Unmarshal(p.SitesBytes, &p.Sites); err != nil {
 		return
 	}
 
@@ -108,24 +105,20 @@ func (s *Profile) Save(password string) (err error) {
 		return
 	}
 
+	if s.SitesBytes, err = json.Marshal(s.Sites); err != nil {
+		return
+	}
+	if s.SitesBytes, err = utility.Encrypt(key, s.SitesBytes); err != nil {
+		return
+	}
+
 	var profileBytes []byte
 	if profileBytes, err = json.Marshal(s); err != nil {
 		return
 	}
 
-	var sitesBytes []byte
-	if sitesBytes, err = json.Marshal(s.Sites); err != nil {
-		return
-	}
-	if sitesBytes, err = utility.Encrypt(key, sitesBytes); err != nil {
-		return
-	}
-
-	profileDir := path.Join(ProfilesDir, s.Name)
-	if err = ioutil.WriteFile(path.Join(profileDir, "profile.json"), profileBytes, os.ModePerm); err != nil {
-		return
-	}
-	if err = ioutil.WriteFile(path.Join(profileDir, "sites"), sitesBytes, os.ModePerm); err != nil {
+	profileName := path.Join(ProfilesDir, s.Name)
+	if err = ioutil.WriteFile(profileName, profileBytes, os.ModePerm); err != nil {
 		return
 	}
 

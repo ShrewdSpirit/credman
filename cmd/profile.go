@@ -107,11 +107,6 @@ func profileAdd(profileName string) {
 	profile := data.NewProfile(profileName, password)
 	profile.ProfileMeta.CreationDate = time.Now().UnixNano()
 
-	if err = os.Mkdir(path.Join(data.ProfilesDir, profileName), os.ModePerm); err != nil {
-		utility.LogError("Failed creating profile directory", err)
-		return
-	}
-
 	if err = profile.Save(password); err != nil {
 		utility.LogError("Failed saving profile", err)
 		return
@@ -234,7 +229,7 @@ func profileList() {
 	}
 
 	for _, profile := range profiles {
-		if profile.IsDir() {
+		if !profile.IsDir() {
 			fmt.Println(profile.Name())
 		}
 	}
