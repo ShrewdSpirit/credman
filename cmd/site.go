@@ -392,7 +392,7 @@ func siteGet(siteName string) {
 				utility.LogError("Failed write to clipboard", err)
 				return
 			}
-			fmt.Println("Password coped to clipboard.")
+			fmt.Println("Password copied to clipboard.")
 		} else {
 			field := siteFieldsList[0]
 			_, ok := site.Fields[field]
@@ -404,7 +404,7 @@ func siteGet(siteName string) {
 				utility.LogError("Failed write to clipboard", err)
 				return
 			}
-			utility.LogColor(utility.Green, "%s coped to clipboard.", field)
+			utility.LogColor(utility.Green, "%s copied to clipboard.", field)
 		}
 	} else {
 		if len(siteFieldsList) == 0 {
