@@ -28,6 +28,13 @@ var digitChars = "0123456789"
 var puncChars = " `~!@#$%^&*()_-+=[]{};':\"<>,./?"
 
 func GeneratePassword(plen byte, pcase PasswordCase, pmix ...PasswordMix) string {
+	for index, mix := range pmix {
+		if mix == PasswordMixAll && len(pmix) > 1 {
+			pmix = append(pmix[:index], pmix[index+1:]...)
+			break
+		}
+	}
+
 	mixBuf := bytes.Buffer{}
 	for _, mix := range pmix {
 		switch mix {

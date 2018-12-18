@@ -1,2 +1,5 @@
 credman
 .vscode
+gui
+gui/desktop/output
+gui/desktop/bind_*
