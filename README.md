@@ -8,14 +8,14 @@ Features:
 - SHA256 hashing for profile password
 - Multiple fields per site/serivce
 - Auto generate password
-- Sync with custom server
+- Sync with custom server and user management
 - Cross platform
 - Easy usage
 - Only one encrypted file per profile that you can carry around!
 - Encrypt files
+- Restoring profile's password in case you manage to forget it!
 
 ## Installation
-I'll add release binaries as soon as I implement all the features.
 You can build from source by installing [Go](https://golang.org/) and then running:
 
 ```
@@ -51,11 +51,15 @@ Site's fields are optional data that you can add to store extra stuff for each s
 All credman configs and profiles will be created at user's home directory under .credman directory.
 
 You can add/delete/rename/change password for each site and profile.
-Check `credman help` for a detailed help or [this file](https://github.com/ShrewdSpirit/credman/blob/master/Commands.md) for a brief on commands.
+Check `credman help` for a detailed help or read [docs](https://github.com/ShrewdSpirit/credman/blob/master/Docs.md) for a brief on commands.
 
 ## TODO
 - [x] Implement local management
 - [x] Pattern matching for site/profile names
 - [x] Colorful output!
-- [ ] **WIP** GUI frontend
-- [ ] Custom server sync
+- [ ] File encryption
+- [ ] Password restore
+- [ ] Server sync
+- [ ] Move the functionality out of commands so other packages can use credman as a library
+- [ ] Desktop GUI frontend
+- [ ] Android app
