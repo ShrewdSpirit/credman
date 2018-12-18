@@ -71,7 +71,10 @@ There are two ways to store your encrypted file:
 If the file isn't in profile, `--no-profile` flag must be set.
 
 ### Listing all stored files in a profile
-`$ credman file/f list/l [regex pattern]`
+`$ credman file/f list/l [regex pattern] [profile]`
+
+### Deleting a stored file in a profile
+`$ credman file/f remove/r <name> [profile]`
 
 # Password restore
 This feature is disabled for all profiles by default.
