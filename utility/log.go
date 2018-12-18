@@ -7,6 +7,7 @@ import (
 )
 
 var (
+	Red          = color.New(color.FgRed)
 	BoldRed      = color.New(color.FgRed, color.Bold)
 	BoldHiWhite  = color.New(color.FgHiWhite, color.Bold)
 	BoldHiYellow = color.New(color.FgHiYellow, color.Bold)

@@ -86,6 +86,7 @@ var siteGetCmd = &cobra.Command{
 
 var siteFieldsMap map[string]string
 var siteFieldsList []string
+var siteFieldsDelete []string
 var sitePgen bool
 var sitePlen byte
 var sitePcase string
@@ -107,6 +108,7 @@ func init() {
 	siteCmd.AddCommand(siteRenameCmd)
 	siteCmd.AddCommand(siteSetCmd)
 	siteSetCmd.Flags().BoolVarP(&siteSetPassword, "password", "w", false, "Change password. Can be used with password generator or it will prompt user")
+	siteSetCmd.Flags().StringSliceVarP(&siteFieldsDelete, "delete", "d", []string{}, "Deletes specified fields")
 	siteFlagsFields(siteSetCmd, false)
 	siteFlagsPasswordOptions(siteSetCmd)
 
@@ -320,11 +322,19 @@ func siteSet(siteName string) {
 		site.Fields["password"] = password
 	}
 
+	updatedFields := make([]string, len(siteFieldsMap))
 	for field, value := range siteFieldsMap {
 		if field == "password" {
 			continue
 		}
 		site.Fields[field] = value
+		updatedFields = append(updatedFields, field)
+	}
+
+	deletedFields := make([]string, len(siteFieldsDelete))
+	for _, field := range siteFieldsDelete {
+		delete(site.Fields, field)
+		deletedFields = append(deletedFields, field)
 	}
 
 	if err := profile.Save(profilePassword); err != nil {
