@@ -12,20 +12,24 @@ Features:
 - Cross platform
 - Easy usage
 - Only one encrypted file per profile that you can carry around!
+- Encrypt files
 
 ## Installation
 I'll add release binaries as soon as I implement all the features.
 You can build from source by installing [Go](https://golang.org/) and then running:
-`go -u github.com/ShrewdSpirit/credman`
-`go install github.com/ShrewdSpirit/credman`
+
+```
+$ go -u github.com/ShrewdSpirit/credman
+$ go install github.com/ShrewdSpirit/credman
+```
 
 ## Usage
 Credman works on Linux, OSX and all Windows versions.
-It requires 'xsel' or 'xclip' to be installed on Linux.
+It requires 'xsel' or 'xclip' to be installed on Linux otherwise copy function will not work.
 
 First you must create a profile to store your sites in:
 
-`credman profile add "profile name"`
+`$ credman profile add "profile name"`
 
 It will prompt you for password. Enter a secure one and hit enter.
 
@@ -34,9 +38,11 @@ Commands that deal with sites require you to specify a profile name with '-p' op
 
 Next step is to add a site/service:
 
-`credman site add "site name" --field=email="my email" --field=username="my username" --password-generate`
+`$ credman site add "site name" --field=email="my email" --field=username="my username" --password-generate`
+
 OR
-`credman s a 'site name' -f=email='my email' -g`
+
+`$ credman s a 'site name' -f=email='my email' -g`
 
 It will create a site inside default profile with email, username and an auto generated password.
 You can use `-p="profile"` to set a specific profile for site or omit to use default profile.
@@ -45,12 +51,11 @@ Site's fields are optional data that you can add to store extra stuff for each s
 All credman configs and profiles will be created at user's home directory under .credman directory.
 
 You can add/delete/rename/change password for each site and profile.
-Check `credman help` for a detailed help.
+Check `credman help` for a detailed help or [this file](https://github.com/ShrewdSpirit/credman/blob/master/Commands.md) for a brief on commands.
 
 ## TODO
 - [x] Implement local management
 - [x] Pattern matching for site/profile names
 - [x] Colorful output!
-- [ ] GUI frontend
-- [ ] **WIP** Custom server sync
-- [ ] Git sync
+- [ ] **WIP** GUI frontend
+- [ ] Custom server sync
