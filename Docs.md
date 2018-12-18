@@ -1,3 +1,14 @@
+# Contents
+<!--ts-->
+ * [Profile management](#profile-management)
+ * [Site management](#site-management)
+ * [File encryption](#file-encryption)
+ * [Password restore](#password-restore)
+ * [Utility](#utility)
+ * [Remote management](#remote-management)
+ * [Server management](#server-management)
+<!--te-->
+
 # Profile management
 
 ### Adding a profile
@@ -13,7 +24,7 @@ If this is the default profile, default profile will be set to nothing after rem
 ### Renaming a profile
 `$ credman profile/p rename/rn <name> <new name>`
 
-### Changing profile's password
+### Changing profile password
 `$ credman profile/p passwd/pw <name>`
 
 ### Setting or getting default profile
@@ -82,12 +93,12 @@ To reset password restore, or update the answers, you must remove restore for a 
 It starts asking you the questions you have set answers for and checks your answers against the restore key and if they are correct, your profile's password will be copied to clipboard.
 
 ### Removing restore for a profile
-`$ credman restore/rs delete/d [profile]`
+`$ credman restore/rs remove/r [profile]`
 
 # Utility
 
 ### Generate random password
-`$ credman gen [--copy/-c]`
+`$ credman gen [--copy/-c] [password options]`
 
 # Remote management
 
@@ -100,7 +111,7 @@ It starts asking you the questions you have set answers for and checks your answ
 Server will only keep your user profile file and doesn't do any magic on it. The file won't be decrypted or processed on server so all of your synced data will be safe and only the profile owner can decrypt the file. Also **KEEP IN MIND** to run a sync after you do any changes on your profile on any device you do the change. Server won't process changes or conflicts.
 
 ### Deleting remote
-`$ credman remote/r delete/d [profile]`
+`$ credman remote/r remove/r [profile]`
 
 # Server management
 You can run a host for multiple clients since each client will be identified by their username and access password.
