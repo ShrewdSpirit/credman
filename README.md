@@ -1,9 +1,9 @@
-CredMan
+Credman
 =====
-A simple and secure credential management with sync capability.
+A simple, powerful, secure and cross-platform credential management.
 
 Features:
-- Multiple profiles
+- Multiple local profiles
 - AES256 encryption of profile data
 - SHA256 hashing for profile password
 - Multiple fields per site/serivce
@@ -16,7 +16,9 @@ Features:
 - Restoring profile's password in case you manage to forget it!
 
 ## Installation
-You can build from source by installing [Go](https://golang.org/) and then running:
+You can download binary releases from [here](https://github.com/ShrewdSpirit/credman/releases)
+
+Or you can build from source by installing [Go](https://golang.org/) and then running:
 
 ```
 $ go -u github.com/ShrewdSpirit/credman
@@ -24,7 +26,7 @@ $ go install github.com/ShrewdSpirit/credman
 ```
 
 ## Usage
-Credman works on Linux, OSX and all Windows versions.
+Credman works on Linux, RPi, OSX and all Windows versions (BSD might work, but I'll never test).
 It requires 'xsel' or 'xclip' to be installed on Linux otherwise copy function will not work.
 
 First you must create a profile to store your sites in:
