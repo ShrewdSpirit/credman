@@ -15,6 +15,12 @@ type Configuration struct {
 }
 
 func LoadConfiguration() error {
+	configFilePath := path.Join(DataDir, "config.json")
+	_, err := os.Stat(configFilePath)
+	if err != nil {
+		return nil
+	}
+
 	configData, err := ioutil.ReadFile(path.Join(DataDir, "config.json"))
 	if err != nil {
 		return err

@@ -1,10 +1,11 @@
 package cmd
 
 import (
-	"errors"
 	"fmt"
 	"regexp"
 	"strings"
+
+	"github.com/ShrewdSpirit/credman/utility/cmdutlitity"
 
 	"github.com/atotto/clipboard"
 
@@ -87,22 +88,18 @@ var siteGetCmd = &cobra.Command{
 var siteFieldsMap map[string]string
 var siteFieldsList []string
 var siteFieldsDelete []string
-var sitePgen bool
-var sitePlen byte
-var sitePcase string
-var sitePmix []string
 var siteGetCopy bool
 var siteSetPassword bool
 var siteAddNoPassword bool
 
 func init() {
 	rootCmd.AddCommand(siteCmd)
-	utility.FlagsAddProfileName(siteCmd)
+	cmdutility.FlagsAddProfileName(siteCmd)
 
 	siteCmd.AddCommand(siteAddCmd)
 	siteAddCmd.Flags().BoolVarP(&siteAddNoPassword, "no-password", "n", false, "Doesn't prompt for site password. Useful for sites that you don't want any password for.")
 	siteFlagsFields(siteAddCmd, false)
-	siteFlagsPasswordOptions(siteAddCmd)
+	cmdutility.FlagsAddPasswordOptions(siteAddCmd)
 
 	siteCmd.AddCommand(siteRemoveCmd)
 	siteCmd.AddCommand(siteRenameCmd)
@@ -110,7 +107,7 @@ func init() {
 	siteSetCmd.Flags().BoolVarP(&siteSetPassword, "password", "w", false, "Change password. Can be used with password generator or it will prompt user")
 	siteSetCmd.Flags().StringSliceVarP(&siteFieldsDelete, "delete", "d", []string{}, "Deletes specified fields")
 	siteFlagsFields(siteSetCmd, false)
-	siteFlagsPasswordOptions(siteSetCmd)
+	cmdutility.FlagsAddPasswordOptions(siteSetCmd)
 
 	siteCmd.AddCommand(siteListCmd)
 	siteCmd.AddCommand(siteGetCmd)
@@ -126,91 +123,8 @@ func siteFlagsFields(cmd *cobra.Command, get bool) {
 	}
 }
 
-func siteFlagsPasswordOptions(cmd *cobra.Command) {
-	cmd.Flags().BoolVarP(&sitePgen, "password-generate", "g", false, "Uses password generation")
-	cmd.Flags().Uint8VarP(&sitePlen, "password-length", "l", 16, "Password generation length")
-	cmd.Flags().StringVarP(&sitePcase, "password-case", "c", "both", "Password generation letter case: lower,upper,both")
-	cmd.Flags().StringSliceVarP(&sitePmix, "password-mix", "m", []string{"all"}, "Password generation character mix: letter,digit,punc,all")
-}
-
-func getProfile() (*data.Profile, string) {
-	profileName := data.Config.DefaultProfile
-	if len(utility.FlagProfileName) != 0 {
-		profileName = utility.FlagProfileName
-	}
-
-	if len(profileName) == 0 {
-		fmt.Println("Create a profile first!")
-		return nil, ""
-	}
-
-	if !data.ProfileExists(profileName) {
-		utility.LogColor(utility.BoldHiYellow, "Profile %s doesnt exist.", profileName)
-		return nil, ""
-	}
-
-	utility.LogColor(utility.Green, "Using profile %s", profileName)
-
-	password, err := utility.PasswordPrompt("Profile password")
-	if err != nil {
-		utility.LogError("Failed reading password", err)
-		return nil, ""
-	}
-
-	profile, err := data.LoadProfile(profileName, password)
-	if err != nil {
-		utility.LogError("Failed loading profile", err)
-		return nil, ""
-	}
-
-	return profile, password
-}
-
-func generatePassword() (string, error) {
-	if sitePgen {
-		var pcase utility.PasswordCase
-		pmix := make([]utility.PasswordMix, 1)
-
-		switch strings.ToLower(sitePcase) {
-		case "both":
-			pcase = utility.PasswordCaseBoth
-		case "lower":
-			pcase = utility.PasswordCaseLower
-		case "upper":
-			pcase = utility.PasswordCaseUpper
-		default:
-			return "", errors.New("Invalid password generator case")
-		}
-
-		for _, mix := range sitePmix {
-			switch strings.ToLower(mix) {
-			case "letter":
-				pmix = append(pmix, utility.PasswordMixLetter)
-			case "digit":
-				pmix = append(pmix, utility.PasswordMixDigit)
-			case "punc":
-				pmix = append(pmix, utility.PasswordMixPunc)
-			case "all":
-				pmix = []utility.PasswordMix{utility.PasswordMixAll}
-			default:
-				return "", errors.New("Invalid password generator mix")
-			}
-		}
-
-		password := utility.GeneratePassword(sitePlen, pcase, pmix...)
-		return password, nil
-	}
-
-	password, err := utility.NewPasswordPrompt("Site new password")
-	if err != nil {
-		return "", err
-	}
-
-	return password, nil
-}
-
 func siteAdd(siteName string) {
-	profile, profilePassword := getProfile()
+	profile, profilePassword := cmdutility.GetProfileCommandLine()
 	if profile == nil {
 		return
 	}
@@ -224,7 +138,7 @@ func siteAdd(siteName string) {
 	var password string
 	if !siteAddNoPassword {
 		var err error
-		password, err = generatePassword()
+		password, err = cmdutility.ParsePasswordGenerationFlags("Site new password")
 		if err != nil {
 			utility.LogError("Site creation failed", err)
 			return
@@ -248,7 +162,7 @@ func siteAdd(siteName string) {
 }
 
 func siteRemove(siteName string) {
-	profile, profilePassword := getProfile()
+	profile, profilePassword := cmdutility.GetProfileCommandLine()
 	if profile == nil {
 		return
 	}
@@ -279,7 +193,7 @@ func siteRemove(siteName string) {
 }
 
 func siteRename(siteName string, newName string) {
-	profile, profilePassword := getProfile()
+	profile, profilePassword := cmdutility.GetProfileCommandLine()
 	if profile == nil {
 		return
 	}
@@ -301,7 +215,7 @@ func siteRename(siteName string, newName string) {
 }
 
 func siteSet(siteName string) {
-	profile, profilePassword := getProfile()
+	profile, profilePassword := cmdutility.GetProfileCommandLine()
 	if profile == nil {
 		return
 	}
@@ -314,7 +228,7 @@ func siteSet(siteName string) {
 	site := profile.GetSite(siteName)
 
 	if siteSetPassword {
-		password, err := generatePassword()
+		password, err := cmdutility.ParsePasswordGenerationFlags("Site new password")
 		if err != nil {
 			utility.LogError("Site creation failed", err)
 			return
@@ -346,7 +260,7 @@ func siteSet(siteName string) {
 }
 
 func siteList(pattern string) {
-	profile, _ := getProfile()
+	profile, _ := cmdutility.GetProfileCommandLine()
 	if profile == nil {
 		return
 	}
@@ -375,7 +289,7 @@ func siteList(pattern string) {
 }
 
 func siteGet(siteName string) {
-	profile, _ := getProfile()
+	profile, _ := cmdutility.GetProfileCommandLine()
 	if profile == nil {
 		return
 	}

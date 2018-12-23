@@ -17,6 +17,10 @@ func Hash(value string) string {
 	return base64.StdEncoding.EncodeToString(b)
 }
 
+// func HashKey(password string) (key []byte, err error) {
+// 	key, err = scrypt.Key([]byte(password), []byte{}, 65536, 8, 1, 32)
+// }
+
 func padKey(key []byte) []byte {
 	k := len(key)
 	if k < 32 {

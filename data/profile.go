@@ -8,31 +8,26 @@ import (
 	"path"
 	"time"
 
-	"github.com/ShrewdSpirit/credman/utility"
+	"github.com/ShrewdSpirit/credman/cipher"
 )
 
-var ProfileVersion string
+var ProfileVersion byte = 2
 var ProfilesDir string
-
-func init() {
-	ProfileVersion = utility.Hash("1.2")
-}
 
 type ProfileMeta struct {
 	Remote         *Remote `json:"r"`
 	CreationDate   int64   `json:"c"`
 	LastModifyDate int64   `json:"m"`
+	Version        byte    `json:"v"`
+	Restore        []byte  `json:"s"`
 }
 
 type Profile struct {
-	Hash       string `json:"h"`
-	Meta       []byte `json:"m"`
-	Version    string `json:"v"`
-	SitesBytes []byte `json:"s"`
+	Meta       ProfileMeta `json:"m"`
+	SitesBytes []byte      `json:"s"`
 
-	Name        string      `json:"-"`
-	ProfileMeta ProfileMeta `json:"-"`
-	Sites       []*Site     `json:"-"`
+	Name  string  `json:"-"`
+	Sites []*Site `json:"-"`
 }
 
 func ProfileExists(name string) bool {
@@ -43,17 +38,19 @@ func ProfileExists(name string) bool {
 	return true
 }
 
-func NewProfile(name, password string) *Profile {
+func NewProfile(name string) *Profile {
 	return &Profile{
-		Hash:    utility.Hash(password),
-		Name:    name,
-		Version: ProfileVersion,
-		Sites:   make([]*Site, 0),
+		Name:  name,
+		Sites: make([]*Site, 0),
+		Meta: ProfileMeta{
+			CreationDate:   time.Now().UnixNano(),
+			LastModifyDate: time.Now().UnixNano(),
+			Version:        ProfileVersion,
+		},
 	}
 }
 
 func LoadProfile(name, password string) (p *Profile, err error) {
-	key := []byte(password)
 	profileFile := path.Join(ProfilesDir, name)
 
 	var profileBytes []byte
@@ -61,29 +58,17 @@ func LoadProfile(name, password string) (p *Profile, err error) {
 		return
 	}
 
-	p = NewProfile(name, password)
+	p = NewProfile(name)
 	if err = json.Unmarshal(profileBytes, p); err != nil {
 		return
 	}
 
-	if p.Version != ProfileVersion {
+	if p.Meta.Version != ProfileVersion {
 		err = errors.New("Unsupported profile version")
 		return
 	}
 
-	if !p.CheckPassword(password) {
-		err = errors.New("Wrong password")
-		return
-	}
-
-	if p.Meta, err = utility.Decrypt(key, p.Meta); err != nil {
-		return
-	}
-	if err = json.Unmarshal(p.Meta, &p.ProfileMeta); err != nil {
-		return
-	}
-
-	if p.SitesBytes, err = utility.Decrypt(key, p.SitesBytes); err != nil {
+	if p.SitesBytes, err = cipher.BlockDecrypt(p.SitesBytes, password); err != nil {
 		return
 	}
 	if err = json.Unmarshal(p.SitesBytes, &p.Sites); err != nil {
@@ -94,21 +79,12 @@ func LoadProfile(name, password string) (p *Profile, err error) {
 }
 
 func (s *Profile) Save(password string) (err error) {
-	key := []byte(password)
-
-	s.ProfileMeta.LastModifyDate = time.Now().UnixNano()
-
-	if s.Meta, err = json.Marshal(s.ProfileMeta); err != nil {
-		return
-	}
-	if s.Meta, err = utility.Encrypt(key, s.Meta); err != nil {
-		return
-	}
+	s.Meta.LastModifyDate = time.Now().UnixNano()
 
 	if s.SitesBytes, err = json.Marshal(s.Sites); err != nil {
 		return
 	}
-	if s.SitesBytes, err = utility.Encrypt(key, s.SitesBytes); err != nil {
+	if s.SitesBytes, err = cipher.BlockEncrypt(s.SitesBytes, password); err != nil {
 		return
 	}
 
@@ -123,10 +99,6 @@ func (s *Profile) Save(password string) (err error) {
 	}
 
 	return
-}
-
-func (s *Profile) CheckPassword(password string) bool {
-	return utility.Hash(password) == s.Hash
 }
 
 func (s *Profile) AddSite(site *Site) {

@@ -1,6 +1,12 @@
 package cmd
 
 import (
+	"fmt"
+	"io/ioutil"
+	"os"
+
+	"github.com/ShrewdSpirit/credman/utility"
+	"github.com/ShrewdSpirit/credman/utility/cmdutlitity"
 	"github.com/spf13/cobra"
 )
 
@@ -57,18 +63,91 @@ var fileDeleteCmd = &cobra.Command{
 	},
 }
 
+var fileOutput string
+var fileDeleteOriginal bool
+var fileNoProfile bool
+
 func init() {
 	rootCmd.AddCommand(fileCmd)
+
 	fileCmd.AddCommand(fileEncryptCmd)
+	fileFlagsAddOutput(fileEncryptCmd)
+	fileFlagsAddNoProfile(fileEncryptCmd)
+	fileEncryptCmd.Flags().BoolVarP(&fileDeleteOriginal, "delete-original", "d", false, "Deletes original file after encryption")
+	cmdutility.FlagsAddPasswordOptions(fileEncryptCmd)
+	cmdutility.FlagsAddProfileName(fileEncryptCmd)
+
 	fileCmd.AddCommand(fileDecryptCmd)
+	fileFlagsAddOutput(fileDecryptCmd)
+	fileFlagsAddNoProfile(fileDecryptCmd)
+	cmdutility.FlagsAddProfileName(fileDecryptCmd)
+
 	fileCmd.AddCommand(fileListCmd)
+	cmdutility.FlagsAddProfileName(fileListCmd)
+
 	fileCmd.AddCommand(fileDeleteCmd)
+	cmdutility.FlagsAddProfileName(fileDeleteCmd)
 }
 
-func fileEncrypt(filename, name string) {}
+func fileFlagsAddOutput(cmd *cobra.Command) {
+	cmd.Flags().StringVarP(&fileOutput, "output", "o", "", "Output file for encryption/decryption")
+}
 
-func fileDecrypt(name string) {}
+func fileFlagsAddNoProfile(cmd *cobra.Command) {
+	cmd.Flags().BoolVarP(&fileNoProfile, "no-profile", "n", false, "Doesn't use a profile for encryption/decryption")
+}
 
-func fileList(pattern string) {}
+func fileEncrypt(filename, name string) {
+	if fileNoProfile {
+		_, err := os.Stat(filename)
+		if err != nil {
+			utility.LogError("Invalid source file", err)
+			return
+		}
 
-func fileDelete(name string) {}
+		password, err := cmdutility.ParsePasswordGenerationFlags("Encryption password")
+		if err != nil {
+			utility.LogError("Password reading failed", err)
+			return
+		}
+
+		utility.LogColor(utility.Green, "Reading file %s", filename)
+		data, err := ioutil.ReadFile(filename)
+		if err != nil {
+			utility.LogError("Reading file failed", err)
+			return
+		}
+
+		utility.LogColor(utility.Green, "Encrypting")
+		encrypted, err := utility.Encrypt([]byte(password), data)
+		if err != nil {
+			utility.LogError("Encryption failed", err)
+		}
+
+		utility.LogColor(utility.Green, "Writing to %s", name)
+		if err := ioutil.WriteFile(name, encrypted, os.ModePerm); err != nil {
+			utility.LogError("Writing file failed", err)
+			return
+		}
+	} else {
+		fmt.Println("Not implemented")
+	}
+
+	if fileDeleteOriginal {
+		utility.LogColor(utility.Green, "Deleting original file %s", filename)
+		if err := os.Remove(filename); err != nil {
+			utility.LogError("Removing original file failed", err)
+			return
+		}
+	}
+}
+
+func fileDecrypt(name string) {
+
+}
+
+func fileList(pattern string) {
+}
+
+func fileDelete(name string) {
+}

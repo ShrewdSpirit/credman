@@ -156,3 +156,55 @@ After running server, the process will continue working in background and the ou
 
 ### Listing users
 `$ credman server/sv list/l [regex pattern]`
+
+# Encryption details
+
+#### Method
+- AES-CFB for sites
+- AES-CTR + HMAC SHA-512 for files
+- Scrypt for hashing
+
+#### Salt and nounce
+- scrypt salt generation: 32 bytes of random data
+- nounce generation: 16 bytes of random data
+
+#### Keys
+- master key: user's password
+- master key hash: master key -> scrypt salt1 -> 64 bytes hash
+- aes key: `masterkeyhash[:32]`
+- hmac key: `masterkeyhash[32:]`
+- stored user password hash: user password -> scrypt salt2 -> 64 byte hash
+
+#### Restore point
+- restore point key: concatication of answers to scrypt for 32 byte key with salt1
+- restore point hash: concatication of sha-512 of each answer as key to scrypt for 64 bytes len with salt2
+
+#### Profile format
+```json
+{ // profile
+	"m": { // meta
+		"v": "byte", // version
+		"d": "int64", // creation date
+		"r": "[]byte", // restore security data
+			// [1 byte number of answers] [1 byte of each answer's order]
+			// [64 bytes key hash2] [64 bytes salt 1,2] [16 bytes iv] [encrypted profile password data]
+	},
+	"s": "[]byte", // [64 bytes key hash2] [64 bytes salt 1,2] [16 bytes iv] [encrypted json of sites slice]
+}
+```
+
+```json
+{ // site
+	"name": "site name",
+	"fields": {
+		"password": "1234",
+	}
+}
+```
+
+#### Encrypted file
+- 64 bytes key hash
+- 64 bytes salt 1,2
+- 16 bytes nounce
+- file data
+- hmac
