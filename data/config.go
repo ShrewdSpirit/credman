@@ -5,6 +5,8 @@ import (
 	"io/ioutil"
 	"os"
 	"path"
+
+	homedir "github.com/mitchellh/go-homedir"
 )
 
 var DataDir string
@@ -12,6 +14,22 @@ var Config Configuration
 
 type Configuration struct {
 	DefaultProfile string
+}
+
+func init() {
+	home, _ := homedir.Dir()
+	DataDir = path.Join(home, ".credman")
+
+	stat, err := os.Stat(DataDir)
+	if err != nil {
+		os.Mkdir(DataDir, os.ModePerm)
+	} else if !stat.IsDir() {
+		os.Remove(DataDir)
+		os.Mkdir(DataDir, os.ModePerm)
+	}
+
+	ProfilesDir = path.Join(DataDir, "profiles")
+	os.Mkdir(ProfilesDir, os.ModePerm)
 }
 
 func LoadConfiguration() error {
