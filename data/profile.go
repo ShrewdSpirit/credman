@@ -22,12 +22,14 @@ type ProfileMeta struct {
 	Restore        []byte  `json:"s"`
 }
 
+type Site map[string]string // fields
+
 type Profile struct {
 	Meta       ProfileMeta `json:"m"`
 	SitesBytes []byte      `json:"s"`
 
-	Name  string  `json:"-"`
-	Sites []*Site `json:"-"`
+	Name  string          `json:"-"`
+	Sites map[string]Site `json:"-"`
 }
 
 func ProfileExists(name string) bool {
@@ -41,7 +43,7 @@ func ProfileExists(name string) bool {
 func NewProfile(name string) *Profile {
 	return &Profile{
 		Name:  name,
-		Sites: make([]*Site, 0),
+		Sites: make(map[string]Site),
 		Meta: ProfileMeta{
 			CreationDate:   time.Now().UnixNano(),
 			LastModifyDate: time.Now().UnixNano(),
@@ -101,37 +103,22 @@ func (s *Profile) Save(password string) (err error) {
 	return
 }
 
-func (s *Profile) AddSite(site *Site) {
-	s.Sites = append(s.Sites, site)
+func (s *Profile) AddSite(name string, site Site) {
+	s.Sites[name] = site
 }
 
 func (s *Profile) SiteExist(name string) bool {
-	for _, site := range s.Sites {
-		if site.Name == name {
-			return true
-		}
-	}
-	return false
+	_, ok := s.Sites[name]
+	return ok
 }
 
-func (s *Profile) GetSite(name string) *Site {
-	for _, site := range s.Sites {
-		if site.Name == name {
-			return site
-		}
+func (s *Profile) GetSite(name string) Site {
+	if s.SiteExist(name) {
+		return s.Sites[name]
 	}
 	return nil
 }
 
 func (s *Profile) DeleteSite(name string) {
-	siteIndex := -1
-	for i, site := range s.Sites {
-		if site.Name == name {
-			siteIndex = i
-			break
-		}
-	}
-	if siteIndex >= 0 {
-		s.Sites = append(s.Sites[:siteIndex], s.Sites[siteIndex+1:]...)
-	}
+	delete(s.Sites, name)
 }
