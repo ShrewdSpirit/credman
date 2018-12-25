@@ -28,7 +28,7 @@ func FlagsAddPasswordOptions(cmd *cobra.Command) {
 	cmd.Flags().StringSliceVarP(&FlagPmix, "password-mix", "m", []string{"all"}, "Password generation character mix: letter,digit,punc,all")
 }
 
-func GetProfileCommandLine() (*data.Profile, string) {
+func GetProfileCommandLine(readPassword bool) (*data.Profile, string) {
 	profileName := data.Config.DefaultProfile
 	if len(FlagProfileName) != 0 {
 		profileName = FlagProfileName
@@ -45,6 +45,16 @@ func GetProfileCommandLine() (*data.Profile, string) {
 	}
 
 	LogColor(Green, "Using profile %s", profileName)
+
+	if !readPassword {
+		profile, err := data.LoadProfileRaw(profileName)
+		if err != nil {
+			LogError("Failed loading profile", err)
+			return nil, ""
+		}
+
+		return profile, ""
+	}
 
 	password, err := PasswordPrompt("Profile password")
 	if err != nil {

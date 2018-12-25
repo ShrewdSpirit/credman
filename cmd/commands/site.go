@@ -23,7 +23,7 @@ var siteAddCmd = &cobra.Command{
 	Short:   "Adds a new site",
 	Run: func(cmd *cobra.Command, args []string) {
 		siteName := args[0]
-		profile, profilePassword := cmdutility.GetProfileCommandLine()
+		profile, profilePassword := cmdutility.GetProfileCommandLine(true)
 		if profile == nil {
 			return
 		}
@@ -71,7 +71,7 @@ var siteRemoveCmd = &cobra.Command{
 	Short:   "Removes a site",
 	Run: func(cmd *cobra.Command, args []string) {
 		siteName := args[0]
-		profile, profilePassword := cmdutility.GetProfileCommandLine()
+		profile, profilePassword := cmdutility.GetProfileCommandLine(true)
 		if profile == nil {
 			return
 		}
@@ -116,7 +116,7 @@ var siteRenameCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		siteName := args[0]
 		newName := args[1]
-		profile, profilePassword := cmdutility.GetProfileCommandLine()
+		profile, profilePassword := cmdutility.GetProfileCommandLine(true)
 		if profile == nil {
 			return
 		}
@@ -153,7 +153,7 @@ var siteSetCmd = &cobra.Command{
 	Short:   "Updates site fields",
 	Run: func(cmd *cobra.Command, args []string) {
 		siteName := args[0]
-		profile, profilePassword := cmdutility.GetProfileCommandLine()
+		profile, profilePassword := cmdutility.GetProfileCommandLine(true)
 		if profile == nil {
 			return
 		}
@@ -206,7 +206,7 @@ var siteListCmd = &cobra.Command{
 			pattern = args[0]
 		}
 
-		profile, profilePassword := cmdutility.GetProfileCommandLine()
+		profile, profilePassword := cmdutility.GetProfileCommandLine(true)
 		if profile == nil {
 			return
 		}
@@ -241,7 +241,7 @@ var siteGetCmd = &cobra.Command{
 	Short:   "Gets value(s) of specified field(s) or copy the first field into clipboard",
 	Run: func(cmd *cobra.Command, args []string) {
 		siteName := args[0]
-		profile, profilePassword := cmdutility.GetProfileCommandLine()
+		profile, profilePassword := cmdutility.GetProfileCommandLine(true)
 		if profile == nil {
 			return
 		}
