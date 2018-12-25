@@ -2,6 +2,8 @@ Credman
 =====
 A simple, powerful, cross-platform and military grade (marketing ~~bs~~!) secure credential management.
 
+<p align="center"><img src="/img/demo.gif?raw=true"/></p>
+
 Features:
 - Multiple local profiles
 - Stateless (doesn't keep passwords in memory for later use)
@@ -64,8 +66,8 @@ Check `credman help` for a detailed help or read [docs](https://github.com/Shrew
 - [x] Colorful output!
 - [x] Move the functionality out of commands so other packages can use credman as a library
 - [x] File encryption
-- [ ] **WIP** Password restore
-- [ ] Site tags (for grouping)
+- [x] Password restore
+- [ ] **WIP** Site tags (for grouping)
 - [ ] Saving text files in sites
 - [ ] Auto update and update check
 - [ ] Profile backup and auto backup
