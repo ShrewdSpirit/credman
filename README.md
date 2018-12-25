@@ -22,8 +22,8 @@ You can download binary releases from [here](https://github.com/ShrewdSpirit/cre
 Or you can build from source by installing [Go](https://golang.org/) and then running:
 
 ```
-$ go -u github.com/ShrewdSpirit/credman
-$ go install github.com/ShrewdSpirit/credman
+$ go get -u github.com/ShrewdSpirit/credman/cmd
+$ go install github.com/ShrewdSpirit/credman/cmd
 ```
 
 ## Usage
