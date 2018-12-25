@@ -17,7 +17,7 @@ Features:
 - Restoring profile's password in case you manage to forget it!
 
 ## Installation
-You can download binary releases from [here](https://github.com/ShrewdSpirit/credman/releases)
+You can download binary releases from [here](https://github.com/ShrewdSpirit/credman/releases). Make sure you put the binary somewhere that's included in your PATH environment variable.
 
 Or you can build from source by installing [Go](https://golang.org/) and then running:
 
@@ -27,8 +27,10 @@ $ go build -o $GOPATH/bin/credman github.com/ShrewdSpirit/credman/cmd
 ```
 
 ## Usage
-Credman works on Linux, RPi, OSX and all Windows versions (BSD might work, but I'll never test).
+Credman works on Linux, RPi, OSX and all Windows versions (BSD **should** work, but I'll never test since I don't have the environment). You can use it on your Android device if you have a terminal emulator (Termux is recomended).
 It requires 'xsel' or 'xclip' to be installed on Linux otherwise copy function will not work.
+
+Currently it's a work in progress and not all features are implemented. But at this stage, you can use the commandline to manage your credentials/passwords in local and encrypt your files.
 
 First you must create a profile to store your sites in:
 
@@ -60,9 +62,11 @@ Check `credman help` for a detailed help or read [docs](https://github.com/Shrew
 - [x] Implement local management
 - [x] Pattern matching for site/profile names
 - [x] Colorful output!
-- [ ] File encryption
+- [x] Move the functionality out of commands so other packages can use credman as a library
+- [ ] **WIP** File encryption
 - [ ] Password restore
 - [ ] Server sync
-- [ ] Move the functionality out of commands so other packages can use credman as a library
+- [ ] Site tags (for grouping)
+- [ ] Saving text files in sites
 - [ ] Desktop GUI frontend
 - [ ] Android app

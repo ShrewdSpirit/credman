@@ -7,9 +7,14 @@
  * [Utility](#utility)
  * [Remote management](#remote-management)
  * [Server management](#server-management)
+ * [Password options](#password-options)
+ * [Site fields](#site-fields)
+ * [Encryption details](#encryption-details)
 <!--te-->
 
 # Profile management
+
+Each profile represents a storage for your credentials and sites. Your profile's data is encrypted with the passphrase key you provide. Credman is a credential manager that uses a password to keep your other passwords! All profiles are saved in .credman/profiles under your home or user documents directory. Never forget your profiles passwords! If you doubt your memory, you can enable [password restore](#password-restore) for your profile.
 
 ### Adding a profile
 `$ credman profile/p add/a <name>`
@@ -37,8 +42,12 @@ Default profile is used in management of sites, files and remotes for easier acc
 
 # Site management
 
+Sites are basically where you put the credentials for each specific service/website/etc. It might have a confusing name but you can store almost any plaintext data in sites. The sites you add to a profile will be encrypted super securely! Along with site passwords and your username, email you can add any other field that will be encrypted with the site. At this stage, you can only add text fields but in a future update, you can add text files and binary files as fields of a site.
+
 ### Adding a new site
 `$ credman site/s add/a <name> [profile] [fields] [password options] [--no-password/-n]`
+
+By default, credman adds a password field to every site you add. If you don't want any password for your site, use `--no-password` flag otherwise you must either provide [password options](#password-options) or credman will prompt you a password for your site if you already have a password. For fields, refer to [site fields](#site-fields) to see how you can use it.
 
 ### Removing a site
 `$ credman site/s remove/rm <name> [profile]`
@@ -49,13 +58,24 @@ Default profile is used in management of sites, files and remotes for easier acc
 ### Changing or deleting a site's fields or password
 `$ credman site/s set/s <name> [fields] [password options] [--password] [profile]`
 
+Refer to [password options](#password-options)
+
+Refer to [fields](#site-fields)
+
 ### Listing all sites of a profile
 `$ credman site/s list/l [regex pattern] [profile]`
+
+Lists all sites in a profile if pattern is not given. Otherwise you can use regex to filter sites.
 
 ### Getting all or specific fields of a site
 `$ credman site/s get/g <name> [fields] [profile] [--copy/-c]`
 
+If no fields are specified, site's password will be printed on output. If `--copy` flag is set, it will put the password in clipboard.
+If more than one field is specified and `--copy` flag is used, Only first field will be copyed to clipboard (Usually password).
+
 # File encryption
+
+File encryption is not related to profiles and encrypted files will not be stored inside profiles. You can encrypt any kind of file with any size since the encryption/decryption is done in streaming mode.
 
 ### Encrypt a file
 `$ credman file/f encrypt/e <path> [--output/-o=<output>] [--delete-original/-d]`
@@ -89,6 +109,8 @@ It starts asking you the questions you have set answers for and checks your answ
 
 ### Generate random password
 `$ credman gen [--copy/-c] [password options]`
+
+Generates a random password that you can use anywhere other than credman!
 
 # Remote management
 
@@ -144,54 +166,51 @@ After running server, the process will continue working in background and the ou
 ### Listing users
 `$ credman server/sv list/l [regex pattern]`
 
+# Password options
+
+Some subcommands have password options that enables password generation. If you don't give password options to such subcommands, credman will prompt you to enter your own not-secure! password.
+
+Password options are a set of commandline options that specify how the password is generated. Bellow is the full list of these options:
+- `--password-generate/-g`: Enables password generator
+- `--password-length/-l`: Sets the generated password length. Max length is 255 characters
+- `--password-case/-c`: Sets the letter case in generated password. Valid values are `lower`/`upper`/`both`(default)
+- `--password-mix/-m`: Sets the mix of characters to use in password. Valid values are `letter`/`digit`/`punc`/`all`(default)
+
+# Site fields
+
+Site fields are commandline options to set field values, set a list of fields to get or delete.
+
+If you're setting or adding a new site, you must provide fields in this format: `--field=FieldKey=FieldValue` and so on.
+For example to set email and username for a site you must do `-f=email=myemail@xyz.com -f=username=myniceusername`.
+
+If you're getting a site's fields, you must provide a list of fields in this format: `--fields=Key,Key,Key` and so on.
+For example to get email and username for a site you must do `-f=email,username` or `-f=email -f=username`.
+
+Same format as above applies for deleting fields. You must provide a list of fields to `--delete` or `-d` option.
+
 # Encryption details
 
 #### Method
-- AES-CFB for sites
-- AES-CTR + HMAC SHA-512 for files
+- AES-CFB-256 + HMAC SHA-256 for sites
+- AES-CTR-256 + HMAC SHA-256 for files
 - Scrypt for hashing
 
-#### Salt and nounce
-- scrypt salt generation: 32 bytes of random data
-- nounce generation: 16 bytes of random data
-
-#### Keys
-- master key: user's password
-- master key hash: master key -> scrypt salt1 -> 64 bytes hash
-- aes key: `masterkeyhash[:32]`
-- hmac key: `masterkeyhash[32:]`
-- stored user password hash: user password -> scrypt salt2 -> 64 byte hash
+#### Salt, nounce/iv and HMAC key
+Scrypt salt and HMAC key for encryption/decryption will be derivated from a master key that is generated by scrypt from the password you provide. Nounce and iv will be randomly generated.
 
 #### Restore point
-- restore point key: concatication of answers to scrypt for 32 byte key with salt1
-- restore point hash: concatication of sha-512 of each answer as key to scrypt for 64 bytes len with salt2
+Order of answers and number of answers will be used in HMAC. Your answers will be concaticated and written to SHA-256 along with order of the answers and number of answers to generate a masterkey for encrypting your profile password.
 
-#### Profile format
+#### Profile format v3
 ```json
 { // profile
 	"m": { // meta
-		"v": "byte", // version
-		"d": "int64", // creation date
-		"r": "[]byte", // restore security data
-			// [1 byte number of answers] [1 byte of each answer's order]
-			// [64 bytes key hash2] [64 bytes salt 1,2] [16 bytes iv] [encrypted profile password data]
+		"v": "byte", // profile version
+		"c": "int64", // creation date in unix time
+		"m": "int64", // last modification date in unix time
+		"s": "[]byte", // encrypted restore security data
+		"r": "[]byte", // encrypted remote server info
 	},
-	"s": "[]byte", // [64 bytes key hash2] [64 bytes salt 1,2] [16 bytes iv] [encrypted json of sites slice]
+	"s": "[]byte", // encrypted sites data
 }
 ```
-
-```json
-{ // site
-	"name": "site name",
-	"fields": {
-		"password": "1234",
-	}
-}
-```
-
-#### Encrypted file
-- 64 bytes key hash
-- 64 bytes salt 1,2
-- 16 bytes nounce
-- file data
-- hmac
