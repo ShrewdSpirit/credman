@@ -21,7 +21,8 @@ var fileEncryptCmd = &cobra.Command{
 
 		management.FileData{
 			InputFilename:  inputFilename,
-			OutputFilename: fileOutput,
+			OutputFilename: &fileOutput,
+			DeleteInput:    fileDeleteOriginal,
 			PasswordReader: func(step management.ManagementStep) string {
 				password, err := cmdutility.NewPasswordPrompt("New password")
 				if err != nil {
@@ -32,10 +33,26 @@ var fileEncryptCmd = &cobra.Command{
 			},
 			ManagementData: management.ManagementData{
 				OnStep: func(step management.ManagementStep) {
-
+					switch step {
+					case management.FileStepEncrypting:
+						cmdutility.LogColor(cmdutility.Green, "Encrypting file %s", inputFilename)
+					case management.StepDone:
+						cmdutility.LogColor(cmdutility.Green, "Encryption done. Wrote data to %s", fileOutput)
+					case management.FileStepDeletingInput:
+						cmdutility.LogColor(cmdutility.Green, "Deleting original file %s", inputFilename)
+					}
 				},
 				OnError: func(step management.ManagementStep, err error) {
-
+					switch step {
+					case management.FileStepOpeningInput:
+						cmdutility.LogError("Failed to open input file", err)
+					case management.FileStepCreatingOutput:
+						cmdutility.LogError("Failed to create output file", err)
+					case management.FileStepEncrypting:
+						cmdutility.LogError("Failed to encrypt file", err)
+					case management.FileStepDeletingInput:
+						cmdutility.LogError("Failed to delete original file", err)
+					}
 				},
 			},
 		}.Encrypt()
@@ -52,7 +69,8 @@ var fileDecryptCmd = &cobra.Command{
 
 		management.FileData{
 			InputFilename:  inputFilename,
-			OutputFilename: fileOutput,
+			OutputFilename: &fileOutput,
+			DeleteInput:    fileDeleteOriginal,
 			PasswordReader: func(step management.ManagementStep) string {
 				password, err := cmdutility.PasswordPrompt("File password")
 				if err != nil {
@@ -66,7 +84,6 @@ var fileDecryptCmd = &cobra.Command{
 
 				},
 				OnError: func(step management.ManagementStep, err error) {
-
 				},
 			},
 		}.Decrypt()
