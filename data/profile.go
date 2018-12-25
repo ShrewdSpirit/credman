@@ -11,7 +11,7 @@ import (
 	"github.com/ShrewdSpirit/credman/cipher"
 )
 
-var ProfileVersion byte = 2
+var ProfileVersion byte = 3
 var ProfilesDir string
 
 type ProfileMeta struct {
@@ -20,6 +20,7 @@ type ProfileMeta struct {
 	LastModifyDate int64  `json:"m"`
 	Version        byte   `json:"v"`
 	Restore        []byte `json:"s"`
+	RestoreOrder   []int  `json:"o"`
 }
 
 type Site map[string]string // fields
@@ -52,7 +53,7 @@ func NewProfile(name string) *Profile {
 	}
 }
 
-func LoadProfile(name, password string) (p *Profile, err error) {
+func LoadProfileRaw(name string) (p *Profile, err error) {
 	profileFile := path.Join(ProfilesDir, name)
 
 	var profileBytes []byte
@@ -70,6 +71,15 @@ func LoadProfile(name, password string) (p *Profile, err error) {
 		return
 	}
 
+	return
+}
+
+func LoadProfile(name, password string) (p *Profile, err error) {
+	p, err = LoadProfileRaw(name)
+	if err != nil {
+		return
+	}
+
 	if p.SitesBytes, err = cipher.BlockDecrypt(p.SitesBytes, password); err != nil {
 		return
 	}
@@ -80,15 +90,8 @@ func LoadProfile(name, password string) (p *Profile, err error) {
 	return
 }
 
-func (s *Profile) Save(password string) (err error) {
+func (s *Profile) SaveRaw() (err error) {
 	s.Meta.LastModifyDate = time.Now().UnixNano()
-
-	if s.SitesBytes, err = json.Marshal(s.Sites); err != nil {
-		return
-	}
-	if s.SitesBytes, err = cipher.BlockEncrypt(s.SitesBytes, password); err != nil {
-		return
-	}
 
 	var profileBytes []byte
 	if profileBytes, err = json.Marshal(s); err != nil {
@@ -100,6 +103,18 @@ func (s *Profile) Save(password string) (err error) {
 		return
 	}
 
+	return
+}
+
+func (s *Profile) Save(password string) (err error) {
+	if s.SitesBytes, err = json.Marshal(s.Sites); err != nil {
+		return
+	}
+	if s.SitesBytes, err = cipher.BlockEncrypt(s.SitesBytes, password); err != nil {
+		return
+	}
+
+	err = s.SaveRaw()
 	return
 }
 
