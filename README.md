@@ -23,7 +23,7 @@ Or you can build from source by installing [Go](https://golang.org/) and then ru
 
 ```
 $ go get -u github.com/ShrewdSpirit/credman/cmd
-$ go install github.com/ShrewdSpirit/credman/cmd
+$ go build -o $GOPATH/bin/credman github.com/ShrewdSpirit/credman/cmd
 ```
 
 ## Usage
