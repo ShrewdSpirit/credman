@@ -68,5 +68,7 @@ Check `credman help` for a detailed help or read [docs](https://github.com/Shrew
 - [ ] Server sync
 - [ ] Site tags (for grouping)
 - [ ] Saving text files in sites
+- [ ] Auto update and update check
+- [ ] Profile backup and auto backup
 - [ ] Desktop GUI frontend
 - [ ] Android app
