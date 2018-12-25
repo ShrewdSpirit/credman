@@ -27,6 +27,9 @@ func (s FileData) Encrypt() {
 	}
 
 	password := s.PasswordReader(FileStepReadingPassword)
+	if len(password) == 0 {
+		return
+	}
 
 	s.ManagementData.CallStep(FileStepOpeningInput)
 	inputFile, err := os.Open(s.InputFilename)
