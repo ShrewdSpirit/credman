@@ -7,8 +7,9 @@ import (
 )
 
 var fileCmd = &cobra.Command{
-	Use:   "file",
-	Short: "File encryption",
+	Use:     "file",
+	Aliases: []string{"f"},
+	Short:   "File encryption",
 }
 
 var fileEncryptCmd = &cobra.Command{
