@@ -1,11 +1,10 @@
-**UNDER MAINTAINANCEC! DON'T USE YET** I've realised the encryption method that I've used isn't well suited for large data (files) and the hashing method isn't much secure. Therefore I'm changing some stuff and profile structure for a better protection. Next release will be using AES-CFB-256 for sites encryption and AES-CTR-256 with HMAC-SHA-256 authenticity check for all encryptions (custom streaming encryption since go's streaming cipher sucks) and will be using scrypt for hashing the passphrases (N: 65536, r: 16, p: 1) that makes it almost impossible to run brute-force attacks using FPGAs and such (almost 114MB of ram will be used for hashing a passphrase). The scrypt configuration defined will be the default but user can change it if they know what they're doing.
-
 Credman
 =====
-A simple, powerful, cross-platform and military grade (marketing ~~bs~~!) secure and stateless credential management.
+A simple, powerful, cross-platform and military grade (marketing ~~bs~~!) secure credential management.
 
 Features:
 - Multiple local profiles
+- Stateless (doesn't keep passwords in memory for later use)
 - AES-CFB-256 and AES-CTR-256 with HMAC-SHA-256 authenticity and integrity check for profiles and files
 - Identical heavy Scrypt algorithm for hashing
 - Multiple fields per site/serivce
