@@ -63,8 +63,8 @@ Check `credman help` for a detailed help or read [docs](https://github.com/Shrew
 - [x] Pattern matching for site/profile names
 - [x] Colorful output!
 - [x] Move the functionality out of commands so other packages can use credman as a library
-- [ ] **WIP** File encryption
-- [ ] Password restore
+- [x] File encryption
+- [ ] **WIP** Password restore
 - [ ] Server sync
 - [ ] Site tags (for grouping)
 - [ ] Saving text files in sites
