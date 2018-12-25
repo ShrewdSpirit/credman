@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/ShrewdSpirit/credman/cmd/cmdutility"
 	"github.com/ShrewdSpirit/credman/utility"
 	"github.com/atotto/clipboard"
 	"github.com/spf13/cobra"
@@ -54,12 +55,12 @@ var genCmd = &cobra.Command{
 		password := utility.GeneratePassword(genPlen, pcase, pmix...)
 		if genCopy {
 			if err := clipboard.WriteAll(password); err != nil {
-				utility.LogError("Failed writing to clipboard", err)
+				cmdutility.LogError("Failed writing to clipboard", err)
 				return
 			}
 			fmt.Println("Generated password copied to clipboard")
 		} else {
-			utility.LogColor(utility.HiGreen, "%s", password)
+			cmdutility.LogColor(cmdutility.HiGreen, "%s", password)
 			return
 		}
 	},

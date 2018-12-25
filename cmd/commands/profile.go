@@ -3,9 +3,10 @@ package commands
 import (
 	"fmt"
 
+	"github.com/ShrewdSpirit/credman/cmd/cmdutility"
+
 	"github.com/ShrewdSpirit/credman/data"
 	"github.com/ShrewdSpirit/credman/management"
-	"github.com/ShrewdSpirit/credman/utility"
 	"github.com/spf13/cobra"
 )
 
@@ -26,9 +27,9 @@ var profileAddCmd = &cobra.Command{
 		management.ProfileData{
 			ProfileName: profileName,
 			PasswordReader: func(step management.ManagementStep) string {
-				password, err := utility.NewPasswordPrompt("New password")
+				password, err := cmdutility.NewPasswordPrompt("New password")
 				if err != nil {
-					utility.LogError("Failed reading password", err)
+					cmdutility.LogError("Failed reading password", err)
 					return ""
 				}
 				return password
@@ -37,11 +38,11 @@ var profileAddCmd = &cobra.Command{
 				OnStep: func(step management.ManagementStep) {
 					switch step {
 					case management.ProfileStepProfileExists:
-						utility.LogColor(utility.BoldHiYellow, "Profile %s already exists.", profileName)
+						cmdutility.LogColor(cmdutility.BoldHiYellow, "Profile %s already exists.", profileName)
 					case management.StepDone:
-						utility.LogColor(utility.Green, "Profile %s has been created.", profileName)
+						cmdutility.LogColor(cmdutility.Green, "Profile %s has been created.", profileName)
 					case management.ProfileStepDefaultChanged:
-						utility.LogColor(utility.Green, "Default profile changed to %s", profileName)
+						cmdutility.LogColor(cmdutility.Green, "Default profile changed to %s", profileName)
 					}
 				},
 			},
@@ -59,9 +60,9 @@ var profileRemoveCmd = &cobra.Command{
 		management.ProfileData{
 			ProfileName: profileName,
 			YesNoPrompt: func(step management.ManagementStep) bool {
-				remove, err := utility.YesNoPrompt(fmt.Sprintf("Are you sure to delete profile %s?", profileName))
+				remove, err := cmdutility.YesNoPrompt(fmt.Sprintf("Are you sure to delete profile %s?", profileName))
 				if err != nil {
-					utility.LogError("Reading input failed", err)
+					cmdutility.LogError("Reading input failed", err)
 					return false
 				}
 				return remove
@@ -70,15 +71,15 @@ var profileRemoveCmd = &cobra.Command{
 				OnStep: func(step management.ManagementStep) {
 					switch step {
 					case management.ProfileStepDoesntExist:
-						utility.LogColor(utility.BoldHiYellow, "Profile %s doesnt exist.", profileName)
+						cmdutility.LogColor(cmdutility.BoldHiYellow, "Profile %s doesnt exist.", profileName)
 					case management.StepDone:
-						utility.LogColor(utility.Green, "Profile %s has been removed.", profileName)
+						cmdutility.LogColor(cmdutility.Green, "Profile %s has been removed.", profileName)
 					}
 				},
 				OnError: func(step management.ManagementStep, err error) {
 					switch step {
 					case management.ProfileStepRemoving:
-						utility.LogError("Failed to remove profile", err)
+						cmdutility.LogError("Failed to remove profile", err)
 					}
 				},
 			},
@@ -101,19 +102,19 @@ var profileRenameCmd = &cobra.Command{
 				OnStep: func(step management.ManagementStep) {
 					switch step {
 					case management.ProfileStepDoesntExist:
-						utility.LogColor(utility.BoldHiYellow, "Profile %s doesnt exist.", profileName)
+						cmdutility.LogColor(cmdutility.BoldHiYellow, "Profile %s doesnt exist.", profileName)
 					case management.ProfileStepProfileExists:
-						utility.LogColor(utility.BoldHiYellow, "Profile %s already exists.", newName)
+						cmdutility.LogColor(cmdutility.BoldHiYellow, "Profile %s already exists.", newName)
 					case management.StepDone:
-						utility.LogColor(utility.Green, "Profile %s has been renamed to %s", profileName, newName)
+						cmdutility.LogColor(cmdutility.Green, "Profile %s has been renamed to %s", profileName, newName)
 					case management.ProfileStepDefaultChanged:
-						utility.LogColor(utility.Green, "Default profile changed to %s", newName)
+						cmdutility.LogColor(cmdutility.Green, "Default profile changed to %s", newName)
 					}
 				},
 				OnError: func(step management.ManagementStep, err error) {
 					switch step {
 					case management.ProfileStepRenaming:
-						utility.LogError("Profile rename failed", err)
+						cmdutility.LogError("Profile rename failed", err)
 					}
 				},
 			},
@@ -132,18 +133,18 @@ var profilePasswdCmd = &cobra.Command{
 			ProfileName: profileName,
 			PasswordReader: func(step management.ManagementStep) string {
 				if step == management.ProfileStepReadingPassword {
-					password, err := utility.PasswordPrompt("Profile password")
+					password, err := cmdutility.PasswordPrompt("Profile password")
 					if err != nil {
-						utility.LogError("Failed reading password", err)
+						cmdutility.LogError("Failed reading password", err)
 						return ""
 					}
 
 					return password
 				}
 
-				newPassword, err := utility.NewPasswordPrompt("New password")
+				newPassword, err := cmdutility.NewPasswordPrompt("New password")
 				if err != nil {
-					utility.LogError("Failed reading password", err)
+					cmdutility.LogError("Failed reading password", err)
 					return ""
 				}
 
@@ -153,17 +154,17 @@ var profilePasswdCmd = &cobra.Command{
 				OnStep: func(step management.ManagementStep) {
 					switch step {
 					case management.ProfileStepDoesntExist:
-						utility.LogColor(utility.BoldHiYellow, "Profile %s doesnt exist.", profileName)
+						cmdutility.LogColor(cmdutility.BoldHiYellow, "Profile %s doesnt exist.", profileName)
 					case management.StepDone:
-						utility.LogColor(utility.Green, "Profile's %s password updated.", profileName)
+						cmdutility.LogColor(cmdutility.Green, "Profile's %s password updated.", profileName)
 					}
 				},
 				OnError: func(step management.ManagementStep, err error) {
 					switch step {
 					case management.ProfileStepLoadingProfile:
-						utility.LogError("Failed loading profile", err)
+						cmdutility.LogError("Failed loading profile", err)
 					case management.ProfileStepSaving:
-						utility.LogError("Failed saving profile", err)
+						cmdutility.LogError("Failed saving profile", err)
 					}
 				},
 			},
@@ -183,18 +184,18 @@ var profileDefaultCmd = &cobra.Command{
 		}
 		if len(profileName) == 0 {
 			if len(data.Config.DefaultProfile) == 0 {
-				utility.LogColor(utility.Green, "No default profile is set")
+				cmdutility.LogColor(cmdutility.Green, "No default profile is set")
 			} else {
-				utility.LogColor(utility.Green, "Default profile is %s", data.Config.DefaultProfile)
+				cmdutility.LogColor(cmdutility.Green, "Default profile is %s", data.Config.DefaultProfile)
 			}
 		} else {
 			if !data.ProfileExists(profileName) {
-				utility.LogColor(utility.BoldHiYellow, "Profile %s doesnt exist.", profileName)
+				cmdutility.LogColor(cmdutility.BoldHiYellow, "Profile %s doesnt exist.", profileName)
 				return
 			}
 
 			data.Config.DefaultProfile = profileName
-			utility.LogColor(utility.Green, "Default profile changed to %s", profileName)
+			cmdutility.LogColor(cmdutility.Green, "Default profile changed to %s", profileName)
 		}
 	},
 }
@@ -212,7 +213,7 @@ var profileListCmd = &cobra.Command{
 				OnError: func(step management.ManagementStep, err error) {
 					switch step {
 					case management.ProfileStepReadingProfiles:
-						utility.LogError("Failed getting profiles list", err)
+						cmdutility.LogError("Failed getting profiles list", err)
 					}
 				},
 			},

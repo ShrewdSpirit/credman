@@ -1,4 +1,4 @@
-package commands
+package cmdutility
 
 import (
 	"errors"
@@ -40,21 +40,21 @@ func GetProfileCommandLine() (*data.Profile, string) {
 	}
 
 	if !data.ProfileExists(profileName) {
-		utility.LogColor(utility.BoldHiYellow, "Profile %s doesnt exist.", profileName)
+		LogColor(BoldHiYellow, "Profile %s doesnt exist.", profileName)
 		return nil, ""
 	}
 
-	utility.LogColor(utility.Green, "Using profile %s", profileName)
+	LogColor(Green, "Using profile %s", profileName)
 
-	password, err := utility.PasswordPrompt("Profile password")
+	password, err := PasswordPrompt("Profile password")
 	if err != nil {
-		utility.LogError("Failed reading password", err)
+		LogError("Failed reading password", err)
 		return nil, ""
 	}
 
 	profile, err := data.LoadProfile(profileName, password)
 	if err != nil {
-		utility.LogError("Failed loading profile", err)
+		LogError("Failed loading profile", err)
 		return nil, ""
 	}
 
@@ -96,7 +96,7 @@ func ParsePasswordGenerationFlags(prompt string) (string, error) {
 		return password, nil
 	}
 
-	password, err := utility.NewPasswordPrompt(prompt)
+	password, err := NewPasswordPrompt(prompt)
 	if err != nil {
 		return "", err
 	}

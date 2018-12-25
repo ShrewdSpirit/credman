@@ -1,6 +1,7 @@
 package commands
 
 import (
+	"github.com/ShrewdSpirit/credman/cmd/cmdutility"
 	"github.com/spf13/cobra"
 )
 
@@ -68,19 +69,19 @@ func init() {
 	fileFlagsAddOutput(fileEncryptCmd)
 	fileFlagsAddNoProfile(fileEncryptCmd)
 	fileEncryptCmd.Flags().BoolVarP(&fileDeleteOriginal, "delete-original", "d", false, "Deletes original file after encryption")
-	FlagsAddPasswordOptions(fileEncryptCmd)
-	FlagsAddProfileName(fileEncryptCmd)
+	cmdutility.FlagsAddPasswordOptions(fileEncryptCmd)
+	cmdutility.FlagsAddProfileName(fileEncryptCmd)
 
 	fileCmd.AddCommand(fileDecryptCmd)
 	fileFlagsAddOutput(fileDecryptCmd)
 	fileFlagsAddNoProfile(fileDecryptCmd)
-	FlagsAddProfileName(fileDecryptCmd)
+	cmdutility.FlagsAddProfileName(fileDecryptCmd)
 
 	fileCmd.AddCommand(fileListCmd)
-	FlagsAddProfileName(fileListCmd)
+	cmdutility.FlagsAddProfileName(fileListCmd)
 
 	fileCmd.AddCommand(fileDeleteCmd)
-	FlagsAddProfileName(fileDeleteCmd)
+	cmdutility.FlagsAddProfileName(fileDeleteCmd)
 }
 
 func fileFlagsAddOutput(cmd *cobra.Command) {
