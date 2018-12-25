@@ -45,6 +45,7 @@ const (
 	FileStepOpeningInput      ManagementStep = 37
 	FileStepCreatingOutput    ManagementStep = 38
 	FileStepDeletingInput     ManagementStep = 39
+	FileStepInvalidInput      ManagementStep = 40
 )
 
 type ManagementData struct {

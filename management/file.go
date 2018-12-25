@@ -2,6 +2,7 @@ package management
 
 import (
 	"os"
+	"strings"
 
 	"github.com/ShrewdSpirit/credman/cipher"
 )
@@ -47,6 +48,7 @@ func (s FileData) Encrypt() {
 
 	s.ManagementData.CallStep(FileStepEncrypting)
 	if err = cipher.StreamEncrypt(inputFile, outputFile, password); err != nil {
+		os.Remove(*s.OutputFilename)
 		s.ManagementData.CallError(FileStepEncrypting, err)
 		return
 	}
@@ -70,9 +72,40 @@ func (s FileData) Decrypt() {
 		return
 	}
 
-	// check output file if len == 0 output file = input without .enc if it had, or .dec if didnt had
-	// read password
-	// dec
-	// delete original
+	if len(*s.OutputFilename) == 0 {
+		*s.OutputFilename = strings.TrimSuffix(s.InputFilename, ".enc")
+	}
+
+	if *s.OutputFilename == s.InputFilename {
+		s.ManagementData.CallStep(FileStepInvalidInput)
+		return
+	}
+
+	password := s.PasswordReader(FileStepReadingPassword)
+	if len(password) == 0 {
+		return
+	}
+
+	s.ManagementData.CallStep(FileStepOpeningInput)
+	inputFile, err := os.Open(s.InputFilename)
+	if err != nil {
+		s.ManagementData.CallError(FileStepOpeningInput, err)
+		return
+	}
+
+	s.ManagementData.CallStep(FileStepCreatingOutput)
+	outputFile, err := os.Create(*s.OutputFilename)
+	if err != nil {
+		s.ManagementData.CallError(FileStepCreatingOutput, err)
+		return
+	}
+
+	s.ManagementData.CallStep(FileStepDecrypting)
+	if err = cipher.StreamDecrypt(inputFile, outputFile, password); err != nil {
+		os.Remove(*s.OutputFilename)
+		s.ManagementData.CallError(FileStepDecrypting, err)
+		return
+	}
+
 	s.ManagementData.CallStep(StepDone)
 }
