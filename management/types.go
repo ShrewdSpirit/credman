@@ -35,6 +35,12 @@ const (
 	SiteStepSettingClipboard         ManagementStep = 28
 	SiteStepInvalidField             ManagementStep = 29
 	SiteStepListingFields            ManagementStep = 30
+
+	FileStepCheckingExistence ManagementStep = 31
+	FileStepInputDoesntExist  ManagementStep = 32
+	FileStepInvalidOutput     ManagementStep = 33
+	FileStepEncrypting        ManagementStep = 34
+	FileStepDecrypting        ManagementStep = 35
 )
 
 type ManagementData struct {

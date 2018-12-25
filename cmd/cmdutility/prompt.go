@@ -21,10 +21,6 @@ func PasswordPrompt(prompt string) (string, error) {
 	}
 	password := strings.TrimSpace(string(passwordBytes))
 
-	if len(password) >= 32 {
-		return "", errors.New("Password can't be longer than 32 characters")
-	}
-
 	return password, nil
 }
 
@@ -42,7 +38,7 @@ func NewPasswordPrompt(prompt string) (string, error) {
 	}
 
 	if password != repeatPassword {
-		return "", errors.New("Passwords doesn't match")
+		return "", errors.New("Passwords don't match")
 	}
 
 	return password, nil
