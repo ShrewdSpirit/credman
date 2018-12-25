@@ -125,8 +125,8 @@ func StreamEncrypt(in io.Reader, out io.Writer, key string) error {
 
 	buf := make([]byte, bufSize)
 	for {
-		var bufSz int
-		bufSz, err = in.Read(buf)
+		var numBytesRead int
+		numBytesRead, err = in.Read(buf)
 		if err != nil && err != io.EOF {
 			return err
 		}
@@ -135,9 +135,9 @@ func StreamEncrypt(in io.Reader, out io.Writer, key string) error {
 			break
 		}
 
-		if bufSz != 0 {
-			outBuf := make([]byte, bufSz)
-			ctr.XORKeyStream(outBuf, buf[:bufSz])
+		if numBytesRead != 0 {
+			outBuf := make([]byte, numBytesRead)
+			ctr.XORKeyStream(outBuf, buf[:numBytesRead])
 			w.Write(outBuf)
 		}
 	}
@@ -184,25 +184,25 @@ func StreamDecrypt(in io.Reader, out io.Writer, key string) error {
 	mac := make([]byte, hmacSize)
 	buf := bufio.NewReaderSize(in, bufSize)
 	for {
-		readBytes, err := buf.Peek(bufSize)
+		numBytesRead, err := buf.Peek(bufSize)
 		if err != nil && err != io.EOF {
 			return err
 		}
 
 		if err == io.EOF {
-			nBytesLeft := buf.Buffered()
-			if nBytesLeft < hmacSize {
+			numBytesLeft := buf.Buffered()
+			if numBytesLeft < hmacSize {
 				return ErrInvalidData
 			}
 
-			copy(mac, readBytes[nBytesLeft-hmacSize:nBytesLeft])
-			if nBytesLeft == hmacSize {
+			copy(mac, numBytesRead[numBytesLeft-hmacSize:numBytesLeft])
+			if numBytesLeft == hmacSize {
 				break
 			}
 		}
 
-		limit := len(readBytes) - hmacSize
-		limitedBytes := readBytes[:limit]
+		limit := len(numBytesRead) - hmacSize
+		limitedBytes := numBytesRead[:limit]
 		outbuf := make([]byte, limit)
 
 		hmacX.Write(limitedBytes)
