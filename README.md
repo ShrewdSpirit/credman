@@ -65,10 +65,10 @@ Check `credman help` for a detailed help or read [docs](https://github.com/Shrew
 - [x] Move the functionality out of commands so other packages can use credman as a library
 - [x] File encryption
 - [ ] **WIP** Password restore
-- [ ] Server sync
 - [ ] Site tags (for grouping)
 - [ ] Saving text files in sites
 - [ ] Auto update and update check
 - [ ] Profile backup and auto backup
+- [ ] Server sync
 - [ ] Desktop GUI frontend
 - [ ] Android app
