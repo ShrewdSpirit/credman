@@ -2,8 +2,8 @@ package main
 
 import (
 	"github.com/ShrewdSpirit/credman/cmd/cmdutility"
+	"github.com/ShrewdSpirit/credman/cmd/commands"
 	"github.com/ShrewdSpirit/credman/data"
-	"github.com/spf13/cobra/cobra/cmd"
 )
 
 func main() {
@@ -12,7 +12,7 @@ func main() {
 		return
 	}
 
-	cmd.Execute()
+	commands.Execute()
 
 	if err := data.SaveConfiguration(); err != nil {
 		cmdutility.LogError("Failed to save config", err)
