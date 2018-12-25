@@ -15,11 +15,11 @@ var ProfileVersion byte = 2
 var ProfilesDir string
 
 type ProfileMeta struct {
-	Remote         *Remote `json:"r"`
-	CreationDate   int64   `json:"c"`
-	LastModifyDate int64   `json:"m"`
-	Version        byte    `json:"v"`
-	Restore        []byte  `json:"s"`
+	Remote         []byte `json:"r"`
+	CreationDate   int64  `json:"c"`
+	LastModifyDate int64  `json:"m"`
+	Version        byte   `json:"v"`
+	Restore        []byte `json:"s"`
 }
 
 type Site map[string]string // fields
