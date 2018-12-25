@@ -38,7 +38,7 @@ var profileAddCmd = &cobra.Command{
 					switch step {
 					case management.ProfileStepProfileExists:
 						utility.LogColor(utility.BoldHiYellow, "Profile %s already exists.", profileName)
-					case management.ProfileStepDone:
+					case management.StepDone:
 						utility.LogColor(utility.Green, "Profile %s has been created.", profileName)
 					case management.ProfileStepDefaultChanged:
 						utility.LogColor(utility.Green, "Default profile changed to %s", profileName)
@@ -71,7 +71,7 @@ var profileRemoveCmd = &cobra.Command{
 					switch step {
 					case management.ProfileStepDoesntExist:
 						utility.LogColor(utility.BoldHiYellow, "Profile %s doesnt exist.", profileName)
-					case management.ProfileStepDone:
+					case management.StepDone:
 						utility.LogColor(utility.Green, "Profile %s has been removed.", profileName)
 					}
 				},
@@ -104,7 +104,7 @@ var profileRenameCmd = &cobra.Command{
 						utility.LogColor(utility.BoldHiYellow, "Profile %s doesnt exist.", profileName)
 					case management.ProfileStepProfileExists:
 						utility.LogColor(utility.BoldHiYellow, "Profile %s already exists.", newName)
-					case management.ProfileStepDone:
+					case management.StepDone:
 						utility.LogColor(utility.Green, "Profile %s has been renamed to %s", profileName, newName)
 					case management.ProfileStepDefaultChanged:
 						utility.LogColor(utility.Green, "Default profile changed to %s", newName)
@@ -154,7 +154,7 @@ var profilePasswdCmd = &cobra.Command{
 					switch step {
 					case management.ProfileStepDoesntExist:
 						utility.LogColor(utility.BoldHiYellow, "Profile %s doesnt exist.", profileName)
-					case management.ProfileStepDone:
+					case management.StepDone:
 						utility.LogColor(utility.Green, "Profile's %s password updated.", profileName)
 					}
 				},

@@ -119,6 +119,12 @@ func (s *Profile) GetSite(name string) Site {
 	return nil
 }
 
+func (s *Profile) RenameSite(name, newName string) {
+	site := s.GetSite(name)
+	s.AddSite(newName, site)
+	s.DeleteSite(name)
+}
+
 func (s *Profile) DeleteSite(name string) {
 	delete(s.Sites, name)
 }

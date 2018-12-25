@@ -1,11 +1,6 @@
 package cmd
 
 import (
-	"fmt"
-	"io/ioutil"
-	"os"
-
-	"github.com/ShrewdSpirit/credman/utility"
 	"github.com/ShrewdSpirit/credman/utility/cmdutlitity"
 	"github.com/spf13/cobra"
 )
@@ -98,48 +93,48 @@ func fileFlagsAddNoProfile(cmd *cobra.Command) {
 }
 
 func fileEncrypt(filename, name string) {
-	if fileNoProfile {
-		_, err := os.Stat(filename)
-		if err != nil {
-			utility.LogError("Invalid source file", err)
-			return
-		}
+	// if fileNoProfile {
+	// 	_, err := os.Stat(filename)
+	// 	if err != nil {
+	// 		utility.LogError("Invalid source file", err)
+	// 		return
+	// 	}
 
-		password, err := cmdutility.ParsePasswordGenerationFlags("Encryption password")
-		if err != nil {
-			utility.LogError("Password reading failed", err)
-			return
-		}
+	// 	password, err := cmdutility.ParsePasswordGenerationFlags("Encryption password")
+	// 	if err != nil {
+	// 		utility.LogError("Password reading failed", err)
+	// 		return
+	// 	}
 
-		utility.LogColor(utility.Green, "Reading file %s", filename)
-		data, err := ioutil.ReadFile(filename)
-		if err != nil {
-			utility.LogError("Reading file failed", err)
-			return
-		}
+	// 	utility.LogColor(utility.Green, "Reading file %s", filename)
+	// 	data, err := ioutil.ReadFile(filename)
+	// 	if err != nil {
+	// 		utility.LogError("Reading file failed", err)
+	// 		return
+	// 	}
 
-		utility.LogColor(utility.Green, "Encrypting")
-		encrypted, err := utility.Encrypt([]byte(password), data)
-		if err != nil {
-			utility.LogError("Encryption failed", err)
-		}
+	// 	utility.LogColor(utility.Green, "Encrypting")
+	// 	encrypted, err := utility.Encrypt([]byte(password), data)
+	// 	if err != nil {
+	// 		utility.LogError("Encryption failed", err)
+	// 	}
 
-		utility.LogColor(utility.Green, "Writing to %s", name)
-		if err := ioutil.WriteFile(name, encrypted, os.ModePerm); err != nil {
-			utility.LogError("Writing file failed", err)
-			return
-		}
-	} else {
-		fmt.Println("Not implemented")
-	}
+	// 	utility.LogColor(utility.Green, "Writing to %s", name)
+	// 	if err := ioutil.WriteFile(name, encrypted, os.ModePerm); err != nil {
+	// 		utility.LogError("Writing file failed", err)
+	// 		return
+	// 	}
+	// } else {
+	// 	fmt.Println("Not implemented")
+	// }
 
-	if fileDeleteOriginal {
-		utility.LogColor(utility.Green, "Deleting original file %s", filename)
-		if err := os.Remove(filename); err != nil {
-			utility.LogError("Removing original file failed", err)
-			return
-		}
-	}
+	// if fileDeleteOriginal {
+	// 	utility.LogColor(utility.Green, "Deleting original file %s", filename)
+	// 	if err := os.Remove(filename); err != nil {
+	// 		utility.LogError("Removing original file failed", err)
+	// 		return
+	// 	}
+	// }
 }
 
 func fileDecrypt(name string) {

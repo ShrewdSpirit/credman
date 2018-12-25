@@ -8,23 +8,6 @@ import (
 	"github.com/ShrewdSpirit/credman/data"
 )
 
-const (
-	ProfileStepCheckingExistence ManagementStep = 0
-	ProfileStepProfileExists     ManagementStep = 1
-	ProfileStepReadingPassword   ManagementStep = 2
-	ProfileStepCreating          ManagementStep = 3
-	ProfileStepSaving            ManagementStep = 4
-	ProfileStepDone              ManagementStep = 5
-	ProfileStepDefaultChanged    ManagementStep = 6
-	ProfileStepDoesntExist       ManagementStep = 7
-	ProfileStepRemovePrompt      ManagementStep = 8
-	ProfileStepRemoving          ManagementStep = 9
-	ProfileStepRenaming          ManagementStep = 10
-	ProfileStepNewPassword       ManagementStep = 11
-	ProfileStepLoadingProfile    ManagementStep = 12
-	ProfileStepReadingProfiles   ManagementStep = 13
-)
-
 type ProfileData struct {
 	ManagementData
 	ProfileName    string
@@ -55,7 +38,7 @@ func (s ProfileData) Add() {
 		s.ManagementData.CallError(ProfileStepSaving, err)
 		return
 	}
-	s.ManagementData.CallStep(ProfileStepDone)
+	s.ManagementData.CallStep(StepDone)
 
 	if data.Config.DefaultProfile == "" {
 		data.Config.DefaultProfile = s.ProfileName
@@ -79,7 +62,7 @@ func (s ProfileData) Remove() {
 		s.ManagementData.CallError(ProfileStepRemoving, err)
 		return
 	}
-	s.ManagementData.CallStep(ProfileStepDone)
+	s.ManagementData.CallStep(StepDone)
 
 	if data.Config.DefaultProfile == s.ProfileName {
 		data.Config.DefaultProfile = ""
@@ -106,7 +89,7 @@ func (s ProfileData) Rename() {
 		s.ManagementData.CallError(ProfileStepRenaming, err)
 		return
 	}
-	s.ManagementData.CallStep(ProfileStepDone)
+	s.ManagementData.CallStep(StepDone)
 
 	if data.Config.DefaultProfile == s.ProfileName {
 		data.Config.DefaultProfile = s.NewProfileName
@@ -145,7 +128,7 @@ func (s ProfileData) Passwd() {
 		s.ManagementData.CallError(ProfileStepSaving, err)
 		return
 	}
-	s.ManagementData.CallStep(ProfileStepDone)
+	s.ManagementData.CallStep(StepDone)
 }
 
 func (s ProfileData) List() {
@@ -161,5 +144,5 @@ func (s ProfileData) List() {
 			s.LogList(profile.Name())
 		}
 	}
-	s.ManagementData.CallStep(ProfileStepDone)
+	s.ManagementData.CallStep(StepDone)
 }
