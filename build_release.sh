@@ -1,5 +1,7 @@
 #!/bin/bash
 
+CWD=$(pwd)
+
 if [ -d "release" ]; then
     rm -fr release
 fi
@@ -12,18 +14,21 @@ build() {
     local filename="credman-$os-$arch"
     local ext=""
 
+    cd "$CWD/cmd"
+
     if [ "$os" == "windows" ]; then
         ext=".exe"
     fi
 
     echo "Compiling for $os-$arch"
-    GOOS=$os GOARCH=$arch go build -o "release/$filename$ext" -ldflags='-s -w'
+    GOOS=$os GOARCH=$arch go build -o "$CWD/release/$filename$ext" -ldflags='-s -w'
 
+    cd "$CWD/release"
     echo "  Creating archive"
-    tar -czf "release/$filename.tar.gz" "release/$filename$ext"
+    tar -czf "$filename.tar.gz" "$filename$ext"
 
     echo "  Removing binary"
-    rm -fr "release/$filename$ext"
+    rm -fr "$filename$ext"
 }
 
 build linux amd64
