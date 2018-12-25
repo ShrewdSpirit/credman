@@ -1,7 +1,6 @@
-package cmd
+package commands
 
 import (
-	"github.com/ShrewdSpirit/credman/utility/cmdutlitity"
 	"github.com/spf13/cobra"
 )
 
@@ -69,19 +68,19 @@ func init() {
 	fileFlagsAddOutput(fileEncryptCmd)
 	fileFlagsAddNoProfile(fileEncryptCmd)
 	fileEncryptCmd.Flags().BoolVarP(&fileDeleteOriginal, "delete-original", "d", false, "Deletes original file after encryption")
-	cmdutility.FlagsAddPasswordOptions(fileEncryptCmd)
-	cmdutility.FlagsAddProfileName(fileEncryptCmd)
+	FlagsAddPasswordOptions(fileEncryptCmd)
+	FlagsAddProfileName(fileEncryptCmd)
 
 	fileCmd.AddCommand(fileDecryptCmd)
 	fileFlagsAddOutput(fileDecryptCmd)
 	fileFlagsAddNoProfile(fileDecryptCmd)
-	cmdutility.FlagsAddProfileName(fileDecryptCmd)
+	FlagsAddProfileName(fileDecryptCmd)
 
 	fileCmd.AddCommand(fileListCmd)
-	cmdutility.FlagsAddProfileName(fileListCmd)
+	FlagsAddProfileName(fileListCmd)
 
 	fileCmd.AddCommand(fileDeleteCmd)
-	cmdutility.FlagsAddProfileName(fileDeleteCmd)
+	FlagsAddProfileName(fileDeleteCmd)
 }
 
 func fileFlagsAddOutput(cmd *cobra.Command) {
@@ -100,7 +99,7 @@ func fileEncrypt(filename, name string) {
 	// 		return
 	// 	}
 
-	// 	password, err := cmdutility.ParsePasswordGenerationFlags("Encryption password")
+	// 	password, err := ParsePasswordGenerationFlags("Encryption password")
 	// 	if err != nil {
 	// 		utility.LogError("Password reading failed", err)
 	// 		return

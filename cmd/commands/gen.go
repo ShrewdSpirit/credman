@@ -1,12 +1,11 @@
-package cmd
+package commands
 
 import (
 	"fmt"
 	"strings"
 
-	"github.com/atotto/clipboard"
-
 	"github.com/ShrewdSpirit/credman/utility"
+	"github.com/atotto/clipboard"
 	"github.com/spf13/cobra"
 )
 

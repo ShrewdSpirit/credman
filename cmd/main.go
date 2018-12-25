@@ -1,11 +1,9 @@
 package main
 
 import (
-	"github.com/ShrewdSpirit/credman/utility"
-
+	"github.com/ShrewdSpirit/credman/cmd/utility"
 	"github.com/ShrewdSpirit/credman/data"
-
-	"github.com/ShrewdSpirit/credman/cmd"
+	"github.com/spf13/cobra/cobra/cmd"
 )
 
 func main() {

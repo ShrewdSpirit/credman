@@ -1,4 +1,4 @@
-package cmd
+package commands
 
 import (
 	"fmt"
@@ -6,7 +6,6 @@ import (
 
 	"github.com/ShrewdSpirit/credman/management"
 	"github.com/ShrewdSpirit/credman/utility"
-	"github.com/ShrewdSpirit/credman/utility/cmdutlitity"
 	"github.com/spf13/cobra"
 )
 
@@ -24,7 +23,7 @@ var siteAddCmd = &cobra.Command{
 	Short:   "Adds a new site",
 	Run: func(cmd *cobra.Command, args []string) {
 		siteName := args[0]
-		profile, profilePassword := cmdutility.GetProfileCommandLine()
+		profile, profilePassword := GetProfileCommandLine()
 		if profile == nil {
 			return
 		}
@@ -32,7 +31,7 @@ var siteAddCmd = &cobra.Command{
 		var password string
 		if !siteAddNoPassword {
 			var err error
-			password, err = cmdutility.ParsePasswordGenerationFlags("Site new password")
+			password, err = ParsePasswordGenerationFlags("Site new password")
 			if err != nil {
 				utility.LogError("Site creation failed", err)
 				return
@@ -72,7 +71,7 @@ var siteRemoveCmd = &cobra.Command{
 	Short:   "Removes a site",
 	Run: func(cmd *cobra.Command, args []string) {
 		siteName := args[0]
-		profile, profilePassword := cmdutility.GetProfileCommandLine()
+		profile, profilePassword := GetProfileCommandLine()
 		if profile == nil {
 			return
 		}
@@ -117,7 +116,7 @@ var siteRenameCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		siteName := args[0]
 		newName := args[1]
-		profile, profilePassword := cmdutility.GetProfileCommandLine()
+		profile, profilePassword := GetProfileCommandLine()
 		if profile == nil {
 			return
 		}
@@ -154,7 +153,7 @@ var siteSetCmd = &cobra.Command{
 	Short:   "Updates site fields",
 	Run: func(cmd *cobra.Command, args []string) {
 		siteName := args[0]
-		profile, profilePassword := cmdutility.GetProfileCommandLine()
+		profile, profilePassword := GetProfileCommandLine()
 		if profile == nil {
 			return
 		}
@@ -162,7 +161,7 @@ var siteSetCmd = &cobra.Command{
 		var password string
 		if siteSetPassword {
 			var err error
-			password, err = cmdutility.ParsePasswordGenerationFlags("Site new password")
+			password, err = ParsePasswordGenerationFlags("Site new password")
 			if err != nil {
 				utility.LogError("Site creation failed", err)
 				return
@@ -207,7 +206,7 @@ var siteListCmd = &cobra.Command{
 			pattern = args[0]
 		}
 
-		profile, profilePassword := cmdutility.GetProfileCommandLine()
+		profile, profilePassword := GetProfileCommandLine()
 		if profile == nil {
 			return
 		}
@@ -242,7 +241,7 @@ var siteGetCmd = &cobra.Command{
 	Short:   "Gets value(s) of specified field(s) or copy the first field into clipboard",
 	Run: func(cmd *cobra.Command, args []string) {
 		siteName := args[0]
-		profile, profilePassword := cmdutility.GetProfileCommandLine()
+		profile, profilePassword := GetProfileCommandLine()
 		if profile == nil {
 			return
 		}
@@ -292,12 +291,12 @@ var siteAddNoPassword bool
 
 func init() {
 	rootCmd.AddCommand(siteCmd)
-	cmdutility.FlagsAddProfileName(siteCmd)
+	FlagsAddProfileName(siteCmd)
 
 	siteCmd.AddCommand(siteAddCmd)
 	siteAddCmd.Flags().BoolVarP(&siteAddNoPassword, "no-password", "n", false, "Doesn't prompt for site password. Useful for sites that you don't want any password for.")
 	siteFlagsFields(siteAddCmd, false)
-	cmdutility.FlagsAddPasswordOptions(siteAddCmd)
+	FlagsAddPasswordOptions(siteAddCmd)
 
 	siteCmd.AddCommand(siteRemoveCmd)
 	siteCmd.AddCommand(siteRenameCmd)
@@ -305,7 +304,7 @@ func init() {
 	siteSetCmd.Flags().BoolVarP(&siteSetPassword, "password", "w", false, "Change password. Can be used with password generator or it will prompt user")
 	siteSetCmd.Flags().StringSliceVarP(&siteFieldsDelete, "delete", "d", []string{}, "Deletes specified fields")
 	siteFlagsFields(siteSetCmd, false)
-	cmdutility.FlagsAddPasswordOptions(siteSetCmd)
+	FlagsAddPasswordOptions(siteSetCmd)
 
 	siteCmd.AddCommand(siteListCmd)
 	siteCmd.AddCommand(siteGetCmd)

@@ -1,4 +1,4 @@
-package cmdutility
+package commands
 
 import (
 	"errors"
