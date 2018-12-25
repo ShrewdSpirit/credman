@@ -10,11 +10,12 @@ import (
 )
 
 var DataDir string
-var Version string = "0.3.2"
+var Version string = "0.3.3"
 var Config Configuration
 
 type Configuration struct {
-	DefaultProfile string
+	DefaultProfile   string
+	RestoreQuestions []string
 }
 
 func init() {
@@ -33,6 +34,24 @@ func init() {
 	os.Mkdir(ProfilesDir, os.ModePerm)
 }
 
+func setDefaultRestoreQuestions() {
+	Config.RestoreQuestions = []string{
+		"What's the name of your first high school?",
+		"What are the last 5 digits of your ID?",
+		"What's your favorite animal?",
+		"What's your favorite movie?",
+		"How many siblings do you have?",
+		"In what city or town did your mother and father meet?",
+		"What's your favorite hobby?",
+		"What are the last 4 digits of your credit card?",
+		"In what city was your first job?",
+		"What's your first nickname?",
+		"What's your favorite restaurant?",
+		"What is the first name of the boy or girl that you first kissed?",
+		"What is your preferred musical genre?",
+	}
+}
+
 func LoadConfiguration() error {
 	configFilePath := path.Join(DataDir, "config.json")
 	_, err := os.Stat(configFilePath)
@@ -48,6 +67,10 @@ func LoadConfiguration() error {
 	err = json.Unmarshal(configData, &Config)
 	if err != nil {
 		return err
+	}
+
+	if Config.RestoreQuestions == nil || len(Config.RestoreQuestions) < 3 {
+		setDefaultRestoreQuestions()
 	}
 
 	return nil
