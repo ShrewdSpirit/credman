@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"os"
 
+	"github.com/ShrewdSpirit/credman/data"
 	"github.com/spf13/cobra"
 )
 
@@ -16,7 +17,7 @@ var rootCmd = &cobra.Command{
 
 Use 'credman help password' to see how to use password options.
 Use 'credman help fields to see what fields you can set for a site.`,
-	Version: "0.3.0",
+	Version: data.Version,
 }
 
 func init() {
