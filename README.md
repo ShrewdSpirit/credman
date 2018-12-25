@@ -2,7 +2,7 @@
 
 Credman
 =====
-A simple, powerful, cross-platform and military grade (marketing ~~bs~~!) secure credential management.
+A simple, powerful, cross-platform and military grade (marketing ~~bs~~!) secure and stateless credential management.
 
 Features:
 - Multiple local profiles
