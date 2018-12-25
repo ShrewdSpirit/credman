@@ -37,13 +37,13 @@ func TestStream(t *testing.T) {
 	pw := "mamad"
 
 	encout := &bytes.Buffer{}
-	if err := StreamEncrypt(strings.NewReader(data), encout, pw, nil); err != nil {
+	if err := StreamEncrypt(strings.NewReader(data), encout, pw); err != nil {
 		t.Errorf("Encryption error: %s", err)
 		return
 	}
 
 	decout := &bytes.Buffer{}
-	if err := StreamDecrypt(encout, decout, pw, nil); err != nil {
+	if err := StreamDecrypt(encout, decout, pw); err != nil {
 		t.Errorf("Decryption error: %s", err)
 		return
 	}
