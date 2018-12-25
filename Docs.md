@@ -58,23 +58,10 @@ Default profile is used in management of sites, files and remotes for easier acc
 # File encryption
 
 ### Encrypt a file
-`$ credman file/f encrypt/e <path> [name] [--output/-o=<output>] [--delete-original/-d] [profile]/[--no-profile/-n] [password options if -n]`
-
-There are two ways to store your encrypted file:
-1. To store it in a profile: You must specify profile (optional) and encrypted content will be stored inside profile's file. If name isn't specified, file's name with extention will be used.
-
-2. To store it localy: The `--no-profile` flag and `--output` option and password options must be set and the encrypted file won't be stored in profile.
+`$ credman file/f encrypt/e <path> [--output/-o=<output>] [--delete-original/-d]`
 
 ### Decrypt a file
-`$ credman file/f decrypt/d <name/path/id> [--output/-o=<output>] [profile]/[--no-profile/-n]`
-
-If the file isn't in profile, `--no-profile` flag must be set.
-
-### Listing all stored files in a profile
-`$ credman file/f list/l [regex pattern] [profile]`
-
-### Deleting a stored file in a profile
-`$ credman file/f remove/r <name> [profile]`
+`$ credman file/f decrypt/d <path> [--output/-o=<output>]`
 
 # Password restore
 This feature is disabled for all profiles by default.
