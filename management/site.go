@@ -2,6 +2,7 @@ package management
 
 import (
 	"regexp"
+	"sort"
 
 	"github.com/ShrewdSpirit/credman/data"
 	"github.com/atotto/clipboard"
@@ -132,8 +133,14 @@ func (s SiteData) Set() {
 }
 
 func (s SiteData) List() {
+	sortedSiteNames := make([]string, 0, len(s.Profile.Sites))
+	for name := range s.Profile.Sites {
+		sortedSiteNames = append(sortedSiteNames, name)
+	}
+	sort.Strings(sortedSiteNames)
+
 	if len(s.SiteName) == 0 {
-		for name, _ := range s.Profile.Sites {
+		for _, name := range sortedSiteNames {
 			s.Match(name, name, "", "")
 		}
 	} else {
@@ -144,7 +151,7 @@ func (s SiteData) List() {
 			return
 		}
 
-		for name, _ := range s.Profile.Sites {
+		for _, name := range sortedSiteNames {
 			if rx.MatchString(name) {
 				idx := rx.FindStringIndex(name)
 				part1 := name[:idx[0]]
