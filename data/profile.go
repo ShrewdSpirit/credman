@@ -23,8 +23,6 @@ type ProfileMeta struct {
 	RestoreOrder   []int  `json:"o"`
 }
 
-type Site map[string]string // fields
-
 type Profile struct {
 	Meta       ProfileMeta `json:"m"`
 	SitesBytes []byte      `json:"s"`

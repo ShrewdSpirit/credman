@@ -9,6 +9,7 @@
  * [Server management](#server-management)
  * [Password options](#password-options)
  * [Site fields](#site-fields)
+ * [Tags](#tags)
  * [Encryption details](#encryption-details)
 <!--te-->
 
@@ -45,9 +46,9 @@ Default profile is used in management of sites, files and remotes for easier acc
 Sites are basically where you put the credentials for each specific service/website/etc. It might have a confusing name but you can store almost any plaintext data in sites. The sites you add to a profile will be encrypted super securely! Along with site passwords and your username, email you can add any other field that will be encrypted with the site. At this stage, you can only add text fields but in a future update, you can add text files and binary files as fields of a site.
 
 ### Adding a new site
-`$ credman site/s add/a <name> [profile] [fields] [password options] [--no-password/-n]`
+`$ credman site/s add/a <name> [profile] [tags] [fields] [password options] [--no-password/-n]`
 
-By default, credman adds a password field to every site you add. If you don't want any password for your site, use `--no-password` flag otherwise you must either provide [password options](#password-options) or credman will prompt you a password for your site if you already have a password. For fields, refer to [site fields](#site-fields) to see how you can use it.
+By default, credman adds a password field to every site you add. If you don't want any password for your site, use `--no-password` flag otherwise you must either provide [password options](#password-options) or credman will prompt you a password for your site if you already have a password. For fields, refer to [site fields](#site-fields) to see how you can use it. To set tags, refer to [tags](#tags).
 
 ### Removing a site
 `$ credman site/s remove/rm <name> [profile]`
@@ -56,19 +57,21 @@ By default, credman adds a password field to every site you add. If you don't wa
 `$ credman site/s rename/rn <name> <new name> [profile]`
 
 ### Changing or deleting a site's fields or password
-`$ credman site/s set/s <name> [fields] [password options] [--password] [profile]`
+`$ credman site/s set/s <name> [fields] [tags] [password options] [--password] [profile]`
 
 Refer to [password options](#password-options)
 
 Refer to [fields](#site-fields)
 
+Refer to [tags](#tags)
+
 ### Listing all sites of a profile
-`$ credman site/s list/l [regex pattern] [profile]`
+`$ credman site/s list/l [regex pattern] [tags] [profile]`
 
 Lists all sites in a profile if pattern is not given. Otherwise you can use regex to filter sites.
 
 ### Getting all or specific fields of a site
-`$ credman site/s get/g <name> [fields] [profile] [--copy/-c]`
+`$ credman site/s get/g <name> [fields] [tags] [profile] [--copy/-c]`
 
 If no fields are specified, site's password will be printed on output. If `--copy` flag is set, it will put the password in clipboard.
 If more than one field is specified and `--copy` flag is used, Only first field will be copyed to clipboard (Usually password).
@@ -187,6 +190,13 @@ If you're getting a site's fields, you must provide a list of fields in this for
 For example to get email and username for a site you must do `-f=email,username` or `-f=email -f=username`.
 
 Same format as above applies for deleting fields. You must provide a list of fields to `--delete` or `-d` option.
+
+# Tags
+Tags are used for grouping sites. Tags are stored per site and they use a special field that you cannot normally get or set by --field(s) option. To set tags on a site, you give your tags list to `--tags` flag. Sites that share the same tag will be grouped together in site list or they can be searched by their tags.
+
+To delete a tag for a site, use `--delete-tags` or `-t` option for giving a list of tags to delete in `site set` subcommand.
+
+Tags for `site get` subcommand is a flag and if set, site tags will be printed on output.
 
 # Encryption details
 

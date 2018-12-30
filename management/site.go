@@ -15,12 +15,26 @@ type SiteData struct {
 	SitePassword    string
 	SiteFieldsMap   map[string]string
 	SiteFieldsList  []string
+	SiteTags        []string
+	SiteDeleteTags  []string
 	SiteCopyField   bool
+	SiteGetTags     bool
 	ProfilePassword string
 	Profile         *data.Profile
 	YesNoPrompt     GetYesNoPromptFunc
-	Match           LogMatch
-	LogFields       LogString2Func
+	Match           func([]SiteList)
+	LogFields       func(SiteFields)
+}
+
+type SiteList struct {
+	Name       string
+	MatchParts [3]string
+	Tags       []string
+}
+
+type SiteFields struct {
+	Fields map[string]string
+	Tags   []string
 }
 
 func (s SiteData) Add() {
@@ -42,6 +56,11 @@ func (s SiteData) Add() {
 			continue
 		}
 		site[field] = value
+	}
+
+	if s.SiteTags != nil && len(s.SiteTags) > 0 {
+		s.ManagementData.CallStep(SiteStepAddingTags)
+		site.SetTags(s.SiteTags)
 	}
 
 	s.ManagementData.CallStep(SiteStepAdding)
@@ -123,6 +142,16 @@ func (s SiteData) Set() {
 		delete(site, field)
 	}
 
+	if s.SiteTags != nil && len(s.SiteTags) > 0 {
+		s.ManagementData.CallStep(SiteStepAddingTags)
+		site.SetTags(s.SiteTags)
+	}
+
+	if s.SiteDeleteTags != nil && len(s.SiteDeleteTags) > 0 {
+		s.ManagementData.CallStep(SiteStepRemovingTags)
+		site.SetTags(s.SiteTags)
+	}
+
 	s.ManagementData.CallStep(ProfileStepSaving)
 	if err := s.Profile.Save(s.ProfilePassword); err != nil {
 		s.ManagementData.CallError(ProfileStepSaving, err)
@@ -133,7 +162,10 @@ func (s SiteData) Set() {
 }
 
 func (s SiteData) List() {
+	siteList := make([]SiteList, 0)
+	filterTags := s.SiteTags != nil && len(s.SiteTags) > 0
 	sortedSiteNames := make([]string, 0, len(s.Profile.Sites))
+
 	for name := range s.Profile.Sites {
 		sortedSiteNames = append(sortedSiteNames, name)
 	}
@@ -141,7 +173,20 @@ func (s SiteData) List() {
 
 	if len(s.SiteName) == 0 {
 		for _, name := range sortedSiteNames {
-			s.Match(name, name, "", "")
+			site := SiteList{
+				Name:       name,
+				MatchParts: [3]string{name},
+			}
+
+			if filterTags {
+				if found, tags := s.Profile.Sites[name].HasTags(s.SiteTags); found {
+					site.Tags = tags
+					siteList = append(siteList, site)
+				}
+			} else {
+				site.Tags = s.Profile.Sites[name].GetTags()
+				siteList = append(siteList, site)
+			}
 		}
 	} else {
 		s.ManagementData.CallStep(SiteStepRegexCompile)
@@ -154,14 +199,30 @@ func (s SiteData) List() {
 		for _, name := range sortedSiteNames {
 			if rx.MatchString(name) {
 				idx := rx.FindStringIndex(name)
+
 				part1 := name[:idx[0]]
 				part2 := name[idx[0]:idx[1]]
 				part3 := name[idx[1]:]
-				s.Match(name, part1, part2, part3)
+
+				site := SiteList{
+					Name:       name,
+					MatchParts: [3]string{part1, part2, part3},
+				}
+
+				if filterTags {
+					if found, tags := s.Profile.Sites[name].HasTags(s.SiteTags); found {
+						site.Tags = tags
+						siteList = append(siteList, site)
+					}
+				} else {
+					site.Tags = s.Profile.Sites[name].GetTags()
+					siteList = append(siteList, site)
+				}
 			}
 		}
 	}
 
+	s.Match(siteList)
 	s.ManagementData.CallStep(StepDone)
 }
 
@@ -184,7 +245,7 @@ func (s SiteData) Get() {
 		} else {
 			field := s.SiteFieldsList[0]
 			_, ok := site[field]
-			if !ok {
+			if !ok || data.IsSpecialField(field) {
 				s.ManagementData.CallStep(SiteStepInvalidField)
 				return
 			}
@@ -196,20 +257,37 @@ func (s SiteData) Get() {
 			s.ManagementData.CallStep(SiteStepSettingClipboard)
 		}
 	} else {
+		siteFields := SiteFields{
+			Fields: make(map[string]string),
+		}
+
+		if s.SiteGetTags {
+			siteFields.Tags = site.GetTags()
+		}
+
 		if len(s.SiteFieldsList) == 0 {
 			s.ManagementData.CallStep(SiteStepListingFields)
 			for field, value := range site {
-				s.LogFields(field, value)
+				if data.IsSpecialField(field) {
+					continue
+				}
+				siteFields.Fields[field] = value
 			}
 		} else {
 			for _, field := range s.SiteFieldsList {
+				if data.IsSpecialField(field) {
+					continue
+				}
+
 				value, ok := site[field]
 				if !ok {
 					continue
 				}
-				s.LogFields(field, value)
+				siteFields.Fields[field] = value
 			}
 		}
+
+		s.LogFields(siteFields)
 	}
 
 	s.ManagementData.CallStep(StepDone)

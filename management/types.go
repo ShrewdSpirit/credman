@@ -3,54 +3,56 @@ package management
 type ManagementStep int
 
 const (
-	StepDone   = 0
-	StepFailed = 1
+	StepDone ManagementStep = iota
+	StepFailed
 
-	ProfileStepCheckingExistence ManagementStep = 2
-	ProfileStepProfileExists     ManagementStep = 3
-	ProfileStepReadingPassword   ManagementStep = 4
-	ProfileStepCreating          ManagementStep = 5
-	ProfileStepSaving            ManagementStep = 6
-	ProfileStepDefaultChanged    ManagementStep = 8
-	ProfileStepDoesntExist       ManagementStep = 9
-	ProfileStepRemovePrompt      ManagementStep = 10
-	ProfileStepRemoving          ManagementStep = 11
-	ProfileStepRenaming          ManagementStep = 12
-	ProfileStepNewPassword       ManagementStep = 13
-	ProfileStepLoadingProfile    ManagementStep = 14
-	ProfileStepReadingProfiles   ManagementStep = 15
+	ProfileStepCheckingExistence
+	ProfileStepProfileExists
+	ProfileStepReadingPassword
+	ProfileStepCreating
+	ProfileStepSaving
+	ProfileStepDefaultChanged
+	ProfileStepDoesntExist
+	ProfileStepRemovePrompt
+	ProfileStepRemoving
+	ProfileStepRenaming
+	ProfileStepNewPassword
+	ProfileStepLoadingProfile
+	ProfileStepReadingProfiles
 
-	SiteStepAdding                   ManagementStep = 16
-	SiteStepSiteExists               ManagementStep = 17
-	SiteStepCreating                 ManagementStep = 18
-	SiteStepSettingFields            ManagementStep = 19
-	SiteStepCheckingExistence        ManagementStep = 20
-	SiteStepDoesntExist              ManagementStep = 21
-	SiteStepRemoving                 ManagementStep = 22
-	SiteStepRenaming                 ManagementStep = 23
-	SiteStepUpdatingFields           ManagementStep = 24
-	SiteStepDeletingFields           ManagementStep = 25
-	SiteStepRegexCompile             ManagementStep = 26
-	SiteStepSettingClipboardPassword ManagementStep = 27
-	SiteStepSettingClipboard         ManagementStep = 28
-	SiteStepInvalidField             ManagementStep = 29
-	SiteStepListingFields            ManagementStep = 30
+	SiteStepAdding
+	SiteStepSiteExists
+	SiteStepCreating
+	SiteStepSettingFields
+	SiteStepCheckingExistence
+	SiteStepDoesntExist
+	SiteStepRemoving
+	SiteStepRenaming
+	SiteStepUpdatingFields
+	SiteStepDeletingFields
+	SiteStepRegexCompile
+	SiteStepSettingClipboardPassword
+	SiteStepSettingClipboard
+	SiteStepInvalidField
+	SiteStepListingFields
+	SiteStepAddingTags
+	SiteStepRemovingTags
 
-	FileStepCheckingExistence ManagementStep = 31
-	FileStepInputDoesntExist  ManagementStep = 32
-	FileStepInvalidOutput     ManagementStep = 33
-	FileStepEncrypting        ManagementStep = 34
-	FileStepDecrypting        ManagementStep = 35
-	FileStepReadingPassword   ManagementStep = 36
-	FileStepOpeningInput      ManagementStep = 37
-	FileStepCreatingOutput    ManagementStep = 38
-	FileStepDeletingInput     ManagementStep = 39
-	FileStepInvalidInput      ManagementStep = 40
+	FileStepCheckingExistence
+	FileStepInputDoesntExist
+	FileStepInvalidOutput
+	FileStepEncrypting
+	FileStepDecrypting
+	FileStepReadingPassword
+	FileStepOpeningInput
+	FileStepCreatingOutput
+	FileStepDeletingInput
+	FileStepInvalidInput
 
-	RestoreStepReadingPassword   ManagementStep = 41
-	RestoreStepEncrypting        ManagementStep = 42
-	RestoreStepDecrypting        ManagementStep = 43
-	RestoreStepClipboardPassword ManagementStep = 44
+	RestoreStepReadingPassword
+	RestoreStepEncrypting
+	RestoreStepDecrypting
+	RestoreStepClipboardPassword
 )
 
 type ManagementData struct {
@@ -75,5 +77,3 @@ type GetYesNoPromptFunc func(ManagementStep) bool
 type LogErrorFunc func(ManagementStep, error)
 type LogStepFunc func(ManagementStep)
 type LogStringFunc func(string)
-type LogString2Func func(string, string)
-type LogMatch func(name, p1, p2, p3 string)

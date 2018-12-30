@@ -2,7 +2,11 @@ package commands
 
 import (
 	"fmt"
+	"os"
 	"strings"
+	"text/tabwriter"
+
+	"github.com/fatih/color"
 
 	"github.com/ShrewdSpirit/credman/cmd/cmdutility"
 	"github.com/ShrewdSpirit/credman/management"
@@ -42,6 +46,7 @@ var siteAddCmd = &cobra.Command{
 			SiteName:        siteName,
 			SitePassword:    password,
 			SiteFieldsMap:   siteFieldsMap,
+			SiteTags:        siteTags,
 			ProfilePassword: profilePassword,
 			Profile:         profile,
 			ManagementData: management.ManagementData{
@@ -173,6 +178,8 @@ var siteSetCmd = &cobra.Command{
 			SitePassword:    password,
 			SiteFieldsMap:   siteFieldsMap,
 			SiteFieldsList:  siteFieldsDelete,
+			SiteTags:        siteTags,
+			SiteDeleteTags:  siteDeleteTags,
 			ProfilePassword: profilePassword,
 			Profile:         profile,
 			ManagementData: management.ManagementData{
@@ -213,14 +220,26 @@ var siteListCmd = &cobra.Command{
 
 		management.SiteData{
 			SiteName:        pattern,
+			SiteTags:        siteTags,
 			ProfilePassword: profilePassword,
 			Profile:         profile,
-			Match: func(name, p1, p2, p3 string) {
-				if name == p1 {
-					fmt.Println(name)
-				} else {
-					cmdutility.LogColor(cmdutility.BoldRed, p1+"%s"+p3, p2)
+			Match: func(siteList []management.SiteList) {
+				tw := tabwriter.NewWriter(os.Stdout, 10, 0, 1, ' ', 0)
+				for _, site := range siteList {
+					tagsString := "#" + strings.Replace(strings.Join(site.Tags, " "), " ", " #", -1)
+					if site.Tags == nil || len(site.Tags) == 0 {
+						tagsString = ""
+					}
+					tags := color.CyanString(tagsString)
+
+					if site.Name == site.MatchParts[0] {
+						fmt.Fprintf(tw, "%s\t%s\n", site.Name, tags)
+					} else {
+						matchPart := color.HiRedString(site.MatchParts[1])
+						fmt.Fprintf(tw, "%s%s%s\t%s\n", site.MatchParts[0], matchPart, site.MatchParts[2], tags)
+					}
 				}
+				tw.Flush()
 			},
 			ManagementData: management.ManagementData{
 				OnError: func(step management.ManagementStep, err error) {
@@ -250,10 +269,21 @@ var siteGetCmd = &cobra.Command{
 			SiteName:        siteName,
 			SiteFieldsList:  siteFieldsList,
 			SiteCopyField:   siteGetCopy,
+			SiteGetTags:     siteGetTags,
 			ProfilePassword: profilePassword,
 			Profile:         profile,
-			LogFields: func(field, value string) {
-				cmdutility.LogColor(cmdutility.HiGreen, strings.Title(field)+": %s", value)
+			LogFields: func(fields management.SiteFields) {
+				tw := tabwriter.NewWriter(os.Stdout, 10, 0, 1, ' ', 0)
+				for field, value := range fields.Fields {
+					fmt.Fprintf(tw, " %s:\t%s\n", strings.Title(field), color.HiGreenString(value))
+				}
+
+				if fields.Tags != nil && len(fields.Tags) > 0 {
+					tagsString := "#" + strings.Replace(strings.Join(fields.Tags, " "), " ", " #", -1)
+					fmt.Fprintf(tw, " Tags:\t%s\n", color.CyanString(tagsString))
+				}
+
+				tw.Flush()
 			},
 			ManagementData: management.ManagementData{
 				OnStep: func(step management.ManagementStep) {
@@ -267,7 +297,7 @@ var siteGetCmd = &cobra.Command{
 					case management.SiteStepInvalidField:
 						cmdutility.LogColor(cmdutility.BoldRed, "No field %s was found.", siteFieldsList[0])
 					case management.SiteStepListingFields:
-						cmdutility.LogColor(cmdutility.Green, "Fields of site %s:", siteName)
+						cmdutility.LogColor(cmdutility.Green, "Site %s fields:", siteName)
 					}
 				},
 				OnError: func(step management.ManagementStep, err error) {
@@ -288,6 +318,10 @@ var siteFieldsDelete []string
 var siteGetCopy bool
 var siteSetPassword bool
 var siteAddNoPassword bool
+var siteTags []string
+var siteDeleteTags []string
+var siteGetTags bool
+var siteGroup bool
 
 func init() {
 	rootCmd.AddCommand(siteCmd)
@@ -296,20 +330,32 @@ func init() {
 	siteCmd.AddCommand(siteAddCmd)
 	siteAddCmd.Flags().BoolVarP(&siteAddNoPassword, "no-password", "n", false, "Doesn't prompt for site password. Useful for sites that you don't want any password for.")
 	siteFlagsFields(siteAddCmd, false)
+	siteFlagsTags(siteAddCmd)
 	cmdutility.FlagsAddPasswordOptions(siteAddCmd)
 
 	siteCmd.AddCommand(siteRemoveCmd)
 	siteCmd.AddCommand(siteRenameCmd)
+
 	siteCmd.AddCommand(siteSetCmd)
 	siteSetCmd.Flags().BoolVarP(&siteSetPassword, "password", "w", false, "Change password. Can be used with password generator or it will prompt user")
 	siteSetCmd.Flags().StringSliceVarP(&siteFieldsDelete, "delete", "d", []string{}, "Deletes specified fields")
+	siteSetCmd.Flags().StringSliceVar(&siteDeleteTags, "delete-tags", nil, "Delte tags")
+	siteFlagsTags(siteSetCmd)
 	siteFlagsFields(siteSetCmd, false)
 	cmdutility.FlagsAddPasswordOptions(siteSetCmd)
 
 	siteCmd.AddCommand(siteListCmd)
+	siteFlagsTags(siteListCmd)
+	siteListCmd.Flags().BoolVarP(&siteGroup, "group", "g", false, "Groups sites by tags")
+
 	siteCmd.AddCommand(siteGetCmd)
 	siteFlagsFields(siteGetCmd, true)
+	siteGetCmd.Flags().BoolVarP(&siteGetTags, "tags", "t", false, "Gets tags")
 	siteGetCmd.Flags().BoolVarP(&siteGetCopy, "copy", "c", false, "Copy first selected field into clipboard")
+}
+
+func siteFlagsTags(cmd *cobra.Command) {
+	cmd.Flags().StringSliceVarP(&siteTags, "tags", "t", nil, "Site tags")
 }
 
 func siteFlagsFields(cmd *cobra.Command, get bool) {
