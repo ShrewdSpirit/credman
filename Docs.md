@@ -66,9 +66,9 @@ Refer to [fields](#site-fields)
 Refer to [tags](#tags)
 
 ### Listing all sites of a profile
-`$ credman site/s list/l [regex pattern] [tags] [profile]`
+`$ credman site/s list/l [regex pattern] [tags] [profile] [--group/-g]`
 
-Lists all sites in a profile if pattern is not given. Otherwise you can use regex to filter sites.
+Lists all sites in a profile if pattern is not given. Otherwise you can use regex to filter sites. If `--group` flag is set, the site listing will be grouped by their tags.
 
 ### Getting all or specific fields of a site
 `$ credman site/s get/g <name> [fields] [tags] [profile] [--copy/-c]`
