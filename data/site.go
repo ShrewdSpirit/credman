@@ -4,7 +4,7 @@ import "encoding/json"
 
 type Site map[string]string // fields
 
-const SpecialFieldTags = "$$_TAGS"
+const SpecialFieldTags = "$$$TAGS"
 
 func IsSpecialField(name string) bool {
 	return name == SpecialFieldTags
