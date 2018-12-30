@@ -68,9 +68,12 @@ Check `credman help` for a detailed help or read [docs](https://github.com/Shrew
 - [x] File encryption
 - [x] Password restore
 - [ ] **WIP** Site tags (for grouping)
-- [ ] Saving text files in sites
+- [ ] Saving encrypted files info as sites
+- [ ] Migration from older profiles
 - [ ] Auto update and update check
 - [ ] Profile backup and auto backup
+- [ ] Export credman to external disks/networks
+- [ ] Export profile to gist/paste service
 - [ ] Server sync
 - [ ] Desktop GUI frontend
 - [ ] Android app
