@@ -60,7 +60,7 @@ func (s SiteData) Add() {
 
 	if s.SiteTags != nil && len(s.SiteTags) > 0 {
 		s.ManagementData.CallStep(SiteStepAddingTags)
-		site.SetTags(s.SiteTags)
+		site.AddTags(s.SiteTags)
 	}
 
 	s.ManagementData.CallStep(SiteStepAdding)
@@ -144,12 +144,12 @@ func (s SiteData) Set() {
 
 	if s.SiteTags != nil && len(s.SiteTags) > 0 {
 		s.ManagementData.CallStep(SiteStepAddingTags)
-		site.SetTags(s.SiteTags)
+		site.AddTags(s.SiteTags)
 	}
 
 	if s.SiteDeleteTags != nil && len(s.SiteDeleteTags) > 0 {
 		s.ManagementData.CallStep(SiteStepRemovingTags)
-		site.SetTags(s.SiteTags)
+		site.RemoveTags(s.SiteDeleteTags)
 	}
 
 	s.ManagementData.CallStep(ProfileStepSaving)

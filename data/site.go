@@ -1,6 +1,8 @@
 package data
 
-import "encoding/json"
+import (
+	"encoding/json"
+)
 
 type Site map[string]string // fields
 
@@ -22,7 +24,7 @@ func (s Site) GetTags() (tags []string) {
 	return
 }
 
-func (s Site) SetTags(tags []string) {
+func (s Site) AddTags(tags []string) {
 	for _, siteTag := range s.GetTags() {
 		found := false
 		for _, tag := range tags {
@@ -35,6 +37,10 @@ func (s Site) SetTags(tags []string) {
 		}
 	}
 
+	s.SetTags(tags)
+}
+
+func (s Site) SetTags(tags []string) {
 	tagsBytes, err := json.Marshal(tags)
 	if err != nil {
 		return
@@ -66,5 +72,19 @@ func (s Site) HasTags(tags []string) (found bool, foundTags []string) {
 	return
 }
 func (s Site) RemoveTags(tags []string) {
-	//
+	siteTags := s.GetTags()
+	newTags := make([]string, 0)
+	for _, siteTag := range siteTags {
+		found := false
+		for _, tag := range tags {
+			if tag == siteTag {
+				found = true
+			}
+		}
+		if !found {
+			newTags = append(newTags, siteTag)
+		}
+	}
+
+	s.SetTags(newTags)
 }
