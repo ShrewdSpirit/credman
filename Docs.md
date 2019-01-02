@@ -15,7 +15,6 @@
 <!--te-->
 
 # Profile management
-
 Each profile represents a storage for your credentials and sites. Your profile's data is encrypted with the passphrase key you provide. Credman is a credential manager that uses a password to keep your other passwords! All profiles are saved in .credman/profiles under your home or user documents directory. Never forget your profiles passwords! If you doubt your memory, you can enable [password restore](#password-restore) for your profile.
 
 ### Adding a profile
@@ -43,7 +42,6 @@ Default profile is used in management of sites, files and remotes for easier acc
 `$ credman profile/p list/l`
 
 # Site management
-
 Sites are basically where you put the credentials for each specific service/website/etc. It might have a confusing name but you can store almost any plaintext data in sites. The sites you add to a profile will be encrypted super securely! Along with site passwords and your username, email you can add any other field that will be encrypted with the site. At this stage, you can only add text fields but in a future update, you can add text files and binary files as fields of a site.
 
 ### Adding a new site
@@ -78,7 +76,6 @@ If no fields are specified, site's password will be printed on output. If `--cop
 If more than one field is specified and `--copy` flag is used, Only first field will be copyed to clipboard (Usually password).
 
 # File encryption
-
 File encryption is not related to profiles and encrypted files will not be stored inside profiles. You can encrypt any kind of file with any size since the encryption/decryption is done in streaming mode.
 
 ### Encrypt a file
@@ -172,10 +169,10 @@ After running server, the process will continue working in background and the ou
 
 # SSH
 `$ credman ssh <site> [--profile/-p] [ssh options]`
+
 Credman can connect to ssh servers by using given site's specific fields. To be able to use ssh, a site must have `user`, `password`, `address` fields. An optional field `ssh-options` can be set and the content of this option will be passed to ssh. You can also pass ssh options such as `-D 8080` directly to `credman ssh`.
 
 # Password options
-
 Some subcommands have password options that enables password generation. If you don't give password options to such subcommands, credman will prompt you to enter your own not-secure! password.
 
 Password options are a set of commandline options that specify how the password is generated. Bellow is the full list of these options:
@@ -185,7 +182,6 @@ Password options are a set of commandline options that specify how the password 
 - `--password-mix/-m`: Sets the mix of characters to use in password. Valid values are `letter`/`digit`/`punc`/`all`(default)
 
 # Site fields
-
 Site fields are commandline options to set field values, set a list of fields to get or delete.
 
 If you're setting or adding a new site, you must provide fields in this format: `--field=FieldKey=FieldValue` and so on.
