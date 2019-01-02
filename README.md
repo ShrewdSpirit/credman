@@ -4,7 +4,7 @@ A simple, powerful, cross-platform and military grade (marketing ~~bs~~!) secure
 
 <p align="center"><img src="/img/demo.gif?raw=true"/></p>
 
-Features:
+#### Features:
 - Multiple local profiles
 - Stateless (doesn't keep passwords in memory for later use)
 - AES-CFB-256 and AES-CTR-256 with HMAC-SHA-256 authenticity and integrity check for profiles and files
@@ -68,7 +68,8 @@ Check `credman help` for a detailed help or read [docs](https://github.com/Shrew
 - [x] Move the functionality out of commands so other packages can use credman as a library
 - [x] File encryption
 - [x] Password restore
-- [ ] **WIP** Site tags (for grouping)
+- [x] Site tags (for grouping)
+- [ ] **WIP** SSH
 - [ ] Saving encrypted files info as sites
 - [ ] Migration from older profiles
 - [ ] Auto update and update check
