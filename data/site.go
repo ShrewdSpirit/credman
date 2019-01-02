@@ -71,6 +71,7 @@ func (s Site) HasTags(tags []string) (found bool, foundTags []string) {
 	found = len(foundTags) > 0
 	return
 }
+
 func (s Site) RemoveTags(tags []string) {
 	siteTags := s.GetTags()
 	newTags := make([]string, 0)

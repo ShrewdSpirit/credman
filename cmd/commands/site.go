@@ -223,7 +223,7 @@ var siteListCmd = &cobra.Command{
 			SiteTags:        siteTags,
 			ProfilePassword: profilePassword,
 			Profile:         profile,
-			Match: func(siteList []management.SiteList) {
+			Match: func(siteList []management.SiteList) { // TODO: implement grouping
 				tw := tabwriter.NewWriter(os.Stdout, 10, 0, 1, ' ', 0)
 				for _, site := range siteList {
 					tagsString := "#" + strings.Replace(strings.Join(site.Tags, " "), " ", " #", -1)
