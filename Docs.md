@@ -7,6 +7,7 @@
  * [Utility](#utility)
  * [Remote management](#remote-management)
  * [Server management](#server-management)
+ * [SSH](#SSH)
  * [Password options](#password-options)
  * [Site fields](#site-fields)
  * [Tags](#tags)
@@ -168,6 +169,10 @@ After running server, the process will continue working in background and the ou
 
 ### Listing users
 `$ credman server/sv list/l [regex pattern]`
+
+# SSH
+`$ credman ssh <site> [--profile/-p] [ssh options]`
+Credman can connect to ssh servers by using given site's specific fields. To be able to use ssh, a site must have `user`, `password`, `address` fields. An optional field `ssh-options` can be set and the content of this option will be passed to ssh. You can also pass ssh options such as `-D 8080` directly to `credman ssh`.
 
 # Password options
 

@@ -17,6 +17,7 @@ Features:
 - Only one encrypted file per profile that you can carry around!
 - Encrypt files
 - Restoring profile's password in case you manage to forget it!
+- Directly connect to ssh server using fields in given site **posix systems only**
 
 ## Installation
 You can download binary releases from [here](https://github.com/ShrewdSpirit/credman/releases). Make sure you put the binary somewhere that's included in your PATH environment variable.
