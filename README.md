@@ -59,7 +59,8 @@ Site's fields are optional data that you can add to store extra stuff for each s
 All credman configs and profiles will be created at user's home directory under .credman directory.
 
 You can add/delete/rename/change password for each site and profile.
-Check `credman help` for a detailed help or read [docs](https://github.com/ShrewdSpirit/credman/blob/master/Docs.md) for a brief on commands.
+
+**Check `credman help` or read [docs](https://github.com/ShrewdSpirit/credman/blob/master/Docs.md) for details on commands and encryption details**
 
 ## TODO
 - [x] Implement local management
