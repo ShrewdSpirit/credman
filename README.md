@@ -70,13 +70,13 @@ You can add/delete/rename/change password for each site and profile.
 - [x] File encryption
 - [x] Password restore
 - [x] Site tags (for grouping)
-- [ ] **WIP** SSH
-- [ ] Saving encrypted files info as sites
+- [x] SSH
+- [ ] **WIP** Saving encrypted files info as sites
 - [ ] Migration from older profiles
 - [ ] Auto update and update check
 - [ ] Profile backup and auto backup
-- [ ] Export credman to external disks/networks
-- [ ] Export profile to gist/paste service
+- [ ] Export to external disks/networks
+- [ ] Export to gist/paste service
 - [ ] Server sync
 - [ ] Desktop GUI frontend
 - [ ] Android app
