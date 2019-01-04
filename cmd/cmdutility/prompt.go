@@ -6,7 +6,6 @@ import (
 	"fmt"
 	"os"
 	"strings"
-	"syscall"
 
 	"github.com/fatih/color"
 	"golang.org/x/crypto/ssh/terminal"
@@ -14,7 +13,7 @@ import (
 
 func PasswordPrompt(prompt string) (string, error) {
 	fmt.Printf("%s: ", prompt)
-	passwordBytes, err := terminal.ReadPassword(int(syscall.Stdin))
+	passwordBytes, err := terminal.ReadPassword(int(os.Stdout.Fd()))
 	fmt.Println()
 	if err != nil {
 		return "", err
