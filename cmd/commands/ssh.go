@@ -126,8 +126,9 @@ func sshshell(siteName, user, pw, addr string) {
 		return
 	}
 
-	if err := session.Wait(); err != nil {
-		cmdutility.LogError("SSH exited", err)
-		return
-	}
+	session.Wait()
+	// if err := session.Wait(); err != nil {
+	// 	cmdutility.LogError("SSH exited", err)
+	// 	return
+	// }
 }
