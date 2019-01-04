@@ -168,9 +168,9 @@ After running server, the process will continue working in background and the ou
 `$ credman server/sv list/l [regex pattern]`
 
 # SSH
-`$ credman ssh <site> [--profile/-p] [ssh options]`
+`$ credman ssh <site> [--profile/-p]`
 
-Credman can connect to ssh servers by using given site's specific fields. To be able to use ssh, a site must have `user`, `password`, `address` fields. An optional field `ssh-options` can be set and the content of this option will be passed to ssh. You can also pass ssh options such as `-D 8080` directly to `credman ssh`.
+Credman can connect to ssh servers by using given site's specific fields. To be able to use ssh, a site must have `user`, `password`, `address` fields.
 
 # Password options
 Some subcommands have password options that enables password generation. If you don't give password options to such subcommands, credman will prompt you to enter your own not-secure! password.
