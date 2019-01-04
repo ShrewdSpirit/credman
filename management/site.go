@@ -3,6 +3,7 @@ package management
 import (
 	"regexp"
 	"sort"
+	"strings"
 
 	"github.com/ShrewdSpirit/credman/data"
 	"github.com/atotto/clipboard"
@@ -55,7 +56,7 @@ func (s SiteData) Add() {
 		if field == "password" {
 			continue
 		}
-		site[field] = value
+		site[strings.ToLower(field)] = value
 	}
 
 	if s.SiteTags != nil && len(s.SiteTags) > 0 {
@@ -134,12 +135,12 @@ func (s SiteData) Set() {
 		if field == "password" {
 			continue
 		}
-		site[field] = value
+		site[strings.ToLower(field)] = value
 	}
 
 	s.ManagementData.CallStep(SiteStepDeletingFields)
 	for _, field := range s.SiteFieldsList {
-		delete(site, field)
+		delete(site, strings.ToLower(field))
 	}
 
 	if s.SiteTags != nil && len(s.SiteTags) > 0 {
