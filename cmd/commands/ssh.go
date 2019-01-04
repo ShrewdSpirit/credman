@@ -77,12 +77,14 @@ func sshshell(siteName, user, pw, addr string) {
 	conn, err := ssh.Dial("tcp", addr, sshConfig)
 	if err != nil {
 		cmdutility.LogError("Failed to connect", err)
+		return
 	}
 	defer conn.Close()
 
 	session, err := conn.NewSession()
 	if err != nil {
 		cmdutility.LogError("Failed to create a session", err)
+		return
 	}
 	defer session.Close()
 
@@ -102,25 +104,30 @@ func sshshell(siteName, user, pw, addr string) {
 		originalState, err := terminal.MakeRaw(fileDescriptor)
 		if err != nil {
 			cmdutility.LogError("Failed to put terminal in raw mode", err)
+			return
 		}
 		defer terminal.Restore(fileDescriptor, originalState)
 
 		termWidth, termHeight, err := terminal.GetSize(fileDescriptor)
 		if err != nil {
 			cmdutility.LogError("Failed to get terminal size", err)
+			return
 		}
 
 		err = session.RequestPty("xterm", termHeight, termWidth, modes)
 		if err != nil {
 			cmdutility.LogError("Failed to request remote pty", err)
+			return
 		}
 	}
 
 	if err := session.Shell(); err != nil {
 		cmdutility.LogError("Failed to request remote shell", err)
+		return
 	}
 
 	if err := session.Wait(); err != nil {
 		cmdutility.LogError("SSH exited", err)
+		return
 	}
 }
