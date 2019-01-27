@@ -70,6 +70,8 @@ You can add/delete/rename/change password for each site and profile.
 - [x] Site tags (for grouping)
 - [x] SSH
 - [ ] **WIP** Saving encrypted files info as sites
+- [ ] Hide password field when getting site
+- [ ] Clear clipboard after a minute after copying a site's password to clipboard
 - [ ] Migration from older profiles
 - [ ] Auto update and update check
 - [ ] Profile backup and auto backup
