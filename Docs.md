@@ -79,10 +79,34 @@ If more than one field is specified and `--copy` flag is used, Only first field 
 File encryption is not related to profiles and encrypted files will not be stored inside profiles. You can encrypt any kind of file with any size since the encryption/decryption is done in streaming mode.
 
 ### Encrypt a file
-`$ credman file/f encrypt/e <path> [--output/-o=<output>] [--delete-original/-d]`
+`$ credman file/f encrypt/e <path> [--output/-o=<output>] [--delete-original/-d] [--no-site/-n] [--store/-s]`
+
+If `--no-site` flag is set, the file information won't be stored as a site. Otherwise, a new site will be created containing file's information.
+
+The new site will be having name `file`-`[File Name]` and these fields:
+
+- File's name
+- File's unique UUIDv4
+- Directory where file was encrypted
+- Output encrypted file
+- Encryption date
+- Last decryption date
+- Last update date
+- File size
+- Encrypted file's MD5 hash
+- #file tag
+- Stored (either yes or no that tells if this file is stored inside the site)
+
+Everytime you encrypt the same file with same address, credman will either update the current site or add a new site if it doesn't exist.
+
+The `--store` flag tells credman to store the encrypted file's bytes inside the site and the `--output` option will be ignored. **BE AWARE** to not store large files in sites otherwise everytime you access your profile, the site list decryption might get slow and your profile file gets big! Also setting this flag will ignore `--no-site` flag and will create/update the file's site.
+
+You **can't** update a file's site by `credman site set`! File sites are readonly and can only be modified by credman itself. But you can delete a file's site or modify its tags.
 
 ### Decrypt a file
-`$ credman file/f decrypt/d <path> [--output/-o=<output>]`
+`$ credman file/f decrypt/d <path/name/uuid> [--output/-o=<output>]`
+
+If you specify a path to a file that exists on your filesystem, credman will try to decrypt that file. If the file doesn't exist or you specify a filename from sites, credman will use the information from the file's site to decrypt the file. You can also use the last 4 digits of the file's unique id in file's site to decrypt it.
 
 # Password restore
 This feature is disabled for all profiles by default.
