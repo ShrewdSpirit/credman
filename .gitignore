@@ -1,4 +1,4 @@
-credman
+cmd/credman/credman*
 .vscode
 gui
 gui/desktop/output
