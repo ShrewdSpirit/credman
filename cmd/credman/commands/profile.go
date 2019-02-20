@@ -3,7 +3,7 @@ package commands
 import (
 	"fmt"
 
-	"github.com/ShrewdSpirit/credman/cmd/cmdutility"
+	"github.com/ShrewdSpirit/credman/cmd/credman/cmdutility"
 
 	"github.com/ShrewdSpirit/credman/data"
 	"github.com/ShrewdSpirit/credman/management"

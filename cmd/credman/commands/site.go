@@ -8,7 +8,7 @@ import (
 
 	"github.com/fatih/color"
 
-	"github.com/ShrewdSpirit/credman/cmd/cmdutility"
+	"github.com/ShrewdSpirit/credman/cmd/credman/cmdutility"
 	"github.com/ShrewdSpirit/credman/management"
 	"github.com/spf13/cobra"
 )

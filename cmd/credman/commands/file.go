@@ -1,7 +1,7 @@
 package commands
 
 import (
-	"github.com/ShrewdSpirit/credman/cmd/cmdutility"
+	"github.com/ShrewdSpirit/credman/cmd/credman/cmdutility"
 	"github.com/ShrewdSpirit/credman/management"
 	"github.com/spf13/cobra"
 )
@@ -24,6 +24,8 @@ var fileEncryptCmd = &cobra.Command{
 			InputFilename:  inputFilename,
 			OutputFilename: &fileOutput,
 			DeleteInput:    fileDeleteOriginal,
+			SaveSite:       !fileNoNewSite,
+			StoreFile:      fileStore,
 			PasswordReader: func(step management.ManagementStep) string {
 				password, err := cmdutility.NewPasswordPrompt("New password")
 				if err != nil {
@@ -107,6 +109,8 @@ var fileDecryptCmd = &cobra.Command{
 
 var fileOutput string
 var fileDeleteOriginal bool
+var fileNoNewSite bool
+var fileStore bool
 
 func init() {
 	rootCmd.AddCommand(fileCmd)
@@ -114,6 +118,8 @@ func init() {
 	fileCmd.AddCommand(fileEncryptCmd)
 	fileFlagsAddOutput(fileEncryptCmd)
 	fileEncryptCmd.Flags().BoolVarP(&fileDeleteOriginal, "delete-original", "d", false, "Deletes original file after encryption")
+	fileEncryptCmd.Flags().BoolVarP(&fileNoNewSite, "no-site", "n", false, "Doesn't store the file information as a site")
+	fileEncryptCmd.Flags().BoolVarP(&fileStore, "store", "s", false, "Store file's encrypted content in file's site")
 
 	fileCmd.AddCommand(fileDecryptCmd)
 	fileFlagsAddOutput(fileDecryptCmd)
