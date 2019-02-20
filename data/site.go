@@ -8,6 +8,7 @@ import (
 type Site map[string]string // fields
 
 const SpecialFieldTags = "$$$TAGS"
+const SpecialFieldFileData = "$$$FBYTES" // dont store em here
 
 func IsSpecialField(name string) bool {
 	return name == SpecialFieldTags

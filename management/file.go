@@ -12,6 +12,8 @@ type FileData struct {
 	InputFilename  string
 	OutputFilename *string
 	DeleteInput    bool
+	SaveSite       bool
+	StoreFile      bool
 	PasswordReader GetStringFunc
 }
 
