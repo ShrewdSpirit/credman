@@ -25,8 +25,8 @@ You can download binary releases from [here](https://github.com/ShrewdSpirit/cre
 Or you can build from source by installing [Go](https://golang.org/) and then running:
 
 ```
-$ go get -u github.com/ShrewdSpirit/credman/cmd
-$ go build -o $GOPATH/bin/credman github.com/ShrewdSpirit/credman/cmd
+$ go get -u github.com/ShrewdSpirit/credman/cmd/credman
+$ go build github.com/ShrewdSpirit/credman/cmd/credman
 ```
 
 ## Usage
@@ -69,14 +69,15 @@ You can add/delete/rename/change password for each site and profile.
 - [x] Password restore
 - [x] Site tags (for grouping)
 - [x] SSH
+- [x] Use cryptographically secure random number generator
+- [x] Hide password field when getting site
 - [ ] **WIP** Saving encrypted files info as sites
-- [ ] Hide password field when getting site
+- [ ] **WIP** Migration from older profiles
 - [ ] Clear clipboard after a minute after copying a site's password to clipboard
-- [ ] Migration from older profiles
+- [ ] Manually give path to profile file
 - [ ] Auto update and update check
 - [ ] Profile backup and auto backup
-- [ ] Export to external disks/networks
-- [ ] Export to gist/paste service
+- [ ] Profile export
 - [ ] Server sync
-- [ ] Desktop GUI frontend
+- [ ] Desktop GUI
 - [ ] Android app
