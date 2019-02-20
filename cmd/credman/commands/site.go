@@ -275,6 +275,9 @@ var siteGetCmd = &cobra.Command{
 			LogFields: func(fields management.SiteFields) {
 				tw := tabwriter.NewWriter(os.Stdout, 10, 0, 1, ' ', 0)
 				for field, value := range fields.Fields {
+					if field == "password" {
+						value = "*****"
+					}
 					fmt.Fprintf(tw, " %s:\t%s\n", strings.Title(field), color.HiGreenString(value))
 				}
 
