@@ -71,8 +71,10 @@ You can add/delete/rename/change password for each site and profile.
 - [x] SSH
 - [ ] **WIP** Saving encrypted files info as sites
 - [ ] Hide password field when getting site
+- [ ] Use cryptographically secure random number generator
 - [ ] Clear clipboard after a minute after copying a site's password to clipboard
-- [ ] Migration from older profiles
+- [ ] **WIP** Migration from older profiles
+- [ ] Manually give path to profile file
 - [ ] Auto update and update check
 - [ ] Profile backup and auto backup
 - [ ] Export to external disks/networks
