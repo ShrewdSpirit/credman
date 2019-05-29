@@ -96,6 +96,22 @@ func LoadProfile(name, password string) (p *Profile, err error) {
 	return
 }
 
+func ListProfiles() ([]string, error) {
+	files, err := ioutil.ReadDir(ProfilesDir)
+	if err != nil {
+		return nil, err
+	}
+
+	profileNames := make([]string, 0)
+	for _, file := range files {
+		if !file.IsDir() {
+			profileNames = append(profileNames, file.Name())
+		}
+	}
+
+	return profileNames, nil
+}
+
 func (s *Profile) SaveRaw() (err error) {
 	s.Meta.LastModifyDate = time.Now().UnixNano()
 

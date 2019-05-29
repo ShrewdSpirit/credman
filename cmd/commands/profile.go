@@ -2,11 +2,12 @@ package commands
 
 import (
 	"fmt"
+	"os"
+	"path"
 
 	"github.com/ShrewdSpirit/credman/cmd/cmdutility"
 
 	"github.com/ShrewdSpirit/credman/data"
-	"github.com/ShrewdSpirit/credman/management"
 	"github.com/spf13/cobra"
 )
 
@@ -22,32 +23,7 @@ var profileAddCmd = &cobra.Command{
 	Aliases: []string{"a", "n", "new"},
 	Args:    cobra.ExactArgs(1),
 	Short:   "Adds a new profile",
-	Run: func(cmd *cobra.Command, args []string) {
-		profileName := args[0]
-		management.ProfileData{
-			ProfileName: profileName,
-			PasswordReader: func(step management.ManagementStep) string {
-				password, err := cmdutility.NewPasswordPrompt("New password")
-				if err != nil {
-					cmdutility.LogError("Failed reading password", err)
-					return ""
-				}
-				return password
-			},
-			ManagementData: management.ManagementData{
-				OnStep: func(step management.ManagementStep) {
-					switch step {
-					case management.ProfileStepProfileExists:
-						cmdutility.LogColor(cmdutility.BoldHiYellow, "Profile %s already exists.", profileName)
-					case management.StepDone:
-						cmdutility.LogColor(cmdutility.Green, "Profile %s has been created.", profileName)
-					case management.ProfileStepDefaultChanged:
-						cmdutility.LogColor(cmdutility.Green, "Default profile changed to %s", profileName)
-					}
-				},
-			},
-		}.Add()
-	},
+	Run:     profileAdd,
 }
 
 var profileRemoveCmd = &cobra.Command{
@@ -55,36 +31,7 @@ var profileRemoveCmd = &cobra.Command{
 	Aliases: []string{"rm", "rem", "del", "delete"},
 	Args:    cobra.ExactArgs(1),
 	Short:   "Removes a profile",
-	Run: func(cmd *cobra.Command, args []string) {
-		profileName := args[0]
-		management.ProfileData{
-			ProfileName: profileName,
-			YesNoPrompt: func(step management.ManagementStep) bool {
-				remove, err := cmdutility.YesNoPrompt(fmt.Sprintf("Are you sure to delete profile %s?", profileName))
-				if err != nil {
-					cmdutility.LogError("Reading input failed", err)
-					return false
-				}
-				return remove
-			},
-			ManagementData: management.ManagementData{
-				OnStep: func(step management.ManagementStep) {
-					switch step {
-					case management.ProfileStepDoesntExist:
-						cmdutility.LogColor(cmdutility.BoldHiYellow, "Profile %s doesnt exist.", profileName)
-					case management.StepDone:
-						cmdutility.LogColor(cmdutility.Green, "Profile %s has been removed.", profileName)
-					}
-				},
-				OnError: func(step management.ManagementStep, err error) {
-					switch step {
-					case management.ProfileStepRemoving:
-						cmdutility.LogError("Failed to remove profile", err)
-					}
-				},
-			},
-		}.Remove()
-	},
+	Run:     profileRemove,
 }
 
 var profileRenameCmd = &cobra.Command{
@@ -92,34 +39,7 @@ var profileRenameCmd = &cobra.Command{
 	Aliases: []string{"rn", "ren"},
 	Args:    cobra.ExactArgs(2),
 	Short:   "Renames a profile",
-	Run: func(cmd *cobra.Command, args []string) {
-		profileName := args[0]
-		newName := args[1]
-		management.ProfileData{
-			ProfileName:    profileName,
-			NewProfileName: newName,
-			ManagementData: management.ManagementData{
-				OnStep: func(step management.ManagementStep) {
-					switch step {
-					case management.ProfileStepDoesntExist:
-						cmdutility.LogColor(cmdutility.BoldHiYellow, "Profile %s doesnt exist.", profileName)
-					case management.ProfileStepProfileExists:
-						cmdutility.LogColor(cmdutility.BoldHiYellow, "Profile %s already exists.", newName)
-					case management.StepDone:
-						cmdutility.LogColor(cmdutility.Green, "Profile %s has been renamed to %s", profileName, newName)
-					case management.ProfileStepDefaultChanged:
-						cmdutility.LogColor(cmdutility.Green, "Default profile changed to %s", newName)
-					}
-				},
-				OnError: func(step management.ManagementStep, err error) {
-					switch step {
-					case management.ProfileStepRenaming:
-						cmdutility.LogError("Profile rename failed", err)
-					}
-				},
-			},
-		}.Rename()
-	},
+	Run:     profileRename,
 }
 
 var profilePasswdCmd = &cobra.Command{
@@ -127,49 +47,7 @@ var profilePasswdCmd = &cobra.Command{
 	Aliases: []string{"pw"},
 	Args:    cobra.ExactArgs(1),
 	Short:   "Changes profile password",
-	Run: func(cmd *cobra.Command, args []string) {
-		profileName := args[0]
-		management.ProfileData{
-			ProfileName: profileName,
-			PasswordReader: func(step management.ManagementStep) string {
-				if step == management.ProfileStepReadingPassword {
-					password, err := cmdutility.PasswordPrompt("Profile password")
-					if err != nil {
-						cmdutility.LogError("Failed reading password", err)
-						return ""
-					}
-
-					return password
-				}
-
-				newPassword, err := cmdutility.NewPasswordPrompt("New password")
-				if err != nil {
-					cmdutility.LogError("Failed reading password", err)
-					return ""
-				}
-
-				return newPassword
-			},
-			ManagementData: management.ManagementData{
-				OnStep: func(step management.ManagementStep) {
-					switch step {
-					case management.ProfileStepDoesntExist:
-						cmdutility.LogColor(cmdutility.BoldHiYellow, "Profile %s doesnt exist.", profileName)
-					case management.StepDone:
-						cmdutility.LogColor(cmdutility.Green, "Profile's %s password updated.", profileName)
-					}
-				},
-				OnError: func(step management.ManagementStep, err error) {
-					switch step {
-					case management.ProfileStepLoadingProfile:
-						cmdutility.LogError("Failed loading profile", err)
-					case management.ProfileStepSaving:
-						cmdutility.LogError("Failed saving profile", err)
-					}
-				},
-			},
-		}.Passwd()
-	},
+	Run:     profilePasswd,
 }
 
 var profileDefaultCmd = &cobra.Command{
@@ -177,48 +55,14 @@ var profileDefaultCmd = &cobra.Command{
 	Aliases: []string{"d"},
 	Args:    cobra.MaximumNArgs(1),
 	Short:   "Sets or gets the default profile",
-	Run: func(cmd *cobra.Command, args []string) {
-		profileName := ""
-		if len(args) != 0 {
-			profileName = args[0]
-		}
-		if len(profileName) == 0 {
-			if len(data.Config.DefaultProfile) == 0 {
-				cmdutility.LogColor(cmdutility.Green, "No default profile is set")
-			} else {
-				cmdutility.LogColor(cmdutility.Green, "Default profile is %s", data.Config.DefaultProfile)
-			}
-		} else {
-			if !data.ProfileExists(profileName) {
-				cmdutility.LogColor(cmdutility.BoldHiYellow, "Profile %s doesnt exist.", profileName)
-				return
-			}
-
-			data.Config.DefaultProfile = profileName
-			cmdutility.LogColor(cmdutility.Green, "Default profile changed to %s", profileName)
-		}
-	},
+	Run:     profileDefault,
 }
 
 var profileListCmd = &cobra.Command{
 	Use:     "list",
 	Aliases: []string{"l", "ls"},
 	Short:   "Lists all profiles",
-	Run: func(cmd *cobra.Command, args []string) {
-		management.ProfileData{
-			LogList: func(profileName string) {
-				fmt.Println(profileName)
-			},
-			ManagementData: management.ManagementData{
-				OnError: func(step management.ManagementStep, err error) {
-					switch step {
-					case management.ProfileStepReadingProfiles:
-						cmdutility.LogError("Failed getting profiles list", err)
-					}
-				},
-			},
-		}.List()
-	},
+	Run:     profileList,
 }
 
 func init() {
@@ -229,4 +73,160 @@ func init() {
 	profileCmd.AddCommand(profilePasswdCmd)
 	profileCmd.AddCommand(profileDefaultCmd)
 	profileCmd.AddCommand(profileListCmd)
+}
+
+func profileAdd(cmd *cobra.Command, args []string) {
+	profileName := args[0]
+
+	if data.ProfileExists(profileName) {
+		cmdutility.LogColor(cmdutility.BoldHiYellow, "Profile %s already exists.", profileName)
+		return
+	}
+
+	password, err := cmdutility.NewPasswordPrompt("New password")
+	if err != nil {
+		cmdutility.LogError("Failed reading password", err)
+		return
+	}
+
+	profile := data.NewProfile(profileName)
+	if err := profile.Save(password); err != nil {
+		cmdutility.LogError("Failed saving profile", err)
+		return
+	}
+
+	cmdutility.LogColor(cmdutility.Green, "Profile %s has been created.", profileName)
+
+	if data.Config.DefaultProfile == "" {
+		data.Config.DefaultProfile = profileName
+		cmdutility.LogColor(cmdutility.Green, "Default profile changed to %s", profileName)
+	}
+}
+
+func profileDefault(cmd *cobra.Command, args []string) {
+	profileName := ""
+	if len(args) != 0 {
+		profileName = args[0]
+	}
+
+	if len(profileName) == 0 {
+		if len(data.Config.DefaultProfile) == 0 {
+			cmdutility.LogColor(cmdutility.Green, "No default profile is set")
+		} else {
+			cmdutility.LogColor(cmdutility.Green, "Default profile is %s", data.Config.DefaultProfile)
+		}
+	} else {
+		if !data.ProfileExists(profileName) {
+			cmdutility.LogColor(cmdutility.BoldHiYellow, "Profile %s doesnt exist.", profileName)
+			return
+		}
+
+		data.Config.DefaultProfile = profileName
+		cmdutility.LogColor(cmdutility.Green, "Default profile changed to %s", profileName)
+	}
+}
+
+func profileList(cmd *cobra.Command, args []string) {
+	profiles, err := data.ListProfiles()
+	if err != nil {
+		cmdutility.LogError("Failed getting profiles list", err)
+		return
+	}
+
+	for _, profile := range profiles {
+		fmt.Println(profile)
+	}
+}
+
+func profilePasswd(cmd *cobra.Command, args []string) {
+	profileName := args[0]
+
+	if !data.ProfileExists(profileName) {
+		cmdutility.LogColor(cmdutility.BoldHiYellow, "Profile %s doesnt exist.", profileName)
+		return
+	}
+
+	password, err := cmdutility.PasswordPrompt("Profile password")
+	if err != nil {
+		cmdutility.LogError("Failed reading password", err)
+		return
+	}
+
+	profile, err := data.LoadProfile(profileName, password)
+	if err != nil {
+		cmdutility.LogError("Failed loading profile", err)
+		return
+	}
+
+	newPassword, err := cmdutility.NewPasswordPrompt("New password")
+	if err != nil {
+		cmdutility.LogError("Failed reading password", err)
+		return
+	}
+
+	if err := profile.Save(newPassword); err != nil {
+		cmdutility.LogError("Failed saving profile", err)
+		return
+	}
+
+	cmdutility.LogColor(cmdutility.Green, "Profile's %s password updated.", profileName)
+}
+
+func profileRemove(cmd *cobra.Command, args []string) {
+	profileName := args[0]
+
+	if !data.ProfileExists(profileName) {
+		cmdutility.LogColor(cmdutility.BoldHiYellow, "Profile %s doesnt exist.", profileName)
+		return
+	}
+
+	remove, err := cmdutility.YesNoPrompt(fmt.Sprintf("Are you sure to delete profile %s?", profileName))
+	if err != nil {
+		cmdutility.LogError("Reading input failed", err)
+		return
+	}
+
+	if !remove {
+		return
+	}
+
+	if err := os.RemoveAll(path.Join(data.ProfilesDir, profileName)); err != nil {
+		cmdutility.LogError("Failed to remove profile", err)
+		return
+	}
+
+	cmdutility.LogColor(cmdutility.Green, "Profile %s has been removed.", profileName)
+
+	if data.Config.DefaultProfile == profileName {
+		data.Config.DefaultProfile = ""
+	}
+}
+
+func profileRename(cmd *cobra.Command, args []string) {
+	profileName := args[0]
+	newName := args[1]
+
+	if !data.ProfileExists(profileName) {
+		cmdutility.LogColor(cmdutility.BoldHiYellow, "Profile %s doesnt exist.", profileName)
+		return
+	}
+
+	if data.ProfileExists(newName) {
+		cmdutility.LogColor(cmdutility.BoldHiYellow, "Profile %s already exists.", newName)
+		return
+	}
+
+	ppath := path.Join(data.ProfilesDir, profileName)
+	npath := path.Join(data.ProfilesDir, newName)
+	if err := os.Rename(ppath, npath); err != nil {
+		cmdutility.LogError("Profile rename failed", err)
+		return
+	}
+
+	cmdutility.LogColor(cmdutility.Green, "Profile %s has been renamed to %s", profileName, newName)
+
+	if data.Config.DefaultProfile == profileName {
+		data.Config.DefaultProfile = newName
+		cmdutility.LogColor(cmdutility.Green, "Default profile changed to %s", newName)
+	}
 }
