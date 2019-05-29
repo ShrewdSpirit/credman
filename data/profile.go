@@ -6,6 +6,8 @@ import (
 	"io/ioutil"
 	"os"
 	"path"
+	"regexp"
+	"sort"
 	"time"
 
 	"github.com/ShrewdSpirit/credman/cipher"
@@ -29,6 +31,12 @@ type Profile struct {
 
 	Name  string          `json:"-"`
 	Sites map[string]Site `json:"-"`
+}
+
+type SiteListResult struct {
+	Name       string
+	MatchParts [3]string
+	Tags       []string
 }
 
 func ProfileExists(name string) bool {
@@ -125,13 +133,6 @@ func (s *Profile) SiteExist(name string) bool {
 	return ok
 }
 
-func (s *Profile) GetSite(name string) Site {
-	if s.SiteExist(name) {
-		return s.Sites[name]
-	}
-	return nil
-}
-
 func (s *Profile) RenameSite(name, newName string) {
 	site := s.GetSite(name)
 	s.AddSite(newName, site)
@@ -140,4 +141,74 @@ func (s *Profile) RenameSite(name, newName string) {
 
 func (s *Profile) DeleteSite(name string) {
 	delete(s.Sites, name)
+}
+
+func (s *Profile) GetSite(name string) Site {
+	if s.SiteExist(name) {
+		return s.Sites[name]
+	}
+	return nil
+}
+
+func (s *Profile) GetSites(pattern string, tags []string) (result []SiteListResult, err error) {
+	result = make([]SiteListResult, 0)
+	filterTags := tags != nil && len(tags) > 0
+	sortedSiteNames := make([]string, 0, len(s.Sites))
+
+	for siteName := range s.Sites {
+		sortedSiteNames = append(sortedSiteNames, siteName)
+	}
+	sort.Strings(sortedSiteNames)
+
+	if len(pattern) == 0 {
+		for _, siteName := range sortedSiteNames {
+			siteListItem := SiteListResult{
+				Name:       siteName,
+				MatchParts: [3]string{siteName},
+			}
+
+			if filterTags {
+				if found, siteTags := s.Sites[siteName].HasTags(tags); found {
+					siteListItem.Tags = siteTags
+					result = append(result, siteListItem)
+				}
+			} else {
+				siteListItem.Tags = s.Sites[siteName].GetTags()
+				result = append(result, siteListItem)
+			}
+		}
+	} else {
+		var rx *regexp.Regexp
+		rx, err = regexp.Compile(pattern)
+		if err != nil {
+			return
+		}
+
+		for _, siteName := range sortedSiteNames {
+			if rx.MatchString(siteName) {
+				locs := rx.FindStringIndex(siteName)
+
+				part1 := siteName[:locs[0]]
+				part2 := siteName[locs[0]:locs[1]]
+				part3 := siteName[locs[1]:]
+
+				siteListItem := SiteListResult{
+					Name:       siteName,
+					MatchParts: [3]string{part1, part2, part3},
+				}
+
+				if filterTags {
+					if found, tags := s.Sites[siteName].HasTags(tags); found {
+						siteListItem.Tags = tags
+						result = append(result, siteListItem)
+					}
+				} else {
+					siteListItem.Tags = s.Sites[siteName].GetTags()
+					result = append(result, siteListItem)
+				}
+			}
+		}
+	}
+
+	return
 }

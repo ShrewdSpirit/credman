@@ -14,6 +14,55 @@ func IsSpecialField(name string) bool {
 	return strings.HasPrefix(name, "$$$")
 }
 
+func NewSite(name, password string, fields map[string]string, tags []string) (site Site) {
+	site = make(Site)
+
+	if len(password) != 0 {
+		site["password"] = password
+	}
+
+	for field, value := range fields {
+		if field == "password" {
+			continue
+		}
+
+		site[strings.ToLower(field)] = value
+	}
+
+	if tags != nil && len(tags) > 0 {
+		site.AddTags(tags)
+	}
+
+	return
+}
+
+func (s Site) GetFields(filterFields []string) (fields map[string]string) {
+	fields = make(map[string]string)
+
+	if filterFields == nil || len(filterFields) == 0 {
+		for field, value := range s {
+			if IsSpecialField(field) {
+				continue
+			}
+			fields[field] = value
+		}
+	} else {
+		for _, field := range filterFields {
+			if IsSpecialField(field) {
+				continue
+			}
+
+			value, ok := s[field]
+			if !ok {
+				continue
+			}
+			fields[field] = value
+		}
+	}
+
+	return
+}
+
 func (s Site) GetTags() (tags []string) {
 	tagsList, ok := s[SpecialFieldTags]
 	tags = make([]string, 0)

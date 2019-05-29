@@ -4,12 +4,14 @@ import (
 	"fmt"
 	"os"
 	"strings"
+
+	"github.com/atotto/clipboard"
+
 	"text/tabwriter"
 
-	"github.com/fatih/color"
-
 	"github.com/ShrewdSpirit/credman/cmd/cmdutility"
-	"github.com/ShrewdSpirit/credman/management"
+	"github.com/ShrewdSpirit/credman/data"
+	"github.com/fatih/color"
 	"github.com/spf13/cobra"
 )
 
@@ -25,48 +27,7 @@ var siteAddCmd = &cobra.Command{
 	Aliases: []string{"a", "n", "new"},
 	Args:    cobra.ExactArgs(1),
 	Short:   "Adds a new site",
-	Run: func(cmd *cobra.Command, args []string) {
-		siteName := args[0]
-		profile, profilePassword := cmdutility.GetProfileCommandLine(true)
-		if profile == nil {
-			return
-		}
-
-		var password string
-		if !siteAddNoPassword {
-			var err error
-			password, err = cmdutility.ParsePasswordGenerationFlags("Site new password")
-			if err != nil {
-				cmdutility.LogError("Site creation failed", err)
-				return
-			}
-		}
-
-		management.SiteData{
-			SiteName:        siteName,
-			SitePassword:    password,
-			SiteFieldsMap:   siteFieldsMap,
-			SiteTags:        siteTags,
-			ProfilePassword: profilePassword,
-			Profile:         profile,
-			ManagementData: management.ManagementData{
-				OnStep: func(step management.ManagementStep) {
-					switch step {
-					case management.SiteStepSiteExists:
-						cmdutility.LogColor(cmdutility.BoldHiYellow, "Site %s exists.", siteName)
-					case management.StepDone:
-						cmdutility.LogColor(cmdutility.Green, "Site %s has been added to profile %s", siteName, profile.Name)
-					}
-				},
-				OnError: func(step management.ManagementStep, err error) {
-					switch step {
-					case management.ProfileStepSaving:
-						cmdutility.LogError("Failed saving profile", err)
-					}
-				},
-			},
-		}.Add()
-	},
+	Run:     siteAdd,
 }
 
 var siteRemoveCmd = &cobra.Command{
@@ -74,43 +35,7 @@ var siteRemoveCmd = &cobra.Command{
 	Aliases: []string{"rm", "rem", "del", "delete"},
 	Args:    cobra.ExactArgs(1),
 	Short:   "Removes a site",
-	Run: func(cmd *cobra.Command, args []string) {
-		siteName := args[0]
-		profile, profilePassword := cmdutility.GetProfileCommandLine(true)
-		if profile == nil {
-			return
-		}
-
-		management.SiteData{
-			SiteName:        siteName,
-			ProfilePassword: profilePassword,
-			Profile:         profile,
-			YesNoPrompt: func(step management.ManagementStep) bool {
-				remove, err := cmdutility.YesNoPrompt(fmt.Sprintf("Are you sure to delete site %s?", siteName))
-				if err != nil {
-					cmdutility.LogError("Reading input failed", err)
-					return false
-				}
-				return remove
-			},
-			ManagementData: management.ManagementData{
-				OnStep: func(step management.ManagementStep) {
-					switch step {
-					case management.SiteStepDoesntExist:
-						cmdutility.LogColor(cmdutility.BoldHiYellow, "Site %s doesn't exist.", siteName)
-					case management.StepDone:
-						cmdutility.LogColor(cmdutility.Green, "Site %s has been removed.", siteName)
-					}
-				},
-				OnError: func(step management.ManagementStep, err error) {
-					switch step {
-					case management.ProfileStepSaving:
-						cmdutility.LogError("Failed saving profile", err)
-					}
-				},
-			},
-		}.Remove()
-	},
+	Run:     siteRemove,
 }
 
 var siteRenameCmd = &cobra.Command{
@@ -118,37 +43,7 @@ var siteRenameCmd = &cobra.Command{
 	Aliases: []string{"rn", "ren"},
 	Args:    cobra.ExactArgs(2),
 	Short:   "Renames a site",
-	Run: func(cmd *cobra.Command, args []string) {
-		siteName := args[0]
-		newName := args[1]
-		profile, profilePassword := cmdutility.GetProfileCommandLine(true)
-		if profile == nil {
-			return
-		}
-
-		management.SiteData{
-			SiteName:        siteName,
-			NewSiteName:     newName,
-			ProfilePassword: profilePassword,
-			Profile:         profile,
-			ManagementData: management.ManagementData{
-				OnStep: func(step management.ManagementStep) {
-					switch step {
-					case management.SiteStepDoesntExist:
-						cmdutility.LogColor(cmdutility.BoldHiYellow, "Site %s doesn't exist.", siteName)
-					case management.StepDone:
-						cmdutility.LogColor(cmdutility.Green, "Site %s has been renamed to %s.", siteName, newName)
-					}
-				},
-				OnError: func(step management.ManagementStep, err error) {
-					switch step {
-					case management.ProfileStepSaving:
-						cmdutility.LogError("Failed saving profile", err)
-					}
-				},
-			},
-		}.Rename()
-	},
+	Run:     siteRename,
 }
 
 var siteSetCmd = &cobra.Command{
@@ -156,50 +51,7 @@ var siteSetCmd = &cobra.Command{
 	Aliases: []string{"s", "u", "edit", "e"},
 	Args:    cobra.ExactArgs(1),
 	Short:   "Updates site fields",
-	Run: func(cmd *cobra.Command, args []string) {
-		siteName := args[0]
-		profile, profilePassword := cmdutility.GetProfileCommandLine(true)
-		if profile == nil {
-			return
-		}
-
-		var password string
-		if siteSetPassword {
-			var err error
-			password, err = cmdutility.ParsePasswordGenerationFlags("Site new password")
-			if err != nil {
-				cmdutility.LogError("Site creation failed", err)
-				return
-			}
-		}
-
-		management.SiteData{
-			SiteName:        siteName,
-			SitePassword:    password,
-			SiteFieldsMap:   siteFieldsMap,
-			SiteFieldsList:  siteFieldsDelete,
-			SiteTags:        siteTags,
-			SiteDeleteTags:  siteDeleteTags,
-			ProfilePassword: profilePassword,
-			Profile:         profile,
-			ManagementData: management.ManagementData{
-				OnStep: func(step management.ManagementStep) {
-					switch step {
-					case management.SiteStepDoesntExist:
-						cmdutility.LogColor(cmdutility.BoldHiYellow, "Site %s doesn't exist.", siteName)
-					case management.StepDone:
-						cmdutility.LogColor(cmdutility.Green, "Site %s has been updated.", siteName)
-					}
-				},
-				OnError: func(step management.ManagementStep, err error) {
-					switch step {
-					case management.ProfileStepSaving:
-						cmdutility.LogError("Failed saving profile", err)
-					}
-				},
-			},
-		}.Set()
-	},
+	Run:     siteSet,
 }
 
 var siteListCmd = &cobra.Command{
@@ -207,50 +59,7 @@ var siteListCmd = &cobra.Command{
 	Aliases: []string{"l", "ls"},
 	Args:    cobra.MaximumNArgs(1),
 	Short:   "Lists sites using optional pattern",
-	Run: func(cmd *cobra.Command, args []string) {
-		pattern := ""
-		if len(args) == 1 {
-			pattern = args[0]
-		}
-
-		profile, profilePassword := cmdutility.GetProfileCommandLine(true)
-		if profile == nil {
-			return
-		}
-
-		management.SiteData{
-			SiteName:        pattern,
-			SiteTags:        siteTags,
-			ProfilePassword: profilePassword,
-			Profile:         profile,
-			Match: func(siteList []management.SiteList) { // TODO: implement grouping
-				tw := tabwriter.NewWriter(os.Stdout, 10, 0, 1, ' ', 0)
-				for _, site := range siteList {
-					tagsString := "#" + strings.Replace(strings.Join(site.Tags, " "), " ", " #", -1)
-					if site.Tags == nil || len(site.Tags) == 0 {
-						tagsString = ""
-					}
-					tags := color.CyanString(tagsString)
-
-					if site.Name == site.MatchParts[0] {
-						fmt.Fprintf(tw, "%s\t%s\n", site.Name, tags)
-					} else {
-						matchPart := color.HiRedString(site.MatchParts[1])
-						fmt.Fprintf(tw, "%s%s%s\t%s\n", site.MatchParts[0], matchPart, site.MatchParts[2], tags)
-					}
-				}
-				tw.Flush()
-			},
-			ManagementData: management.ManagementData{
-				OnError: func(step management.ManagementStep, err error) {
-					switch step {
-					case management.SiteStepRegexCompile:
-						cmdutility.LogError("Failed to compile pattern", err)
-					}
-				},
-			},
-		}.List()
-	},
+	Run:     siteList,
 }
 
 var siteGetCmd = &cobra.Command{
@@ -258,58 +67,7 @@ var siteGetCmd = &cobra.Command{
 	Aliases: []string{"g", "f"},
 	Args:    cobra.ExactArgs(1),
 	Short:   "Gets value(s) of specified field(s) or copy the first field into clipboard",
-	Run: func(cmd *cobra.Command, args []string) {
-		siteName := args[0]
-		profile, profilePassword := cmdutility.GetProfileCommandLine(true)
-		if profile == nil {
-			return
-		}
-
-		management.SiteData{
-			SiteName:        siteName,
-			SiteFieldsList:  siteFieldsList,
-			SiteCopyField:   siteGetCopy,
-			SiteGetTags:     siteGetTags,
-			ProfilePassword: profilePassword,
-			Profile:         profile,
-			LogFields: func(fields management.SiteFields) {
-				tw := tabwriter.NewWriter(os.Stdout, 10, 0, 1, ' ', 0)
-				for field, value := range fields.Fields {
-					fmt.Fprintf(tw, " %s:\t%s\n", strings.Title(field), color.HiGreenString(value))
-				}
-
-				if fields.Tags != nil && len(fields.Tags) > 0 {
-					tagsString := "#" + strings.Replace(strings.Join(fields.Tags, " "), " ", " #", -1)
-					fmt.Fprintf(tw, " Tags:\t%s\n", color.CyanString(tagsString))
-				}
-
-				tw.Flush()
-			},
-			ManagementData: management.ManagementData{
-				OnStep: func(step management.ManagementStep) {
-					switch step {
-					case management.SiteStepDoesntExist:
-						cmdutility.LogColor(cmdutility.BoldHiYellow, "Site %s doesn't exist.", siteName)
-					case management.SiteStepSettingClipboardPassword:
-						fmt.Println("Password copied to clipboard.")
-					case management.SiteStepSettingClipboard:
-						cmdutility.LogColor(cmdutility.Green, "%s copied to clipboard.", siteFieldsList[0])
-					case management.SiteStepInvalidField:
-						cmdutility.LogColor(cmdutility.BoldRed, "No field %s was found.", siteFieldsList[0])
-					case management.SiteStepListingFields:
-						cmdutility.LogColor(cmdutility.Green, "Site %s fields:", siteName)
-					}
-				},
-				OnError: func(step management.ManagementStep, err error) {
-					switch step {
-					case management.SiteStepSettingClipboard,
-						management.SiteStepSettingClipboardPassword:
-						cmdutility.LogError("Failed write to clipboard", err)
-					}
-				},
-			},
-		}.Get()
-	},
+	Run:     siteGet,
 }
 
 var siteFieldsMap map[string]string
@@ -364,4 +122,240 @@ func siteFlagsFields(cmd *cobra.Command, get bool) {
 	} else {
 		cmd.Flags().StringToStringVarP(&siteFieldsMap, "field", "f", make(map[string]string), "-f=Key=Value ...")
 	}
+}
+
+func siteAdd(cmd *cobra.Command, args []string) {
+	siteName := args[0]
+	profile, profilePassword := cmdutility.GetProfileCommandLine(true)
+	if profile == nil {
+		return
+	}
+
+	var password string
+	if !siteAddNoPassword {
+		var err error
+		password, err = cmdutility.ParsePasswordGenerationFlags("Site new password")
+		if err != nil {
+			cmdutility.LogError("Site creation failed", err)
+			return
+		}
+	}
+
+	if profile.SiteExist(siteName) {
+		cmdutility.LogColor(cmdutility.BoldHiYellow, "Site %s exists.", siteName)
+		return
+	}
+
+	site := data.NewSite(siteName, password, siteFieldsMap, siteTags)
+
+	profile.AddSite(siteName, site)
+
+	if err := profile.Save(profilePassword); err != nil {
+		cmdutility.LogError("Failed saving profile", err)
+		return
+	}
+
+	cmdutility.LogColor(cmdutility.Green, "Site %s has been added to profile %s", siteName, profile.Name)
+}
+
+func siteGet(cmd *cobra.Command, args []string) {
+	siteName := args[0]
+	profile, _ := cmdutility.GetProfileCommandLine(true)
+	if profile == nil {
+		return
+	}
+
+	if !profile.SiteExist(siteName) {
+		cmdutility.LogColor(cmdutility.BoldHiYellow, "Site %s doesn't exist.", siteName)
+		return
+	}
+
+	site := profile.GetSite(siteName)
+	fields := site.GetFields(siteFieldsList)
+	tags := site.GetTags()
+
+	if siteGetCopy {
+		if len(siteFieldsList) == 0 {
+			if err := clipboard.WriteAll(site["password"]); err != nil {
+				cmdutility.LogError("Failed write to clipboard", err)
+				return
+			}
+
+			fmt.Println("Password copied to clipboard.")
+			return
+		} else {
+			field := siteFieldsList[0]
+			_, ok := site[field]
+			if !ok || data.IsSpecialField(field) {
+				cmdutility.LogColor(cmdutility.BoldRed, "No field %s was found.", siteFieldsList[0])
+				return
+			}
+
+			if err := clipboard.WriteAll(site[field]); err != nil {
+				cmdutility.LogError("Failed write to clipboard", err)
+				return
+			}
+
+			cmdutility.LogColor(cmdutility.Green, "%s copied to clipboard.", siteFieldsList[0])
+			return
+		}
+	}
+
+	cmdutility.LogColor(cmdutility.Green, "Site %s fields:", siteName)
+	tw := tabwriter.NewWriter(os.Stdout, 10, 0, 1, ' ', 0)
+	for field, value := range fields {
+		fmt.Fprintf(tw, " %s:\t%s\n", strings.Title(field), color.HiGreenString(value))
+	}
+
+	if tags != nil && len(tags) > 0 {
+		tagsString := "#" + strings.Replace(strings.Join(tags, " "), " ", " #", -1)
+		fmt.Fprintf(tw, " Tags:\t%s\n", color.CyanString(tagsString))
+	}
+
+	tw.Flush()
+}
+
+func siteList(cmd *cobra.Command, args []string) {
+	pattern := ""
+	if len(args) == 1 {
+		pattern = args[0]
+	}
+
+	profile, _ := cmdutility.GetProfileCommandLine(true)
+	if profile == nil {
+		return
+	}
+
+	sites, err := profile.GetSites(pattern, siteTags)
+	if err != nil {
+		cmdutility.LogError("Failed to list sites", err)
+		return
+	}
+
+	// TODO: implement grouping
+	tw := tabwriter.NewWriter(os.Stdout, 10, 0, 1, ' ', 0)
+	for _, site := range sites {
+		tagsString := "#" + strings.Replace(strings.Join(site.Tags, " "), " ", " #", -1)
+		if site.Tags == nil || len(site.Tags) == 0 {
+			tagsString = ""
+		}
+		tags := color.CyanString(tagsString)
+
+		if site.Name == site.MatchParts[0] {
+			fmt.Fprintf(tw, "%s\t%s\n", site.Name, tags)
+		} else {
+			matchPart := color.HiRedString(site.MatchParts[1])
+			fmt.Fprintf(tw, "%s%s%s\t%s\n", site.MatchParts[0], matchPart, site.MatchParts[2], tags)
+		}
+	}
+	tw.Flush()
+}
+
+func siteRemove(cmd *cobra.Command, args []string) {
+	siteName := args[0]
+	profile, profilePassword := cmdutility.GetProfileCommandLine(true)
+	if profile == nil {
+		return
+	}
+
+	if !profile.SiteExist(siteName) {
+		cmdutility.LogColor(cmdutility.BoldHiYellow, "Site %s doesn't exist.", siteName)
+		return
+	}
+
+	remove, err := cmdutility.YesNoPrompt(fmt.Sprintf("Are you sure to delete site %s?", siteName))
+	if err != nil {
+		cmdutility.LogError("Reading input failed", err)
+		return
+	}
+
+	if !remove {
+		return
+	}
+
+	profile.DeleteSite(siteName)
+	if err := profile.Save(profilePassword); err != nil {
+		cmdutility.LogError("Failed saving profile", err)
+		return
+	}
+
+	cmdutility.LogColor(cmdutility.Green, "Site %s has been removed.", siteName)
+}
+
+func siteRename(cmd *cobra.Command, args []string) {
+	siteName := args[0]
+	newName := args[1]
+	profile, profilePassword := cmdutility.GetProfileCommandLine(true)
+	if profile == nil {
+		return
+	}
+
+	if !profile.SiteExist(siteName) {
+		cmdutility.LogColor(cmdutility.BoldHiYellow, "Site %s doesn't exist.", siteName)
+		return
+	}
+
+	profile.RenameSite(siteName, newName)
+	if err := profile.Save(profilePassword); err != nil {
+		cmdutility.LogError("Failed saving profile", err)
+		return
+	}
+
+	cmdutility.LogColor(cmdutility.Green, "Site %s has been renamed to %s.", siteName, newName)
+}
+
+func siteSet(cmd *cobra.Command, args []string) {
+	siteName := args[0]
+	profile, profilePassword := cmdutility.GetProfileCommandLine(true)
+	if profile == nil {
+		return
+	}
+
+	var password string
+	if siteSetPassword {
+		var err error
+		password, err = cmdutility.ParsePasswordGenerationFlags("Site new password")
+		if err != nil {
+			cmdutility.LogError("Site creation failed", err)
+			return
+		}
+	}
+
+	if !profile.SiteExist(siteName) {
+		cmdutility.LogColor(cmdutility.BoldHiYellow, "Site %s doesn't exist.", siteName)
+		return
+	}
+
+	site := profile.GetSite(siteName)
+
+	if len(password) != 0 {
+		site["password"] = password
+	}
+
+	for field, value := range siteFieldsMap {
+		if data.IsSpecialField(field) {
+			continue
+		}
+
+		site[strings.ToLower(field)] = value
+	}
+
+	for _, field := range siteFieldsDelete {
+		delete(site, strings.ToLower(field))
+	}
+
+	if siteTags != nil && len(siteTags) > 0 {
+		site.AddTags(siteTags)
+	}
+
+	if siteDeleteTags != nil && len(siteDeleteTags) > 0 {
+		site.RemoveTags(siteDeleteTags)
+	}
+
+	if err := profile.Save(profilePassword); err != nil {
+		cmdutility.LogError("Failed saving profile", err)
+		return
+	}
+
+	cmdutility.LogColor(cmdutility.Green, "Site %s has been updated.", siteName)
 }
