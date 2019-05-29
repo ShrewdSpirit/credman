@@ -1,3 +1,4 @@
 .vscode
 release
 test
+cmd/credman/credman
