@@ -1,6 +1,8 @@
 package cipher
 
 import (
+	"crypto/rand"
+
 	"golang.org/x/crypto/scrypt"
 )
 
@@ -31,4 +33,16 @@ func HashScryptSalt(input string, diff ScryptDifficulty, hashlen int, salt []byt
 
 	hash, _ = scrypt.Key([]byte(input), salt, 65536, r, 1, hashlen)
 	return
+}
+
+func GenerateSalt(len int) []byte {
+	salt := make([]byte, len)
+	rand.Read(salt)
+	return salt
+}
+
+func GenerateIV() []byte {
+	iv := make([]byte, 16)
+	rand.Read(iv)
+	return iv
 }
