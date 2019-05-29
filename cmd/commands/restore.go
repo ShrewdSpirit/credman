@@ -2,14 +2,18 @@ package commands
 
 import (
 	"bufio"
+	"crypto/sha256"
 	"fmt"
 	"os"
 	"strconv"
 	"strings"
 
+	"github.com/atotto/clipboard"
+
+	"github.com/ShrewdSpirit/credman/cipher"
+
 	"github.com/ShrewdSpirit/credman/cmd/cmdutility"
 	"github.com/ShrewdSpirit/credman/data"
-	"github.com/ShrewdSpirit/credman/management"
 	"github.com/spf13/cobra"
 )
 
@@ -17,147 +21,21 @@ var restoreCmd = &cobra.Command{
 	Use:     "restore",
 	Aliases: []string{"rs"},
 	Short:   "Profile password restore",
-	Run: func(cmd *cobra.Command, args []string) {
-		profile, _ := cmdutility.GetProfileCommandLine(false)
-		if profile == nil {
-			return
-		}
-
-		if profile.Meta.Restore == nil || profile.Meta.RestoreOrder == nil {
-			cmdutility.LogColor(cmdutility.Green, "No restore has been set for profile %s", profile.Name)
-			return
-		}
-
-		answers, orders := restoreReadSecurityQuestions(profile.Meta.RestoreOrder)
-		if answers == nil || len(answers) < 3 {
-			return
-		}
-
-		management.RestoreData{
-			Answers: answers,
-			Orders:  orders,
-			Profile: profile,
-			ManagementData: management.ManagementData{
-				OnStep: func(step management.ManagementStep) {
-					switch step {
-					case management.RestoreStepDecrypting:
-						fmt.Println("Restoring")
-					case management.StepDone:
-						cmdutility.LogColor(cmdutility.Green, "Profile password of %s has been copied to clipboard", profile.Name)
-					}
-				},
-				OnError: func(step management.ManagementStep, err error) {
-					switch step {
-					case management.RestoreStepDecrypting:
-						cmdutility.LogError("Failed to decrypt restore", err)
-					case management.RestoreStepClipboardPassword:
-						cmdutility.LogError("Failed to copy to clipboard", err)
-					}
-				},
-			},
-		}.Restore()
-	},
+	Run:     restore,
 }
 
 var restoreAddCmd = &cobra.Command{
 	Use:     "add",
 	Aliases: []string{"a"},
 	Short:   "Add password restore to profile",
-	Run: func(cmd *cobra.Command, args []string) {
-		profile, _ := cmdutility.GetProfileCommandLine(false)
-		if profile == nil {
-			return
-		}
-
-		if profile.Meta.Restore != nil {
-			replace, err := cmdutility.YesNoPrompt(fmt.Sprintf("Restore has already setup for profile %s. Are you sure to overwrite restore?", profile.Name))
-			if err != nil {
-				cmdutility.LogError("Reading input failed", err)
-				return
-			}
-
-			if !replace {
-				return
-			}
-		}
-
-		answers, orders := restoreReadSecurityQuestions(nil)
-		if len(answers) < 3 {
-			return
-		}
-
-		management.RestoreData{
-			Answers: answers,
-			Orders:  orders,
-			Profile: profile,
-			PasswordReader: func(step management.ManagementStep) string {
-				password, err := cmdutility.PasswordPrompt("Profile password")
-				if err != nil {
-					cmdutility.LogError("Failed reading password", err)
-					return ""
-				}
-				return password
-			},
-			ManagementData: management.ManagementData{
-				OnStep: func(step management.ManagementStep) {
-					switch step {
-					case management.RestoreStepEncrypting:
-						fmt.Println("Adding restore")
-					case management.StepDone:
-						cmdutility.LogColor(cmdutility.Green, "Restore has been set for profile %s", profile.Name)
-					}
-				},
-				OnError: func(step management.ManagementStep, err error) {
-					switch step {
-					case management.RestoreStepEncrypting:
-						cmdutility.LogError("Failed to encrypt restore", err)
-					case management.ProfileStepSaving:
-						cmdutility.LogError("Failed to save profile", err)
-					}
-				},
-			},
-		}.Add()
-	},
+	Run:     restoreAdd,
 }
 
 var restoreRemoveCmd = &cobra.Command{
 	Use:     "remove",
 	Aliases: []string{"r"},
 	Short:   "Remove restore from profile",
-	Run: func(cmd *cobra.Command, args []string) {
-		profile, _ := cmdutility.GetProfileCommandLine(false)
-		if profile == nil {
-			return
-		}
-
-		remove, err := cmdutility.YesNoPrompt(fmt.Sprintf("Are you sure to delete restore for profile %s?", profile.Name))
-		if err != nil {
-			cmdutility.LogError("Reading input failed", err)
-			return
-		}
-
-		if !remove {
-			return
-		}
-
-		management.RestoreData{
-			Profile: profile,
-			ManagementData: management.ManagementData{
-				OnStep: func(step management.ManagementStep) {
-					switch step {
-					case management.StepDone:
-						cmdutility.LogColor(cmdutility.Green, "Restore has been removed from profile %s", profile.Name)
-					}
-				},
-				OnError: func(step management.ManagementStep, err error) {
-					switch step {
-					case management.ProfileStepSaving:
-						cmdutility.LogError("failed to save profile", err)
-					}
-				},
-			},
-		}.Remove()
-	},
+	Run:     restoreRemove,
 }
 
 func init() {
@@ -214,4 +92,123 @@ func restoreReadSecurityQuestions(questionOrders []int) ([]string, []int) {
 	}
 
 	return answers, orders
+}
+
+func makeRestoreKey(answers []string, orders []int) []byte {
+	sha := sha256.New()
+	for _, answer := range answers {
+		sha.Write([]byte(answer))
+	}
+	for _, order := range orders {
+		sha.Write([]byte{byte(order % 255)})
+	}
+	sha.Write([]byte{byte(len(answers) % 255)})
+
+	return sha.Sum(nil)
+}
+
+func restore(cmd *cobra.Command, args []string) {
+	profile, _ := cmdutility.GetProfileCommandLine(false)
+	if profile == nil {
+		return
+	}
+
+	if profile.Meta.Restore == nil || profile.Meta.RestoreOrder == nil {
+		cmdutility.LogColor(cmdutility.Green, "No restore has been set for profile %s", profile.Name)
+		return
+	}
+
+	answers, orders := restoreReadSecurityQuestions(profile.Meta.RestoreOrder)
+	if answers == nil || len(answers) < 3 {
+		cmdutility.LogColor(cmdutility.BoldHiYellow, "Invalid security questions")
+		return
+	}
+
+	key := makeRestoreKey(answers, orders)
+
+	profilePassword, err := cipher.BlockDecrypt(profile.Meta.Restore, string(key))
+	if err != nil {
+		cmdutility.LogError("Failed to decrypt restore", err)
+		return
+	}
+
+	if err := clipboard.WriteAll(string(profilePassword)); err != nil {
+		cmdutility.LogError("Failed to copy to clipboard", err)
+		return
+	}
+
+	cmdutility.LogColor(cmdutility.Green, "Profile password of %s has been copied to clipboard", profile.Name)
+}
+
+func restoreAdd(cmd *cobra.Command, args []string) {
+	profile, _ := cmdutility.GetProfileCommandLine(false)
+	if profile == nil {
+		return
+	}
+
+	if profile.Meta.Restore != nil {
+		replace, err := cmdutility.YesNoPrompt(fmt.Sprintf("Restore has already setup for profile %s. Are you sure to overwrite restore?", profile.Name))
+		if err != nil {
+			cmdutility.LogError("Reading input failed", err)
+			return
+		}
+
+		if !replace {
+			return
+		}
+	}
+
+	answers, orders := restoreReadSecurityQuestions(nil)
+	if len(answers) < 3 {
+		return
+	}
+
+	key := makeRestoreKey(answers, orders)
+
+	profilePassword, err := cmdutility.PasswordPrompt("Profile password")
+	if err != nil {
+		cmdutility.LogError("Failed reading password", err)
+		return
+	}
+
+	if profile.Meta.Restore, err = cipher.BlockEncrypt([]byte(profilePassword), string(key)); err != nil {
+		cmdutility.LogError("Failed to encrypt restore key", err)
+		return
+	}
+
+	profile.Meta.RestoreOrder = orders
+
+	if err = profile.SaveRaw(); err != nil {
+		cmdutility.LogError("Failed to save profile", err)
+		return
+	}
+
+	cmdutility.LogColor(cmdutility.Green, "Restore has been set for profile %s", profile.Name)
+}
+
+func restoreRemove(cmd *cobra.Command, args []string) {
+	profile, _ := cmdutility.GetProfileCommandLine(false)
+	if profile == nil {
+		return
+	}
+
+	remove, err := cmdutility.YesNoPrompt(fmt.Sprintf("Are you sure to delete restore for profile %s?", profile.Name))
+	if err != nil {
+		cmdutility.LogError("Reading input failed", err)
+		return
+	}
+
+	if !remove {
+		return
+	}
+
+	profile.Meta.Restore = nil
+	profile.Meta.RestoreOrder = nil
+
+	if err := profile.SaveRaw(); err != nil {
+		cmdutility.LogError("Failed to save profile", err)
+		return
+	}
+
+	cmdutility.LogColor(cmdutility.Green, "Restore has been removed from profile %s", profile.Name)
 }
