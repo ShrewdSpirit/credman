@@ -288,6 +288,7 @@ func siteRemove(cmd *cobra.Command, args []string) {
 func siteRename(cmd *cobra.Command, args []string) {
 	siteName := args[0]
 	newName := args[1]
+
 	profile, profilePassword := cmdutility.GetProfileCommandLine(true)
 	if profile == nil {
 		return
@@ -295,6 +296,11 @@ func siteRename(cmd *cobra.Command, args []string) {
 
 	if !profile.SiteExist(siteName) {
 		cmdutility.LogColor(cmdutility.BoldHiYellow, "Site %s doesn't exist.", siteName)
+		return
+	}
+
+	if profile.GetSite(siteName).IsFile() {
+		cmdutility.LogColor(cmdutility.BoldHiYellow, "Site %s is a file.", siteName)
 		return
 	}
 
@@ -330,6 +336,11 @@ func siteSet(cmd *cobra.Command, args []string) {
 	}
 
 	site := profile.GetSite(siteName)
+
+	if site.IsFile() {
+		cmdutility.LogColor(cmdutility.BoldHiYellow, "Site %s is a file.", siteName)
+		return
+	}
 
 	if len(password) != 0 {
 		site["password"] = password
