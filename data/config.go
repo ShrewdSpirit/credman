@@ -10,7 +10,7 @@ import (
 )
 
 var DataDir string
-var Version string = "0.8.0"
+var Version string = "0.9.0"
 var Config Configuration
 
 type Configuration struct {
