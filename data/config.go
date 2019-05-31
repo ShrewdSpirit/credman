@@ -10,12 +10,13 @@ import (
 )
 
 var DataDir string
-var Version string = "0.7.0"
+var Version string = "0.8.0"
 var Config Configuration
 
 type Configuration struct {
-	DefaultProfile   string
-	RestoreQuestions []string
+	DefaultProfile     string
+	AutoUpdateInterval int // 0 means no autoupdate
+	RestoreQuestions   []string
 }
 
 func init() {
@@ -34,7 +35,9 @@ func init() {
 	os.Mkdir(ProfilesDir, os.ModePerm)
 }
 
-func setDefaultRestoreQuestions() {
+func setDefaultConfig() {
+	Config.AutoUpdateInterval = 0
+
 	Config.RestoreQuestions = []string{
 		"What's the name of your first high school?",
 		"What are the last 5 digits of your ID?",
@@ -70,7 +73,7 @@ func LoadConfiguration() error {
 	}
 
 	if Config.RestoreQuestions == nil || len(Config.RestoreQuestions) < 3 {
-		setDefaultRestoreQuestions()
+		setDefaultConfig()
 	}
 
 	return nil

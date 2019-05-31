@@ -3,8 +3,11 @@ package commands
 import (
 	"fmt"
 	"os"
+	"time"
 
 	"github.com/ShrewdSpirit/credman/data"
+	"github.com/ShrewdSpirit/credman/utility"
+	"github.com/atotto/clipboard"
 	"github.com/spf13/cobra"
 )
 
@@ -20,7 +23,14 @@ Use 'credman help fields to see what fields you can set for a site.`,
 	Version: data.Version,
 }
 
+var rootClsClip = &cobra.Command{
+	Use:    "clsclip",
+	Hidden: true,
+	Run:    clsClip,
+}
+
 func init() {
+	rootCmd.AddCommand(rootClsClip)
 }
 
 func Execute() {
@@ -28,4 +38,10 @@ func Execute() {
 		fmt.Println(err)
 		os.Exit(1)
 	}
+}
+
+func clsClip(cmd *cobra.Command, args []string) {
+	time.Sleep(10 * time.Second)
+	clipboard.WriteAll("")
+	utility.RemovePidFile()
 }

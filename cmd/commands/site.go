@@ -5,6 +5,8 @@ import (
 	"os"
 	"strings"
 
+	"github.com/ShrewdSpirit/credman/utility"
+
 	"github.com/atotto/clipboard"
 
 	"text/tabwriter"
@@ -184,6 +186,7 @@ func siteGet(cmd *cobra.Command, args []string) {
 			}
 
 			fmt.Println("Password copied to clipboard.")
+			utility.RunClearClipboardDelayed()
 			return
 		} else {
 			field := siteFieldsList[0]
@@ -199,6 +202,10 @@ func siteGet(cmd *cobra.Command, args []string) {
 			}
 
 			cmdutility.LogColor(cmdutility.Green, "%s copied to clipboard.", siteFieldsList[0])
+
+			if field == "password" {
+				utility.RunClearClipboardDelayed()
+			}
 			return
 		}
 	}
