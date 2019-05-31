@@ -21,15 +21,17 @@ build() {
     fi
 
     echo "Compiling for $os-$arch"
-    GOOS=$os GOARCH=$arch go build -ldflags='-s -w' -o "$filename$ext"
+    GOOS=$os GOARCH=$arch go build -ldflags='-s -w' -o "credman$ext"
+
+    chmod +x "credman$ext"
 
     # cd "$CWD/release"
     echo "  Creating archive"
-    tar -czf "$filename.tar.gz" "$filename$ext"
+    tar -czf "$filename.tar.gz" "credman$ext"
     mv "$filename.tar.gz" "$CWD/release"
 
     echo "  Removing binary"
-    rm -fr "$filename$ext" "$filename.tar.gz"
+    rm -fr "credman$ext" "$filename.tar.gz"
 }
 
 build linux amd64
