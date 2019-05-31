@@ -1,14 +1,26 @@
 package data
 
 import (
+	"encoding/base64"
 	"encoding/json"
 	"strings"
+	"time"
 )
 
 type Site map[string]string // fields
 
 const SpecialFieldTags = "$$$TAGS"
-const SpecialFieldFileData = "$$$FBYTES" // dont store em here
+const SpecialFieldFileData = "$$$FBYTES"
+
+const (
+	FileFieldName     string = "name"
+	FileFieldAbsolute string = "path"
+	FileFieldUUID     string = "uuid"
+	FileFieldAddDate  string = "added"
+	FileFieldLastDec  string = "decrypted"
+	FileFieldUpdate   string = "updated"
+	FileFieldSize     string = "size"
+)
 
 func IsSpecialField(name string) bool {
 	return strings.HasPrefix(name, "$$$")
@@ -100,17 +112,20 @@ func (s Site) SetTags(tags []string) {
 	if err != nil {
 		return
 	}
+
 	s[SpecialFieldTags] = string(tagsBytes)
 }
 
 func (s Site) HasTag(tag string) bool {
 	siteTags := s.GetTags()
 	tag = strings.ToLower(tag)
+
 	for _, siteTag := range siteTags {
 		if tag == siteTag {
 			return true
 		}
 	}
+
 	return false
 }
 
@@ -129,7 +144,9 @@ func (s Site) HasTags(tags []string) (found bool, foundTags []string) {
 			}
 		}
 	}
+
 	found = len(foundTags) > 0
+
 	return
 }
 
@@ -154,4 +171,24 @@ func (s Site) RemoveTags(tags []string) {
 	}
 
 	s.SetTags(newTags)
+}
+
+func NewSiteFile(fileName, absPath, uuid string) (site Site) {
+	site = make(Site)
+	site[FileFieldName] = fileName
+	site[FileFieldAbsolute] = absPath
+	site[FileFieldUUID] = uuid
+	site[FileFieldAddDate] = time.Now().Local().Format("2006 Jan 2 15:04:05 MST")
+	site.AddTags([]string{"file"})
+	return
+}
+
+func (s Site) IsFile() bool {
+	_, ok := s[SpecialFieldFileData]
+	return ok
+}
+
+func (s Site) GetFileBytes() []byte {
+	b, _ := base64.URLEncoding.DecodeString(s[SpecialFieldFileData])
+	return b
 }
