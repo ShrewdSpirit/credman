@@ -40,11 +40,15 @@ type SiteListResult struct {
 }
 
 func ProfileExists(name string) bool {
-	_, err := os.Stat(path.Join(ProfilesDir, name))
-	if err != nil {
-		return false
+	if _, err := os.Stat(name); err == nil {
+		return true
 	}
-	return true
+
+	if _, err := os.Stat(path.Join(ProfilesDir, name)); err == nil {
+		return true
+	}
+
+	return false
 }
 
 func NewProfile(name string) *Profile {
@@ -60,7 +64,11 @@ func NewProfile(name string) *Profile {
 }
 
 func LoadProfileRaw(name string) (p *Profile, err error) {
-	profileFile := path.Join(ProfilesDir, name)
+	profileFile := name
+
+	if _, err := os.Stat(name); os.IsNotExist(err) {
+		profileFile = path.Join(ProfilesDir, name)
+	}
 
 	var profileBytes []byte
 	if profileBytes, err = ioutil.ReadFile(profileFile); err != nil {
