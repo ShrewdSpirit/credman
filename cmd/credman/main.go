@@ -1,8 +1,8 @@
 package main
 
 import (
-	"github.com/ShrewdSpirit/credman/cmd/credman/cmdutility"
-	"github.com/ShrewdSpirit/credman/cmd/credman/commands"
+	"github.com/ShrewdSpirit/credman/cmd/cmdutility"
+	"github.com/ShrewdSpirit/credman/cmd/commands"
 	"github.com/ShrewdSpirit/credman/data"
 )
 

@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/ShrewdSpirit/credman/cmd/credman/cmdutility"
+	"github.com/ShrewdSpirit/credman/cmd/cmdutility"
 	"github.com/ShrewdSpirit/credman/utility"
 	"github.com/atotto/clipboard"
 	"github.com/spf13/cobra"
