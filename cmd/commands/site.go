@@ -33,7 +33,7 @@ var siteAddCmd = &cobra.Command{
 var siteRemoveCmd = &cobra.Command{
 	Use:     "remove",
 	Aliases: []string{"rm", "rem", "del", "delete"},
-	Args:    cobra.ExactArgs(1),
+	Args:    cobra.MaximumNArgs(1),
 	Short:   "Removes a site",
 	Run:     siteRemove,
 }
@@ -92,6 +92,8 @@ func init() {
 	cmdutility.FlagsAddPasswordOptions(siteAddCmd)
 
 	siteCmd.AddCommand(siteRemoveCmd)
+	siteFlagsTags(siteRemoveCmd)
+
 	siteCmd.AddCommand(siteRenameCmd)
 
 	siteCmd.AddCommand(siteSetCmd)
@@ -255,17 +257,43 @@ func siteList(cmd *cobra.Command, args []string) {
 }
 
 func siteRemove(cmd *cobra.Command, args []string) {
-	siteName := args[0]
 	profile, profilePassword := cmdutility.GetProfileCommandLine(true)
 	if profile == nil {
 		return
 	}
+
+	if len(siteTags) != 0 {
+		sitesToRemove := make([]string, 0)
+		for sn, s := range profile.Sites {
+			hasTag, _ := s.HasTags(siteTags)
+			if hasTag {
+				sitesToRemove = append(sitesToRemove, sn)
+			}
+		}
+
+		for _, sn := range sitesToRemove {
+			helperSiteRemove(profile, profilePassword, sn)
+		}
+
+		return
+	}
+
+	if len(args) == 0 {
+		cmdutility.LogColor(cmdutility.BoldHiYellow, "No input site")
+		return
+	}
+
+	siteName := args[0]
 
 	if !profile.SiteExist(siteName) {
 		cmdutility.LogColor(cmdutility.BoldHiYellow, "Site %s doesn't exist.", siteName)
 		return
 	}
 
+	helperSiteRemove(profile, profilePassword, siteName)
+}
+
+func helperSiteRemove(profile *data.Profile, profilePassword, siteName string) {
 	remove, err := cmdutility.YesNoPrompt(fmt.Sprintf("Are you sure to delete site %s?", siteName))
 	if err != nil {
 		cmdutility.LogError("Reading input failed", err)
