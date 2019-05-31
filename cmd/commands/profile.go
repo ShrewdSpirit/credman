@@ -15,7 +15,6 @@ var profileCmd = &cobra.Command{
 	Use:     "profile",
 	Aliases: []string{"p"},
 	Short:   "Profile management",
-	Run:     func(cmd *cobra.Command, args []string) {},
 }
 
 var profileAddCmd = &cobra.Command{
