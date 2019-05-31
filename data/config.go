@@ -15,8 +15,10 @@ var Config Configuration
 
 type Configuration struct {
 	DefaultProfile     string
-	AutoUpdateInterval int // 0 means no autoupdate
+	AutoUpdateInterval int `json:"AutoUpdateDays"` // 0 means no autoupdate
 	RestoreQuestions   []string
+
+	LastUpdateCheck int64 `json:"p_uchk"`
 }
 
 func init() {
@@ -36,7 +38,7 @@ func init() {
 }
 
 func setDefaultConfig() {
-	Config.AutoUpdateInterval = 0
+	Config.AutoUpdateInterval = 1
 
 	Config.RestoreQuestions = []string{
 		"What's the name of your first high school?",

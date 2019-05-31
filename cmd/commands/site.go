@@ -4,15 +4,12 @@ import (
 	"fmt"
 	"os"
 	"strings"
-
-	"github.com/ShrewdSpirit/credman/utility"
-
-	"github.com/atotto/clipboard"
-
 	"text/tabwriter"
 
 	"github.com/ShrewdSpirit/credman/cmd/cmdutility"
 	"github.com/ShrewdSpirit/credman/data"
+	"github.com/ShrewdSpirit/credman/utility"
+	"github.com/atotto/clipboard"
 	"github.com/fatih/color"
 	"github.com/spf13/cobra"
 )
