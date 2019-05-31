@@ -137,10 +137,6 @@ func CheckNewVersion() (string, error) {
 }
 
 func GetUpdate() error {
-	if _, err := os.Stat(path.Join(data.DataDir, "origpath")); err == nil {
-		return nil
-	}
-
 	if assetIndex == -1 {
 		v, err := CheckNewVersion()
 		if err != nil {
