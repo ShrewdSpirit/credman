@@ -193,7 +193,7 @@ func GetUpdate() error {
 
 		if header.Typeflag == tar.TypeReg {
 			if strings.HasPrefix(header.Name, "credman") {
-				outputFile, err := os.OpenFile(path.Join(data.DataDir, "update"), os.O_CREATE|os.O_RDWR, os.FileMode(header.Mode))
+				outputFile, err := os.OpenFile(path.Join(data.DataDir, "update"), os.O_WRONLY|os.O_CREATE|os.O_TRUNC, os.ModePerm)
 				if err != nil {
 					return err
 				}

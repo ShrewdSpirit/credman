@@ -100,7 +100,7 @@ func updateSet(cmd *cobra.Command, args []string) {
 		fmt.Println("Auto update disabled")
 	} else {
 		data.Config.AutoUpdateInterval = int(interval)
-		cmdutility.LogColor(cmdutility.HiGreen, "Auto update check interval has been set to %d days", interval)
+		cmdutility.LogColor(cmdutility.HiGreen, "Auto update check interval has been set to %s days", args[0])
 	}
 }
 
