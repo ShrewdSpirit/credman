@@ -64,14 +64,13 @@ You can add/delete/rename/change password for each site and profile.
 - [x] Implement local management
 - [x] Pattern matching for site/profile names
 - [x] Colorful output!
-- [x] Move the functionality out of commands so other packages can use credman as a library
 - [x] File encryption
 - [x] Password restore
 - [x] Site tags (for grouping)
 - [x] SSH
-- [ ] **WIP** Saving encrypted files info as sites
-- [ ] Hide password field when getting site
-- [ ] Use cryptographically secure random number generator
+- [x] Saving encrypted files info as sites
+- [x] Hide password field when getting site
+- [x] Use cryptographically secure random number generator
 - [ ] Clear clipboard after a minute after copying a site's password to clipboard
 - [ ] **WIP** Migration from older profiles
 - [ ] Manually give path to profile file
