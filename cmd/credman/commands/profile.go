@@ -5,7 +5,7 @@ import (
 	"os"
 	"path"
 
-	"github.com/ShrewdSpirit/credman/cmd/cmdutility"
+	"github.com/ShrewdSpirit/credman/cmd/credman/cmdutility"
 
 	"github.com/ShrewdSpirit/credman/data"
 	"github.com/spf13/cobra"

@@ -14,14 +14,14 @@ build() {
     local filename="credman-$os-$arch"
     local ext=""
 
-    cd "$CWD/cmd"
+    cd "$CWD/cmd/credman"
 
     if [ "$os" == "windows" ]; then
         ext=".exe"
     fi
 
     echo "Compiling for $os-$arch"
-    GOOS=$os GOARCH=$arch go build -o "$CWD/release/$filename$ext" -ldflags='-s -w'
+    GOOS=$os GOARCH=$arch go build -ldflags='-s -w'
 
     cd "$CWD/release"
     echo "  Creating archive"

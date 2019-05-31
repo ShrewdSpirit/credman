@@ -1,12 +1,10 @@
-// +build !windows
-
 package commands
 
 import (
 	"net"
 	"os"
 
-	"github.com/ShrewdSpirit/credman/cmd/cmdutility"
+	"github.com/ShrewdSpirit/credman/cmd/credman/cmdutility"
 	"github.com/spf13/cobra"
 	"golang.org/x/crypto/ssh"
 	"golang.org/x/crypto/ssh/terminal"

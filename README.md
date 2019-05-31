@@ -17,7 +17,7 @@ A simple, powerful, cross-platform and military grade (marketing ~~bs~~!) secure
 - Only one encrypted file per profile that you can carry around!
 - Encrypt files
 - Restoring profile's password in case you manage to forget it!
-- Directly connect to ssh server using fields in given site (**requires cygwin or a terminal emulator on windows**)
+- Directly connect to ssh server using fields in given site (**requires cygwin or a POSIX terminal emulator on windows**)
 
 ## Installation
 You can download binary releases from [here](https://github.com/ShrewdSpirit/credman/releases/latest). Make sure you put the binary somewhere that's included in your PATH environment variable.
@@ -25,8 +25,8 @@ You can download binary releases from [here](https://github.com/ShrewdSpirit/cre
 Or you can build from source by installing [Go](https://golang.org/) and then running:
 
 ```
-$ go get -u github.com/ShrewdSpirit/credman/cmd
-$ go build -o $GOPATH/bin/credman github.com/ShrewdSpirit/credman/cmd
+$ go get -u github.com/ShrewdSpirit/credman/cmd/credman
+$ go build github.com/ShrewdSpirit/credman/cmd/credman
 ```
 
 ## Usage
@@ -76,8 +76,7 @@ You can add/delete/rename/change password for each site and profile.
 - [ ] Manually give path to profile file
 - [ ] Auto update and update check
 - [ ] Profile backup and auto backup
-- [ ] Export to external disks/networks
-- [ ] Export to gist/paste service
+- [ ] Profile export
 - [ ] Server sync
-- [ ] Desktop GUI frontend
+- [ ] Desktop GUI
 - [ ] Android app
