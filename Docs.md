@@ -15,7 +15,9 @@
 <!--te-->
 
 # Profile management
-Each profile represents a storage for your credentials and sites. Your profile's data is encrypted with the passphrase key you provide. Credman is a credential manager that uses a password to keep your other passwords! All profiles are saved in .credman/profiles under your home or user documents directory. Never forget your profiles passwords! If you doubt your memory, you can enable [password restore](#password-restore) for your profile.
+Each profile represents a storage for your credentials as sites. Your profile's data is encrypted with the passphrase key you provide. Credman is a credential manager that uses a password to keep your other passwords! All profiles are saved in .credman/profiles under your home or user documents directory. Never forget your profiles passwords! If you doubt your memory, you can enable [password restore](#password-restore) for your profile.
+
+**NOTE** most of credman's commands use a profile (e.g. `site add`). If you don't specify the profile to use by setting `-p/--profile` option, credman will use default profile. You can also use a path to file for the profile to use by same option. The command's helps use `[profile]` to specify they're using a profile for their operation.
 
 ### Adding a profile
 `$ credman profile/p add/a <name>`
