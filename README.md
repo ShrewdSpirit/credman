@@ -73,7 +73,7 @@ You can add/delete/rename/change password for each site and profile.
 - [x] Use cryptographically secure random number generator
 - [x] Manually give path to profile file
 - [x] Clear clipboard after 10 seconds for copying a site's password
-- [ ] Auto update and update check
+- [x] Auto update and update check
 - [ ] Migration from older profiles
 - [ ] Profile backup and auto backup
 - [ ] Profile export
