@@ -44,7 +44,6 @@ var fileDecryptCmd = &cobra.Command{
 	Run:     fileDecrypt,
 }
 
-var outputFilename string
 var fileDeleteOriginal bool
 var fileStore bool
 
@@ -53,16 +52,12 @@ func init() {
 	cmdutility.FlagsAddProfileName(fileCmd)
 
 	fileCmd.AddCommand(fileEncryptCmd)
-	fileFlagsAddOutput(fileEncryptCmd)
+	cmdutility.FlagsAddOutput(fileEncryptCmd, "Output file for encryption/decryption")
 	fileEncryptCmd.Flags().BoolVarP(&fileDeleteOriginal, "delete-original", "d", false, "Deletes original file after encryption")
 	fileEncryptCmd.Flags().BoolVarP(&fileStore, "store", "s", false, "Store file's encrypted content in file's site")
 
 	fileCmd.AddCommand(fileDecryptCmd)
-	fileFlagsAddOutput(fileDecryptCmd)
-}
-
-func fileFlagsAddOutput(cmd *cobra.Command) {
-	cmd.Flags().StringVarP(&outputFilename, "output", "o", "", "Output file for encryption/decryption")
+	cmdutility.FlagsAddOutput(fileDecryptCmd, "Output file for encryption/decryption")
 }
 
 func fileEncrypt(cmd *cobra.Command, args []string) {
@@ -74,8 +69,8 @@ func fileEncrypt(cmd *cobra.Command, args []string) {
 		return
 	}
 
-	if len(outputFilename) == 0 {
-		outputFilename = inputFilename + ".enc"
+	if len(cmdutility.FlagOutput) == 0 {
+		cmdutility.FlagOutput = inputFilename + ".enc"
 	}
 
 	inputFile, err := os.Open(inputFilename)
@@ -91,7 +86,7 @@ func fileEncrypt(cmd *cobra.Command, args []string) {
 			return
 		}
 
-		outputFile, err := os.Create(outputFilename)
+		outputFile, err := os.Create(cmdutility.FlagOutput)
 		if err != nil {
 			cmdutility.LogError("Failed to create output file", err)
 			return
@@ -99,12 +94,12 @@ func fileEncrypt(cmd *cobra.Command, args []string) {
 
 		cmdutility.LogColor(cmdutility.Green, "Encrypting file %s", inputFilename)
 		if err := cipher.StreamEncrypt(inputFile, outputFile, password); err != nil {
-			os.Remove(outputFilename)
+			os.Remove(cmdutility.FlagOutput)
 			cmdutility.LogError("Failed to encrypt file", err)
 			return
 		}
 
-		cmdutility.LogColor(cmdutility.Green, "Encryption done. Wrote data to %s", outputFilename)
+		cmdutility.LogColor(cmdutility.Green, "Encryption done. Wrote data to %s", cmdutility.FlagOutput)
 	} else {
 		profile, profilePassword := cmdutility.GetProfileCommandLine(true)
 		if profile == nil {
@@ -152,7 +147,7 @@ func fileEncrypt(cmd *cobra.Command, args []string) {
 
 		cmdutility.LogColor(cmdutility.Green, "Encrypting file %s", inputFilename)
 		if err := cipher.StreamEncrypt(inputFile, encryptStream, profilePassword); err != nil {
-			os.Remove(outputFilename)
+			os.Remove(cmdutility.FlagOutput)
 			cmdutility.LogError("Failed to encrypt file", err)
 			return
 		}
@@ -215,11 +210,11 @@ func fileDecrypt(cmd *cobra.Command, args []string) {
 		}
 
 		if siteFound {
-			if len(outputFilename) == 0 {
-				outputFilename = site[data.FileFieldName] + ".decrypted"
+			if len(cmdutility.FlagOutput) == 0 {
+				cmdutility.FlagOutput = site[data.FileFieldName] + ".decrypted"
 			}
 
-			outputFile, err := os.Create(outputFilename)
+			outputFile, err := os.Create(cmdutility.FlagOutput)
 			if err != nil {
 				cmdutility.LogError("Failed to create output file", err)
 				return
@@ -231,12 +226,12 @@ func fileDecrypt(cmd *cobra.Command, args []string) {
 
 			cmdutility.LogColor(cmdutility.Green, "Decrypting site file %s", site[data.FileFieldName])
 			if err := cipher.StreamDecrypt(inputReader, outputFile, profilePassword); err != nil {
-				os.Remove(outputFilename)
+				os.Remove(cmdutility.FlagOutput)
 				cmdutility.LogError("Failed to decrypt file", err)
 				return
 			}
 
-			cmdutility.LogColor(cmdutility.Green, "Decryption done. Wrote data to %s", outputFilename)
+			cmdutility.LogColor(cmdutility.Green, "Decryption done. Wrote data to %s", cmdutility.FlagOutput)
 		} else {
 			cmdutility.LogError("File doesn't exist", err)
 		}
@@ -244,12 +239,12 @@ func fileDecrypt(cmd *cobra.Command, args []string) {
 		return
 	}
 
-	if len(outputFilename) == 0 {
-		outputFilename = strings.TrimSuffix(inputFilename, ".enc")
+	if len(cmdutility.FlagOutput) == 0 {
+		cmdutility.FlagOutput = strings.TrimSuffix(inputFilename, ".enc")
 	}
 
-	if outputFilename == inputFilename {
-		cmdutility.LogColor(cmdutility.BoldRed, "Input file name %s is same as output %s", inputFilename, outputFilename)
+	if cmdutility.FlagOutput == inputFilename {
+		cmdutility.LogColor(cmdutility.BoldRed, "Input file name %s is same as output %s", inputFilename, cmdutility.FlagOutput)
 		return
 	}
 
@@ -265,7 +260,7 @@ func fileDecrypt(cmd *cobra.Command, args []string) {
 		return
 	}
 
-	outputFile, err := os.Create(outputFilename)
+	outputFile, err := os.Create(cmdutility.FlagOutput)
 	if err != nil {
 		cmdutility.LogError("Failed to create output file", err)
 		return
@@ -273,10 +268,10 @@ func fileDecrypt(cmd *cobra.Command, args []string) {
 
 	cmdutility.LogColor(cmdutility.Green, "Decrypting file %s", inputFilename)
 	if err := cipher.StreamDecrypt(inputFile, outputFile, password); err != nil {
-		os.Remove(outputFilename)
+		os.Remove(cmdutility.FlagOutput)
 		cmdutility.LogError("Failed to decrypt file", err)
 		return
 	}
 
-	cmdutility.LogColor(cmdutility.Green, "Decryption done. Wrote data to %s", outputFilename)
+	cmdutility.LogColor(cmdutility.Green, "Decryption done. Wrote data to %s", cmdutility.FlagOutput)
 }

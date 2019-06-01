@@ -16,6 +16,7 @@ var FlagPgen bool
 var FlagPlen byte
 var FlagPcase string
 var FlagPmix []string
+var FlagOutput string
 
 func FlagsAddProfileName(cmd *cobra.Command) {
 	cmd.PersistentFlags().StringVarP(&FlagProfileName, "profile", "p", "", "Profile to use")
@@ -26,6 +27,10 @@ func FlagsAddPasswordOptions(cmd *cobra.Command) {
 	cmd.Flags().Uint8VarP(&FlagPlen, "password-length", "l", 16, "Password generation length")
 	cmd.Flags().StringVarP(&FlagPcase, "password-case", "c", "both", "Password generation letter case: lower,upper,both")
 	cmd.Flags().StringSliceVarP(&FlagPmix, "password-mix", "m", []string{"all"}, "Password generation character mix: letter,digit,punc,all")
+}
+
+func FlagsAddOutput(cmd *cobra.Command, desc string) {
+	cmd.Flags().StringVarP(&FlagOutput, "output", "o", "", desc)
 }
 
 func GetProfileCommandLine(readPassword bool) (*data.Profile, string) {
