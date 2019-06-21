@@ -9,27 +9,42 @@ A simple, powerful, cross-platform and military grade (marketing ~~bs~~!) secure
 - Multiple local profiles
 - Stateless (doesn't keep passwords in memory for later use)
 - AES-CFB-256 and AES-CTR-256 with HMAC-SHA-256 authenticity and integrity check for profiles and files
-- Identical heavy Scrypt algorithm for hashing
+- Identical scrypt password hashing
 - Multiple fields per site/serivce
+- CLI and GUI (GUI is in WIP!)
+- Standalone!
 - Auto generate password
 - Sync with custom server and user management
 - Cross platform
 - Only one encrypted file per profile that you can carry around!
-- Encrypt files
+- File encryption
 - Restoring profile's password in case you manage to forget it!
 - Directly connect to ssh server using fields in given site (**requires cygwin or a POSIX terminal emulator on windows**)
 
-## Installation
-You can download binary releases from [here](https://github.com/ShrewdSpirit/credman/releases/latest). Make sure you put the binary somewhere that's included in your PATH environment variable.
+## Install
+Binary releases are available [here](https://github.com/ShrewdSpirit/credman/releases/latest). Make sure you add the binary's directory to your PATH.
 
-Or you can build from source by installing [Go](https://golang.org/) and then running:
+Darwin builds don't come with GUI since I can't cross-compile for mac with cgo enabled. If you're a darwin user and you want GUI, you must build credman from source.
 
+## Build from source
+Requirements:
+- Go toolchain
+- GCC
+- nodejs and npm/yarn
+
+Run the following:
+```bash
+go get -u github.com/ShrewdSpirit/credman/cmd/credman/...
+go install github.com/ShrewdSpirit/gassets/cmd/gassets
+cd $GOPATH/src/github.com/ShrewdSpirit/credman/gui/assets
+npm install
+npm run build
+gassets -d .
+cd ../../cmd/credman
+go install -tags='gui' # omit the -tags='gui' if you don't want GUI
 ```
-$ go get -u github.com/ShrewdSpirit/credman/cmd/credman/...
-$ go install github.com/ShrewdSpirit/credman/cmd/credman
-```
 
-## Usage
+## CLI Usage
 Credman works on Linux, RPi, OSX and all Windows versions (BSD **should** work, but I'll never test since I don't have the environment). You can use it on your Android device if you have a terminal emulator (Termux is recomended).
 It requires 'xsel' or 'xclip' to be installed on Linux otherwise copy function will not work.
 
@@ -74,11 +89,10 @@ You can add/delete/rename/change password for each site and profile.
 - [x] Manually give path to profile file
 - [x] Clear clipboard after 10 seconds for copying a site's password
 - [x] Auto update and update check
-- [ ] **WIP** Desktop GUI
+- [x] Desktop GUI
 - [ ] Server sync
-- [ ] Android app
 
-## Bugs
+## Issues
 
 - Commandline output on windows console/ps doesn't show colors correctly (blame windows)
 - Password input doesn't work on windows git bash program
