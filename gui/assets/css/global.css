@@ -4,6 +4,10 @@
         font-family: 'montserrat';
     }
 
+    * {
+        user-select: none;
+    }
+
     @font-face {
         font-family: 'montserrat';
         src: url('../fonts/Montserrat-Light.woff') format('woff');
