@@ -5,3 +5,4 @@ node_modules
 gui/assets/build
 yarn.lock
 gui/assets/credman
+gui/assets/gassets.go
