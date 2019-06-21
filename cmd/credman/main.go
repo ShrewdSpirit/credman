@@ -22,7 +22,9 @@ func main() {
 			os.Remove(path.Join(data.DataDir, "update"))
 		}
 
-		checkUpdate()
+		if len(os.Args) > 1 {
+			checkUpdate()
+		}
 	}
 
 	commands.Execute()

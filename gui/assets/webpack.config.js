@@ -9,9 +9,19 @@ module.exports = {
     module: {
         rules: [
             {
-                test: /\.(js|jsx)$/,
+                test: /\.(js|jsx)$/i,
                 exclude: /node_modules/,
                 use: ['babel-loader']
+            },
+            {
+                test: /\.svg$/i,
+                use: [
+                    'svg-inline-loader',
+                ]
+            },
+            {
+                test: /\.(png|jpg|gif|woff)$/i,
+                loader: 'url-loader'
             },
             {
                 test: /\.css$/i,

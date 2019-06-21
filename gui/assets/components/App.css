@@ -1,5 +1,0 @@
-@var: red;
-
-.app {
-    color: @var;
-}

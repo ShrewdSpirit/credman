@@ -1,6 +1,9 @@
+// +build gui
+
 package gui
 
 import (
+	"fmt"
 	"net/url"
 
 	"github.com/ShrewdSpirit/credman/data"
@@ -23,6 +26,7 @@ func Open() {
 	defer window.Exit()
 
 	window.Dispatch(func() {
+		window.Eval(fmt.Sprintf("window.AppVersion='%s';window.CommitHash='%s'", data.Version, data.GitCommit))
 		window.Eval(assets.Root.Get("app-js").String())
 	})
 

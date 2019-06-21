@@ -1,0 +1,41 @@
+.headerContainer {
+    display: flex;
+    width: 100%;
+    padding-top: 200px;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+}
+
+.logoText {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 50px;
+}
+
+.textCred {
+    color: rgb(104, 104, 104);
+}
+
+.textMan {
+    font-weight: bold;
+    color: rgb(230, 230, 230);
+}
+
+.info {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 13px;
+    padding-top: 20px;
+}
+
+.infoText {
+    color: #7d7d7d;
+    margin-right: 5px;
+}
+
+.infoValue {
+    color: #dfdfdf;
+}
