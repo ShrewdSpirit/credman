@@ -5,6 +5,7 @@ A simple, powerful, cross-platform and military grade (marketing ~~bs~~!) secure
 <p align="center"><img src="/img/demo.gif?raw=true"/></p>
 
 #### Features:
+- Easy usage!
 - Multiple local profiles
 - Stateless (doesn't keep passwords in memory for later use)
 - AES-CFB-256 and AES-CTR-256 with HMAC-SHA-256 authenticity and integrity check for profiles and files
@@ -13,7 +14,6 @@ A simple, powerful, cross-platform and military grade (marketing ~~bs~~!) secure
 - Auto generate password
 - Sync with custom server and user management
 - Cross platform
-- Easy usage
 - Only one encrypted file per profile that you can carry around!
 - Encrypt files
 - Restoring profile's password in case you manage to forget it!
@@ -25,8 +25,8 @@ You can download binary releases from [here](https://github.com/ShrewdSpirit/cre
 Or you can build from source by installing [Go](https://golang.org/) and then running:
 
 ```
-$ go get -u github.com/ShrewdSpirit/credman/cmd/credman
-$ go build github.com/ShrewdSpirit/credman/cmd/credman
+$ go get -u github.com/ShrewdSpirit/credman/cmd/credman/...
+$ go install github.com/ShrewdSpirit/credman/cmd/credman
 ```
 
 ## Usage
@@ -74,9 +74,11 @@ You can add/delete/rename/change password for each site and profile.
 - [x] Manually give path to profile file
 - [x] Clear clipboard after 10 seconds for copying a site's password
 - [x] Auto update and update check
-- [ ] Migration from older profiles
-- [ ] Profile backup and auto backup
-- [ ] Profile export
+- [ ] **WIP** Desktop GUI
 - [ ] Server sync
-- [ ] Desktop GUI
 - [ ] Android app
+
+## Bugs
+
+- Commandline output on windows console/ps doesn't show colors correctly (blame windows)
+- Password input doesn't work on windows git bash program
