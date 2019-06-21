@@ -9,8 +9,12 @@ import (
 	homedir "github.com/mitchellh/go-homedir"
 )
 
+var (
+	Version   = "N/A"
+	GitCommit = "N/A"
+)
+
 var DataDir string
-var Version string = "0.9.1"
 var Config Configuration
 
 type Configuration struct {

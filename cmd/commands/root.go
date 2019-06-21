@@ -5,7 +5,6 @@ import (
 	"os"
 	"time"
 
-	"github.com/ShrewdSpirit/credman/data"
 	"github.com/ShrewdSpirit/credman/utility"
 	"github.com/atotto/clipboard"
 	"github.com/spf13/cobra"
@@ -20,7 +19,6 @@ var rootCmd = &cobra.Command{
 
 Use 'credman help password' to see how to use password options.
 Use 'credman help fields to see what fields you can set for a site.`,
-	Version: data.Version,
 }
 
 var rootClsClip = &cobra.Command{
