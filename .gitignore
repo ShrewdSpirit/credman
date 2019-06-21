@@ -1,4 +1,7 @@
-.vscode
 release
 test
 cmd/credman/credman*
+node_modules
+gui/assets/build
+yarn.lock
+gui/assets/credman
