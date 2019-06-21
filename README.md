@@ -5,16 +5,15 @@ A simple, powerful, cross-platform and military grade (marketing ~~bs~~!) secure
 <p align="center"><img src="/img/demo.gif?raw=true"/></p>
 
 #### Features:
-- Easy usage!
 - Multiple local profiles
 - Stateless (doesn't keep passwords in memory for later use)
 - AES-CFB-256 and AES-CTR-256 with HMAC-SHA-256 authenticity and integrity check for profiles and files
-- Identical scrypt password hashing
 - Multiple fields per site/serivce
 - CLI and GUI (GUI is in WIP!)
-- Standalone!
+- Standalone
+- Easy to use
 - Auto generate password
-- Sync with custom server and user management
+- Sync with custom server and user management (WIP)
 - Cross platform
 - Only one encrypted file per profile that you can carry around!
 - File encryption
@@ -89,8 +88,9 @@ You can add/delete/rename/change password for each site and profile.
 - [x] Manually give path to profile file
 - [x] Clear clipboard after 10 seconds for copying a site's password
 - [x] Auto update and update check
-- [x] Desktop GUI
-- [ ] Server sync
+- [ ] Desktop GUI **WIP**
+- [ ] Server sync **WIP**
+- [ ] RSA cert generation and digital signatures
 
 ## Issues
 
