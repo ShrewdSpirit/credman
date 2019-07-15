@@ -1,0 +1,19 @@
+<!-- This file is for testing webpack -->
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>Credman</title>
+    </head>
+    <body>
+        <div id="root"></div>
+        <script>
+            window.appversion = '1.0.0'
+            window.commithash = 'thisishowitestmyreactanditsnoneofyourdamnbusinessbish'
+            window.invoke = function(str) {
+                console.log('EXTCALL:', str)
+            }
+        </script>
+        <script src="app.js"></script>
+    </body>
+</html>

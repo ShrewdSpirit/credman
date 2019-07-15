@@ -1,6 +1,6 @@
 module.exports = {
-    mode: 'development',
-    entry: './app.js',
+    mode: 'production',
+    entry: './src/ts/Main.tsx',
     output: {
         path: __dirname + '/build',
         publicPath: '/',
@@ -9,9 +9,9 @@ module.exports = {
     module: {
         rules: [
             {
-                test: /\.(js|jsx)$/i,
+                test: /\.(js|jsx|ts|tsx)$/i,
                 exclude: /node_modules/,
-                use: ['babel-loader']
+                loader: 'babel-loader'
             },
             {
                 test: /\.svg$/i,
@@ -24,10 +24,16 @@ module.exports = {
                 loader: 'url-loader'
             },
             {
-                test: /\.css$/i,
+                test: /\.less$/i,
                 use: [
                     {
                         loader: 'style-loader'
+                    },
+                    {
+                        loader: 'css-modules-typescript-loader',
+                        options: {
+                            mode: process.env.CI ? 'verify' : 'emit'
+                        }
                     },
                     {
                         loader: 'css-loader',
@@ -49,6 +55,6 @@ module.exports = {
         ]
     },
     resolve: {
-        extensions: ['*', '.js', '.jsx']
+        extensions: ['*', '.js', '.jsx', '.ts', '.tsx']
     },
 }

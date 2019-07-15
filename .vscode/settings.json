@@ -1,7 +1,4 @@
 {
-    "files.associations": {
-        "*.css": "less"
-    },
     "go.buildTags": "gui",
-    "go.lintTool": "golint"
+    "go.lintTool": "gometalinter"
 }

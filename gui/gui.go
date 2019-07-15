@@ -26,7 +26,8 @@ func Open() {
 	defer window.Exit()
 
 	window.Dispatch(func() {
-		window.Eval(fmt.Sprintf("window.AppVersion='%s';window.CommitHash='%s'", data.Version, data.GitCommit))
+		window.Eval(fmt.Sprintf("window.appversion='%s';window.commithash='%s'", data.Version, data.GitCommit))
+		window.Eval("window.invoke = window.external.invoke")
 		window.Eval(assets.Root.Get("app-js").String())
 	})
 

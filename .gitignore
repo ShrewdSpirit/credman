@@ -1,8 +1,8 @@
 release
 test
-cmd/credman/credman*
 node_modules
-gui/assets/build
 yarn.lock
+cmd/credman/credman*
+gui/assets/build/app.js
 gui/assets/credman
 gui/assets/gassets.go

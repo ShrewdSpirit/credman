@@ -5,6 +5,22 @@
     justify-content: center;
     align-items: center;
     flex-direction: column;
+
+    animation-name: exit-splash;
+    animation-delay: 2s;
+    animation-duration: 0.5s;
+    animation-timing-function: linear;
+    animation-fill-mode: forwards;
+}
+
+@keyframes exit-splash {
+    from {
+        opacity: 1;
+    }
+
+    to {
+        opacity: 0;
+    }
 }
 
 .logoText {
@@ -23,12 +39,17 @@
     color: rgb(230, 230, 230);
 }
 
+.motto {
+    font-size: 16px;
+    padding-top: 17px;
+}
+
 .info {
     display: flex;
     justify-content: center;
     align-items: center;
     font-size: 13px;
-    padding-top: 20px;
+    margin-top: 35%;
 }
 
 .infoText {
