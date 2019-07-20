@@ -6,7 +6,7 @@ import (
 	"strings"
 
 	"github.com/ShrewdSpirit/credman/data"
-	"github.com/ShrewdSpirit/credman/utility"
+	"github.com/ShrewdSpirit/credman/utils"
 	"github.com/spf13/cobra"
 )
 
@@ -78,16 +78,16 @@ func GetProfileCommandLine(readPassword bool) (*data.Profile, string) {
 
 func ParsePasswordGenerationFlags(prompt string) (string, error) {
 	if FlagPgen {
-		var pcase utility.PasswordCase
-		pmix := make([]utility.PasswordMix, 1)
+		var pcase utils.PasswordCase
+		pmix := make([]utils.PasswordMix, 1)
 
 		switch strings.ToLower(FlagPcase) {
 		case "both":
-			pcase = utility.PasswordCaseBoth
+			pcase = utils.PasswordCaseBoth
 		case "lower":
-			pcase = utility.PasswordCaseLower
+			pcase = utils.PasswordCaseLower
 		case "upper":
-			pcase = utility.PasswordCaseUpper
+			pcase = utils.PasswordCaseUpper
 		default:
 			return "", errors.New("Invalid password generator case")
 		}
@@ -95,19 +95,19 @@ func ParsePasswordGenerationFlags(prompt string) (string, error) {
 		for _, mix := range FlagPmix {
 			switch strings.ToLower(mix) {
 			case "letter":
-				pmix = append(pmix, utility.PasswordMixLetter)
+				pmix = append(pmix, utils.PasswordMixLetter)
 			case "digit":
-				pmix = append(pmix, utility.PasswordMixDigit)
+				pmix = append(pmix, utils.PasswordMixDigit)
 			case "punc":
-				pmix = append(pmix, utility.PasswordMixPunc)
+				pmix = append(pmix, utils.PasswordMixPunc)
 			case "all":
-				pmix = []utility.PasswordMix{utility.PasswordMixAll}
+				pmix = []utils.PasswordMix{utils.PasswordMixAll}
 			default:
 				return "", errors.New("Invalid password generator mix")
 			}
 		}
 
-		password := utility.GeneratePassword(FlagPlen, pcase, pmix...)
+		password := utils.GeneratePassword(FlagPlen, pcase, pmix...)
 		return password, nil
 	}
 

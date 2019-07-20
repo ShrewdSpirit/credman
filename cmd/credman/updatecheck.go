@@ -4,18 +4,18 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/ShrewdSpirit/credman/cmd/cmdutility"
 	"github.com/ShrewdSpirit/credman/data"
-	"github.com/ShrewdSpirit/credman/utility"
+	"github.com/ShrewdSpirit/credman/interfaces/commands/cmdutility"
+	"github.com/ShrewdSpirit/credman/utils"
 )
 
 func checkUpdate() {
-	if !utility.DueUpdateCheck() {
+	if !utils.DueUpdateCheck() {
 		return
 	}
 
 	fmt.Println("Checking for updates")
-	version, err := utility.CheckNewVersion()
+	version, err := utils.CheckNewVersion()
 	if err != nil {
 		cmdutility.LogError("Failed to check new version", err)
 		return
@@ -36,13 +36,13 @@ func checkUpdate() {
 	}
 
 	fmt.Println("Downloading update ...")
-	if err := utility.GetUpdate(); err != nil {
+	if err := utils.GetUpdate(); err != nil {
 		cmdutility.LogError("Failed getting new update", err)
 		return
 	}
 
 	fmt.Println("Download finished. Installing")
-	if err := utility.InstallUpdate(); err != nil {
+	if err := utils.InstallUpdate(); err != nil {
 		cmdutility.LogError("Failed installing update", err)
 		return
 	}

@@ -11,14 +11,11 @@ import (
 	"strings"
 	"time"
 
-	"github.com/ShrewdSpirit/credman/utility"
-
-	"github.com/ShrewdSpirit/credman/data"
-
-	"github.com/google/uuid"
-
 	"github.com/ShrewdSpirit/credman/cipher"
-	"github.com/ShrewdSpirit/credman/cmd/cmdutility"
+	"github.com/ShrewdSpirit/credman/data"
+	"github.com/ShrewdSpirit/credman/interfaces/commands/cmdutility"
+	"github.com/ShrewdSpirit/credman/utils"
+	"github.com/google/uuid"
 	"github.com/spf13/cobra"
 )
 
@@ -139,7 +136,7 @@ func fileEncrypt(cmd *cobra.Command, args []string) {
 
 		siteName := rawFilename + "-" + fileUuidStr[len(fileUuidStr)-4:]
 
-		site[data.FileFieldSize] = utility.Kbmbgb(stat.Size())
+		site[data.FileFieldSize] = utils.Kbmbgb(stat.Size())
 		site[data.FileFieldUpdate] = time.Now().Local().Format("2006 Jan 2 15:04:05 MST")
 
 		encryptedBytes := bytes.Buffer{}

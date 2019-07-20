@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/ShrewdSpirit/credman/cmd/cmdutility"
-	"github.com/ShrewdSpirit/credman/utility"
+	"github.com/ShrewdSpirit/credman/interfaces/commands/cmdutility"
+	"github.com/ShrewdSpirit/credman/utils"
 	"github.com/atotto/clipboard"
 	"github.com/spf13/cobra"
 )
@@ -21,16 +21,16 @@ var genCmd = &cobra.Command{
 	Short:   "Generate password",
 	Long:    `Generates a password using credman's password generator`,
 	Run: func(cmd *cobra.Command, args []string) {
-		var pcase utility.PasswordCase
-		pmix := make([]utility.PasswordMix, 1)
+		var pcase utils.PasswordCase
+		pmix := make([]utils.PasswordMix, 1)
 
 		switch strings.ToLower(genPcase) {
 		case "both":
-			pcase = utility.PasswordCaseBoth
+			pcase = utils.PasswordCaseBoth
 		case "lower":
-			pcase = utility.PasswordCaseLower
+			pcase = utils.PasswordCaseLower
 		case "upper":
-			pcase = utility.PasswordCaseUpper
+			pcase = utils.PasswordCaseUpper
 		default:
 			fmt.Println("Invalid password generator case")
 			return
@@ -39,20 +39,20 @@ var genCmd = &cobra.Command{
 		for _, mix := range genPmix {
 			switch strings.ToLower(mix) {
 			case "letter":
-				pmix = append(pmix, utility.PasswordMixLetter)
+				pmix = append(pmix, utils.PasswordMixLetter)
 			case "digit":
-				pmix = append(pmix, utility.PasswordMixDigit)
+				pmix = append(pmix, utils.PasswordMixDigit)
 			case "punc":
-				pmix = append(pmix, utility.PasswordMixPunc)
+				pmix = append(pmix, utils.PasswordMixPunc)
 			case "all":
-				pmix = []utility.PasswordMix{utility.PasswordMixAll}
+				pmix = []utils.PasswordMix{utils.PasswordMixAll}
 			default:
 				fmt.Println("Invalid password generator mix")
 				return
 			}
 		}
 
-		password := utility.GeneratePassword(genPlen, pcase, pmix...)
+		password := utils.GeneratePassword(genPlen, pcase, pmix...)
 		if genCopy {
 			if err := clipboard.WriteAll(password); err != nil {
 				cmdutility.LogError("Failed writing to clipboard", err)

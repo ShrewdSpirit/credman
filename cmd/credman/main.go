@@ -4,10 +4,10 @@ import (
 	"os"
 	"path"
 
-	"github.com/ShrewdSpirit/credman/cmd/cmdutility"
-	"github.com/ShrewdSpirit/credman/cmd/commands"
 	"github.com/ShrewdSpirit/credman/data"
-	"github.com/ShrewdSpirit/credman/utility"
+	"github.com/ShrewdSpirit/credman/interfaces/commands"
+	"github.com/ShrewdSpirit/credman/interfaces/commands/cmdutility"
+	"github.com/ShrewdSpirit/credman/utils"
 )
 
 func main() {
@@ -16,8 +16,7 @@ func main() {
 		return
 	}
 
-	if result, _ := utility.IsSlaveProcess(); !result {
-		// remove update binary
+	if result, _ := utils.IsSlaveProcess(); !result {
 		if _, err := os.Stat(path.Join(data.DataDir, "update")); err == nil {
 			os.Remove(path.Join(data.DataDir, "update"))
 		}
