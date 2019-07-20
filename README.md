@@ -23,21 +23,18 @@ A simple, powerful, cross-platform and military grade (marketing ~~bs~~!) secure
 ## Install
 Binary releases are available [here](https://github.com/ShrewdSpirit/credman/releases/latest). Make sure you add the binary's directory to your PATH.
 
-Darwin builds don't come with GUI since I can't cross-compile for mac with cgo enabled. If you're a darwin user and you want GUI, you must build credman from source.
-
 ## Build from source
 Requirements:
-- Go toolchain
-- GCC
-- nodejs and npm/yarn
+- Go +1.11
+- nodejs +10 and yarn
 
 Run the following:
 ```bash
 go get -u github.com/ShrewdSpirit/credman/cmd/credman/...
-go install github.com/ShrewdSpirit/gassets/cmd/gassets
+go get -u github.com/ShrewdSpirit/gassets/cmd/gassets/...
 cd $GOPATH/src/github.com/ShrewdSpirit/credman/gui/assets
-npm install
-npm run build
+yarn install
+yarn build
 gassets -d .
 cd ../../cmd/credman
 go install -tags='gui' # omit the -tags='gui' if you don't want GUI
@@ -90,7 +87,10 @@ You can add/delete/rename/change password for each site and profile.
 - [x] Auto update and update check
 - [ ] Desktop GUI **WIP**
 - [ ] Server sync **WIP**
-- [ ] RSA cert generation and digital signatures
+- [ ] (GUI) Colorful tags
+- [ ] RSA cert generation and digital signatures (ssh key and openpgp compatible)
+- [ ] (GUI) Site sorting
+- [ ] Web app
 
 ## Issues
 
