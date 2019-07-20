@@ -17,16 +17,16 @@ log() {
     echo -e "${cYellow}${msg}${cReset}"
 }
 
-cd gui/assets
+cd gui
 log "Building GUI"
-npm run build
+yarn build
 log "Embedding assets"
 gassets -d .
 
 if [[ $# -eq 1 && $1 == "install" ]]; then
     cd "$CWD/cmd/credman"
     log "Compiling credman"
-    go install -ldflags="$VERINFO" -tags='gui'
+    go install -ldflags="$VERINFO -s -w"
 else
     if [ -d "release" ]; then
         rm -fr release
@@ -37,7 +37,6 @@ else
     build() {
         local os=$1
         local arch=$2
-        local tags=$3
         local filename="credman-$os-$arch"
         local ext=""
 
@@ -48,11 +47,10 @@ else
         fi
 
         log "Compiling for $os-$arch"
-        GOOS=$os GOARCH=$arch go build -ldflags="$VERINFO -s -w" -o "credman$ext" -tags=$tags
+        GOOS=$os GOARCH=$arch go build -ldflags="$VERINFO -s -w" -o "credman$ext"
 
         chmod +x "credman$ext"
 
-        # cd "$CWD/release"
         log "  Creating archive"
         tar -czf "$filename.tar.gz" "credman$ext"
         mv "$filename.tar.gz" "$CWD/release"
@@ -61,17 +59,14 @@ else
         rm -fr "credman$ext" "$filename.tar.gz"
     }
 
-    guiTag='gui'
-    noGui=''
-
-    build linux amd64 $guiTag
-    build linux 386 $guiTag
-    build linux arm $noGui
-    build linux arm64 $noGui
-    build windows amd64 $guiTag
-    build windows 386 $guiTag
-    build darwin amd64 $noGui
-    build darwin 386 $noGui
+    build linux amd64
+    build linux 386
+    build linux arm
+    build linux arm64
+    build windows amd64
+    build windows 386
+    build darwin amd64
+    build darwin 386
 fi
 
 log "Done"
