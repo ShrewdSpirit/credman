@@ -1,20 +1,51 @@
 # Contents
 <!--ts-->
- * [Profile management](#profile-management)
- * [Site management](#site-management)
- * [File encryption](#file-encryption)
- * [Password restore](#password-restore)
- * [Utility](#utility)
- * [Remote management](#remote-management)
- * [Server management](#server-management)
- * [SSH](#SSH)
- * [Password options](#password-options)
- * [Site fields](#site-fields)
- * [Tags](#tags)
- * [Encryption details](#encryption-details)
+* [Interfaces](#interfaces)
+* [Client GUI](#client-gui)
+* [Server GUI](#server-gui)
+* [Stdio](#stdio)
+* [Commandline](#commandline)
+    * [Profile management](#profile-management)
+    * [Site management](#site-management)
+    * [File encryption](#file-encryption)
+    * [Password restore](#password-restore)
+    * [Utility](#utils)
+    * [Remote management](#remote-management)
+    * [Server management](#server-management)
+    * [SSH](#SSH)
+    * [Password options](#password-options)
+    * [Site fields](#site-fields)
+    * [Tags](#tags)
+* [Encryption details](#encryption-details)
 <!--te-->
 
-# Profile management
+# Interfaces
+Credman has a few interfaces for interacting with profiles and configurations. Bellow is a list of available interfaces.
+
+# Client GUI
+Client GUI is an interface for end-users and is served in-browser via local webserver.
+
+Running the credman's executable without any arguments will fire the local webserver and opens GUI on default browser.
+
+# Server GUI
+**NOTE:** Server management is a work in progress and is not available yet. This document explains future usage and is subject to change.
+
+Server GUI is enabled by default and can be used for managing users and server configurations.
+
+# Stdio
+**NOTE:** Stdio interface is not available yet.
+
+Stdio interface can be used for running credman as a child process and using its stdin and stdout for interacting.
+It uses a predefined encrypted JSON structure for passing data.
+This interface is asnychronous and usage will be documented as soon as this feature is available.
+
+One can use this interface for building third-party tools that are written with different technologies and want to interact with credman.
+
+# Commandline
+Commandline interface is the most basic way for managing local configurations and profiles.
+Full commands documentation is right bellow.
+
+## Profile management
 Each profile represents a storage for your credentials as sites. Your profile's data is encrypted with the passphrase key you provide. Credman is a credential manager that uses a password to keep your other passwords! All profiles are saved in .credman/profiles under your home or user documents directory. Never forget your profiles passwords! If you doubt your memory, you can enable [password restore](#password-restore) for your profile.
 
 **NOTE** most of credman's commands use a profile (e.g. `site add`). If you don't specify the profile to use by setting `-p/--profile` option, credman will use default profile. You can also use a path to file for the profile to use by same option. The command's helps use `[profile]` to specify they're using a profile for their operation.
@@ -43,7 +74,7 @@ Default profile is used in management of sites, files and remotes for easier acc
 ### Listing all profiles
 `$ credman profile/p list/l`
 
-# Site management
+## Site management
 Sites are basically where you put the credentials for each specific service/website/etc. It might have a confusing name but you can store almost any plaintext data in sites. The sites you add to a profile will be encrypted super securely! Along with site passwords and your username, email you can add any other field that will be encrypted with the site. At this stage, you can only add text fields but in a future update, you can add text files and binary files as fields of a site.
 
 ### Adding a new site
@@ -77,7 +108,7 @@ Lists all sites in a profile if pattern is not given. Otherwise you can use rege
 If no fields are specified, site's password will be printed on output. If `--copy` flag is set, it will put the password in clipboard.
 If more than one field is specified and `--copy` flag is used, Only first field will be copyed to clipboard (Usually password).
 
-# File encryption
+## File encryption
 File encryption is not related to profiles and encrypted files will not be stored inside profiles. You can encrypt any kind of file with any size since the encryption/decryption is done in streaming mode.
 
 ### Encrypt a file
@@ -105,7 +136,7 @@ You **can't** update a file's site by `credman site set`! File sites are readonl
 
 If you specify a path to a file that exists on your filesystem, credman will try to decrypt that file. If the file doesn't exist or you specify a filename from sites, credman will use the information from the file's site to decrypt the file. You can also use the last 4 digits of the file's unique id in file's site to decrypt it.
 
-# Password restore
+## Password restore
 This feature is disabled for all profiles by default.
 
 Password restore might reduce the security of your profiles but in case you think you might forget your profile's password and can't rely on a pen and paper for writing down your password, you can enable this feature.
@@ -127,14 +158,15 @@ It starts asking you the questions you have set answers for and checks your answ
 ### Removing restore for a profile
 `$ credman restore/rs remove/r [profile]`
 
-# Utility
+## Utility
 
 ### Generate random password
 `$ credman gen [--copy/-c] [password options]`
 
 Generates a random password that you can use anywhere other than credman!
 
-# Remote management
+## Remote management
+**NOTE:** Remote server is a work in progress and this document explains future usage and might change.
 
 ### Setting a remote
 `$ credman remote/r set/s <address> <username> [profile]`
@@ -142,17 +174,17 @@ Generates a random password that you can use anywhere other than credman!
 ### Syncing with remote
 `$ credman remote/r sync/u [profile]`
 
-Server will only keep your user profile file and doesn't do any magic on it. The file won't be decrypted or processed on server so all of your synced data will be safe and only the profile owner can decrypt the file. Also **KEEP IN MIND** to run a sync after you do any changes on your profile on any device you do the change. Server won't process changes or conflicts.
+Server will only keep your user profile file and doesn't do any magic on it. The file won't be decrypted or processed on server so all of your synced data will be safe and only the profile owner can decrypt the file. If your profile is more up to date than the one on server, it will be uploaded otherwise it will be downloaded.
 
 ### Deleting remote
 `$ credman remote/r remove/r [profile]`
 
-# Server management
-You can run a host for multiple clients since each client will be identified by their username and access password.
+## Server management
+**NOTE:** Server management is a work in progress and this document explains future usage and might change.
+
+You can run a host for multiple clients since each client will be identified by their username.
 
 Changing a server's configuration using management commands might interrupt existing client connections.
-
-All server management actions require you to give server password.
 
 ### Starting server
 `$ credman server/sv start`
@@ -166,9 +198,6 @@ After running server, the process will continue working in background and the ou
 
 ### Checking server's status
 `$ credman server/sv status`
-
-### Changing server password
-`$ credman server/sv passwd`
 
 ### Setting or getting listen host
 `$ credman server/sv host/h [address]`
@@ -188,12 +217,12 @@ After running server, the process will continue working in background and the ou
 ### Listing users
 `$ credman server/sv list/l [regex pattern]`
 
-# SSH
+## SSH
 `$ credman ssh <site> [--profile/-p]`
 
 Credman can connect to ssh servers by using given site's specific fields. To be able to use ssh, a site must have `user`, `password`, `address` fields.
 
-# Password options
+## Password options
 Some subcommands have password options that enables password generation. If you don't give password options to such subcommands, credman will prompt you to enter your own not-secure! password.
 
 Password options are a set of commandline options that specify how the password is generated. Bellow is the full list of these options:
@@ -202,7 +231,7 @@ Password options are a set of commandline options that specify how the password 
 - `--password-case/-c`: Sets the letter case in generated password. Valid values are `lower`/`upper`/`both`(default)
 - `--password-mix/-m`: Sets the mix of characters to use in password. Valid values are `letter`/`digit`/`punc`/`all`(default)
 
-# Site fields
+## Site fields
 Site fields are commandline options to set field values, set a list of fields to get or delete.
 
 If you're setting or adding a new site, you must provide fields in this format: `--field=FieldKey=FieldValue` and so on.
@@ -213,7 +242,7 @@ For example to get email and username for a site you must do `-f=email,username`
 
 Same format as above applies for deleting fields. You must provide a list of fields to `--delete` or `-d` option.
 
-# Tags
+## Tags
 Tags are used for grouping sites. Tags are stored per site and they use a special field that you cannot normally get or set by --field(s) option. To set tags on a site, you give your tags list to `--tags` flag. Sites that share the same tag will be grouped together in site list or they can be searched by their tags.
 
 To delete a tag for a site, use `--delete-tags` or `-t` option for giving a list of tags to delete in `site set` subcommand.
@@ -223,8 +252,8 @@ Tags for `site get` subcommand is a flag and if set, site tags will be printed o
 # Encryption details
 
 #### Method
-- AES-CFB-256 + HMAC SHA-256 for sites and profile data
-- streaming AES-CTR-256 + HMAC SHA-256 for files
+- AES-CFB-256 + HMAC SHA-256 for sites and profile data and files that are stored in profiles
+- streaming AES-CTR-256 + HMAC SHA-256 for files that are stored on disk
 - Scrypt for hashing with N:65535 r:16 p:1 and 128 bits key length (as masterkey)
 
 #### Salt, nounce/iv and HMAC key
