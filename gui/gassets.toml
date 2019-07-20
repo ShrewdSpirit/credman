@@ -1,0 +1,14 @@
+output-path="."
+
+[root]
+    [root.favicon]
+    path="dist/favicon.ico"
+
+    [root.app-html]
+    path="dist/index.html"
+
+    [root.app-js]
+    path="dist/app.js"
+
+    [root.app-css]
+    path="dist/app.css"

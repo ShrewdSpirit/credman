@@ -1,16 +1,20 @@
 const webpack = require('webpack')
+const { join } = require('path')
 
 module.exports = {
     mode: 'development',
-    entry: './src/ts/Main.tsx',
+    entry: join(__dirname, '..', 'src', 'ts', 'main.tsx'),
     output: {
-        path: __dirname + '/build',
-        publicPath: '/',
+        path: join(__dirname, '..', 'dist'),
+        publicPath: join(__dirname, '..', 'dist'),
         filename: 'app.js'
+    },
+    resolve: {
+        extensions: ['*', '.js', '.jsx', '.ts', '.tsx']
     },
     devtool: 'source-map',
     devServer: {
-        contentBase: __dirname + '/build',
+        contentBase: join(__dirname, '..', 'dist'),
         compress: false,
         port: 9000,
         hot: true,
@@ -67,7 +71,4 @@ module.exports = {
         // new CleanWebpackPlugin(),
         new webpack.HotModuleReplacementPlugin(),
     ],
-    resolve: {
-        extensions: ['*', '.js', '.jsx', '.ts', '.tsx']
-    },
 }

@@ -1,11 +1,36 @@
+const Terser = require('terser-webpack-plugin')
+const MiniCssExtract = require('mini-css-extract-plugin')
+const OptimizeCssAssets = require('optimize-css-assets-webpack-plugin')
+const { join } = require('path')
+
 module.exports = {
     mode: 'production',
-    entry: './src/ts/Main.tsx',
+    entry: join(__dirname, '..', 'src', 'ts', 'main.tsx'),
     output: {
-        path: __dirname + '/build',
+        path: join(__dirname, '..', 'dist'),
         publicPath: '/',
         filename: 'app.js'
     },
+    resolve: {
+        extensions: ['*', '.js', '.jsx', '.ts', '.tsx']
+    },
+    optimization: {
+        minimizer: [new Terser({}), new OptimizeCssAssets({})],
+        splitChunks: {
+            cacheGroups: {
+              styles: {
+                test: /\.css$/i,
+                chunks: 'all',
+                enforce: true,
+              },
+            },
+          }
+    },
+    plugins: [
+        new MiniCssExtract({
+            filename: 'app.css'
+        })
+    ],
     module: {
         rules: [
             {
@@ -26,9 +51,7 @@ module.exports = {
             {
                 test: /\.less$/i,
                 use: [
-                    {
-                        loader: 'style-loader'
-                    },
+                    MiniCssExtract.loader,
                     {
                         loader: 'css-modules-typescript-loader',
                         options: {
@@ -53,8 +76,5 @@ module.exports = {
                 ],
             },
         ]
-    },
-    resolve: {
-        extensions: ['*', '.js', '.jsx', '.ts', '.tsx']
-    },
+    }
 }

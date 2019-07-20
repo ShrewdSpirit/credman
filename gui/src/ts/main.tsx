@@ -1,6 +1,6 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
-import '../styles/Global.less'
-import App from './components/App'
+import '../styles/global.less'
+import App from './components/app'
 
 ReactDOM.render(<App />, document.getElementById('root'))

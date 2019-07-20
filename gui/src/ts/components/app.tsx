@@ -1,11 +1,11 @@
 import React, { Component } from 'react'
 import { view, store } from 'react-easy-state'
 import { MemoryRouter as Router, Link, Route } from 'react-router-dom'
-import styles from '../../styles/components/App.less'
-import SplashScreen from './SplashScreen'
-import Profiles from './Profiles'
-import Tools from './Tools'
-import Settings from './Settings'
+import styles from '../../styles/components/app.less'
+import SplashScreen from './splashscreen'
+import Profiles from './profiles'
+import Tools from './tools'
+import Settings from './settings'
 
 const splashScreen = store({ visible: true })
 

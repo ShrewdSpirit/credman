@@ -1,8 +1,0 @@
-output-path="."
-
-[root]
-    [root.app-html]
-    path="build/app.html"
-
-    [root.app-js]
-    path="build/app.js"

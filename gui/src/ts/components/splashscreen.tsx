@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import { view } from 'react-easy-state'
-import styles from '../../styles/components/SplashScreen.less'
-import {AppVersion, CommitHash} from '../Config'
+import styles from '../../styles/components/splashscreen.less'
+import {AppVersion, CommitHash} from '../config'
 
 class SplashScreen extends Component {
     render() {
