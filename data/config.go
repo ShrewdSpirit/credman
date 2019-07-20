@@ -21,8 +21,8 @@ type Configuration struct {
 	DefaultProfile     string
 	AutoUpdateInterval int `json:"AutoUpdateDays"` // 0 means no autoupdate
 	RestoreQuestions   []string
-
-	LastUpdateCheck int64 `json:"p_uchk"`
+	WebInterfacePort   int   `json:"webinterface_port"`
+	LastUpdateCheck    int64 `json:"p_uchk"`
 }
 
 func init() {
@@ -43,7 +43,7 @@ func init() {
 
 func setDefaultConfig() {
 	Config.AutoUpdateInterval = 1
-
+	Config.WebInterfacePort = 14201
 	Config.RestoreQuestions = []string{
 		"What's the name of your first high school?",
 		"What are the last 5 digits of your ID?",
@@ -62,6 +62,8 @@ func setDefaultConfig() {
 }
 
 func LoadConfiguration() error {
+	setDefaultConfig()
+
 	configFilePath := path.Join(DataDir, "config.json")
 	_, err := os.Stat(configFilePath)
 	if err != nil {
@@ -76,10 +78,6 @@ func LoadConfiguration() error {
 	err = json.Unmarshal(configData, &Config)
 	if err != nil {
 		return err
-	}
-
-	if Config.RestoreQuestions == nil || len(Config.RestoreQuestions) < 3 {
-		setDefaultConfig()
 	}
 
 	return nil
