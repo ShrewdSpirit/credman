@@ -3,6 +3,6 @@ test
 node_modules
 yarn.lock
 cmd/credman/credman*
-gui/assets/build/app.js
-gui/assets/credman
-gui/assets/gassets.go
+gui/dist/app.js
+gui/dist/app.css
+gui/gassets.go
