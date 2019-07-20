@@ -9,8 +9,8 @@ A simple, powerful, cross-platform and military grade (marketing ~~bs~~!) secure
 - Stateless (doesn't keep passwords in memory for later use)
 - AES-CFB-256 and AES-CTR-256 with HMAC-SHA-256 authenticity and integrity check for profiles and files
 - Multiple fields per site/serivce
-- CLI and GUI (GUI is in WIP!)
-- Standalone
+- CLI and GUI (WIP)
+- Standalone (single binary without any dependencies)
 - Easy to use
 - Auto generate password
 - Sync with custom server and user management (WIP)
@@ -32,17 +32,23 @@ Run the following:
 ```bash
 go get -u github.com/ShrewdSpirit/credman/cmd/credman/...
 go get -u github.com/ShrewdSpirit/gassets/cmd/gassets/...
-cd $GOPATH/src/github.com/ShrewdSpirit/credman/gui/assets
+cd $GOPATH/src/github.com/ShrewdSpirit/credman/gui
 yarn install
 yarn build
 gassets -d .
-cd ../../cmd/credman
-go install -tags='gui' # omit the -tags='gui' if you don't want GUI
+cd ..
+./build_release.sh install # for building on windows you must provide version and commit hash variables for go. check lines 7 to 10 in build_release.sh to see how it works.
 ```
 
-## CLI Usage
-Credman works on Linux, RPi, OSX and all Windows versions (BSD **should** work, but I'll never test since I don't have the environment). You can use it on your Android device if you have a terminal emulator (Termux is recomended).
+## Notes
+Credman works on Linux, RPi, OSX and all Windows versions (BSD **should** work, but I'll never test since I don't have the environment).
+You can use it on your Android device if you have a terminal emulator (Termux is recomended).
+
 It requires 'xsel' or 'xclip' to be installed on Linux otherwise copy function will not work.
+
+To launch the web interface, simply execute credman without any arguments.
+
+## CLI Usage
 
 First you must create a profile to store your sites in:
 
@@ -85,12 +91,12 @@ You can add/delete/rename/change password for each site and profile.
 - [x] Manually give path to profile file
 - [x] Clear clipboard after 10 seconds for copying a site's password
 - [x] Auto update and update check
-- [ ] Desktop GUI **WIP**
+- [ ] Desktop GUI (in-browser) **WIP**
 - [ ] Server sync **WIP**
-- [ ] (GUI) Colorful tags
+- [ ] Use gob for profiles instead of JSON
+- [ ] Profile migration
 - [ ] RSA cert generation and digital signatures (ssh key and openpgp compatible)
-- [ ] (GUI) Site sorting
-- [ ] Web app
+- [ ] Stdio interface
 
 ## Issues
 
