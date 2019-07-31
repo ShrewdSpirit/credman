@@ -2,7 +2,7 @@ output-path="."
 
 [root]
     [root.favicon]
-    path="dist/favicon.ico"
+    path="favicon.ico"
 
     [root.app-html]
     path="dist/index.html"
@@ -12,3 +12,4 @@ output-path="."
 
     [root.app-css]
     path="dist/app.css"
+    override-files=["style.css"]
