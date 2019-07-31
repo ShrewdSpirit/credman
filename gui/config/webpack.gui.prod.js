@@ -1,7 +1,11 @@
 const Terser = require('terser-webpack-plugin')
 const MiniCssExtract = require('mini-css-extract-plugin')
 const OptimizeCssAssets = require('optimize-css-assets-webpack-plugin')
+const { CleanWebpackPlugin } = require('clean-webpack-plugin')
+const Html = require('html-webpack-plugin')
+const HtmlRoot = require('html-webpack-root-plugin')
 const { join } = require('path')
+const webpack = require('webpack')
 
 module.exports = {
     mode: 'production',
@@ -18,17 +22,27 @@ module.exports = {
         minimizer: [new Terser({}), new OptimizeCssAssets({})],
         splitChunks: {
             cacheGroups: {
-              styles: {
-                test: /\.css$/i,
-                chunks: 'all',
-                enforce: true,
-              },
+                styles: {
+                    test: /\.css$/i,
+                    chunks: 'all',
+                    enforce: true,
+                },
             },
-          }
+        }
     },
     plugins: [
         new MiniCssExtract({
             filename: 'app.css'
+        }),
+        new CleanWebpackPlugin(),
+        new Html({
+            filename: join(__dirname, '..', 'dist', 'index.html'),
+            favicon: join(__dirname, '..', 'favicon.ico'),
+            title: 'Credman'
+        }),
+        new HtmlRoot(),
+        new webpack.DefinePlugin({
+            'development': JSON.stringify(false)
         })
     ],
     module: {
@@ -63,7 +77,7 @@ module.exports = {
                         options: {
                             modules: {
                                 mode: 'local',
-                                localIdentName: "[local]_[hash:base64:5]"
+                                localIdentName: "[name]-[local]"
                             }
                         }
                     },
