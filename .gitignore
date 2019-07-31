@@ -2,7 +2,8 @@ release
 test
 node_modules
 yarn.lock
-cmd/credman/credman*
 gui/dist/app.js
 gui/dist/app.css
 gui/gassets.go
+cmd/credman/credman*
+gui/credman
