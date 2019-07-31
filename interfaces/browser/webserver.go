@@ -8,35 +8,49 @@ import (
 
 	"github.com/ShrewdSpirit/credman/data"
 	"github.com/ShrewdSpirit/credman/gui"
-	"github.com/labstack/echo"
+	"github.com/labstack/echo/v4"
+	"github.com/labstack/echo/v4/middleware"
 )
 
-func Run() {
-	e := echo.New()
-	e.HideBanner = true
+var server *echo.Echo
 
-	e.GET("/", func(ctx echo.Context) error {
+func Run(silent bool) {
+	server = echo.New()
+	server.HideBanner = true
+
+	server.Use(middleware.CORSWithConfig(middleware.CORSConfig{
+		AllowOrigins: []string{"http://localhost:9000", fmt.Sprintf("http://localhost:%d", data.Config.WebInterfacePort)},
+		AllowMethods: []string{http.MethodPost},
+	}))
+
+	server.GET("/", func(ctx echo.Context) error {
 		return ctx.HTMLBlob(http.StatusOK, gui.Root.Get("app-html").Bytes())
 	})
 
-	e.GET("/app.js", func(ctx echo.Context) error {
+	server.GET("/app.js", func(ctx echo.Context) error {
 		return ctx.Blob(http.StatusOK, "text/javascript", gui.Root.Get("app-js").Bytes())
 	})
 
-	e.GET("/app.css", func(ctx echo.Context) error {
+	server.GET("/app.css", func(ctx echo.Context) error {
 		return ctx.Blob(http.StatusOK, "text/css", gui.Root.Get("app-css").Bytes())
 	})
 
-	e.GET("/favicon.ico", func(ctx echo.Context) error {
+	server.GET("/favicon.ico", func(ctx echo.Context) error {
 		return ctx.Blob(http.StatusOK, "image/x-icon", gui.Root.Get("favicon").Bytes())
 	})
 
+	server.POST("/invoke", invokeHandler)
+
 	done := make(chan bool)
 	go func() {
-		e.Logger.Fatal(e.Start(fmt.Sprintf(":%d", data.Config.WebInterfacePort)))
+		server.Logger.Fatal(server.Start(fmt.Sprintf(":%d", data.Config.WebInterfacePort)))
 		done <- true
 	}()
-	openbrowser()
+
+	if !silent {
+		openbrowser()
+	}
+
 	<-done
 }
 
@@ -52,7 +66,7 @@ func openbrowser() error {
 	case "darwin":
 		err = exec.Command("open", url).Start()
 	default:
-		err = fmt.Errorf("unsupported platform")
+		err = fmt.Errorf("Unsupported platform")
 	}
 
 	return err
