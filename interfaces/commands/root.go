@@ -5,6 +5,7 @@ import (
 	"os"
 	"time"
 
+	"github.com/ShrewdSpirit/credman/data"
 	"github.com/ShrewdSpirit/credman/interfaces/browser"
 	"github.com/ShrewdSpirit/credman/utils"
 	"github.com/atotto/clipboard"
@@ -21,7 +22,9 @@ var rootCmd = &cobra.Command{
 Use 'credman help password' to see how to use password options.
 Use 'credman help fields to see what fields you can set for a site.`,
 	Run: func(cmd *cobra.Command, args []string) {
-		browser.Run()
+		fmt.Printf("Version: %s\n", data.Version)
+		fmt.Printf("Git commit hash: %s\n", data.GitCommit)
+		browser.Run(openSilent)
 	},
 }
 
@@ -31,7 +34,10 @@ var rootClsClip = &cobra.Command{
 	Run:    clsClip,
 }
 
+var openSilent bool
+
 func init() {
+	rootCmd.Flags().BoolVar(&openSilent, "silent", false, "If set, won't launch the browser after running webserver")
 	rootCmd.AddCommand(rootClsClip)
 }
 
