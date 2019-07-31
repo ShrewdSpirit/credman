@@ -1,28 +1,48 @@
 import React, { Component } from 'react'
-import { view } from 'react-easy-state'
+import { view, store } from 'react-easy-state'
 import styles from '../../styles/components/splashscreen.less'
-import {AppVersion, CommitHash} from '../config'
+import FlexLayout, { Direction, JustifyContent, AlignItems } from './flexlayout'
+import { getInfo } from '../interface'
+
+const infoState = store({
+    version: '',
+    commitHash: '',
+    motto: '',
+})
 
 class SplashScreen extends Component {
+    async componentDidMount() {
+        try {
+            const result = await getInfo()
+            infoState.version = result.version
+            infoState.commitHash = result.commithash
+            infoState.motto = result.motto
+        } catch (e) {
+            console.log(e)
+        }
+    }
+
     render() {
-        return <div className={styles.headerContainer}>
-            <div className={styles.logoText}>
-                <label className={styles.textCred}>Cred</label>
-                <label className={styles.textMan}>Man</label>
-            </div>
+        return <FlexLayout direction={Direction.Column} className={styles.container} justifyContent={JustifyContent.Center} >
+            <FlexLayout direction={Direction.Column} className={styles.headerContainer} justifyContent={JustifyContent.Center} alignItems={AlignItems.Center}>
+                <FlexLayout justifyContent={JustifyContent.Center} alignItems={AlignItems.Center}>
+                    <label className={styles.textCred}>Cred</label>
+                    <label className={styles.textMan}>Man</label>
+                </FlexLayout>
 
-            <div className={styles.motto}>
-                <label>Safeguard your credentials!</label>
-            </div>
+                <div className={styles.motto}>
+                    <label>{infoState.motto}</label>
+                </div>
+            </FlexLayout>
 
-            <div className={styles.info}>
+            <FlexLayout className={styles.info} justifyContent={JustifyContent.Center} alignItems={AlignItems.Center}>
                 <label className={styles.infoText}>version</label>
-                <label className={styles.infoValue}>{AppVersion}</label>
+                <label className={styles.infoValue}>{infoState.version}</label>
                 <label className={styles.infoText}></label>
                 <label className={styles.infoText}>commit</label>
-                <label className={styles.infoValue}>{CommitHash}</label>
-            </div>
-        </div>
+                <label className={styles.infoValue}>{infoState.commitHash}</label>
+            </FlexLayout>
+        </FlexLayout>
     }
 }
 
