@@ -3,10 +3,12 @@ module github.com/ShrewdSpirit/credman
 go 1.12
 
 require (
+	github.com/ShrewdSpirit/ezsec v0.0.0-20190731155333-3e77ba952f44
 	github.com/ShrewdSpirit/gassets v0.0.0-20190715104411-e79b2d8b6b47
 	github.com/atotto/clipboard v0.1.2
 	github.com/fatih/color v1.7.0
 	github.com/google/uuid v1.1.1
+	github.com/gopherjs/gopherjs v0.0.0-20190430165422-3e4dfb77656c // indirect
 	github.com/kr/pretty v0.1.0 // indirect
 	github.com/labstack/echo/v4 v4.1.6
 	github.com/mitchellh/go-homedir v1.1.0

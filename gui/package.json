@@ -61,7 +61,7 @@
     "@fortawesome/react-fontawesome": "^0.1.4",
     "@types/react": "^16.8.22",
     "@types/react-dom": "^16.8.4",
-    "ezsec": "^1.1.0",
+    "ezsec": "^1.1.1",
     "react": "^16.8.6",
     "react-dom": "^16.8.6",
     "react-easy-state": "^6.1.3",
