@@ -41,6 +41,8 @@ func Run(silent bool) {
 
 	server.POST("/invoke", invokeHandler)
 
+	initInvokeHandler()
+
 	done := make(chan bool)
 	go func() {
 		server.Logger.Fatal(server.Start(fmt.Sprintf(":%d", data.Config.WebInterfacePort)))
