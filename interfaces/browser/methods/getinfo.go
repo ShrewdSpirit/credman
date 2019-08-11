@@ -4,16 +4,12 @@ import (
 	"github.com/ShrewdSpirit/credman/data"
 )
 
-type ResultGetInfo struct {
-	Version    string `json:"version"`
-	CommitHash string `json:"commithash"`
-	Motto      string `json:"motto"`
-}
+type GetInfo struct{}
 
-func GetInfo() ResultGetInfo {
-	return ResultGetInfo{
-		Version:    data.Version,
-		CommitHash: data.GitCommit,
-		Motto:      "Safeguard your credentials",
-	}
+func (s GetInfo) Do() (MethodResult, error) {
+	return MethodResult{
+		"version":    data.Version,
+		"commithash": data.GitCommit,
+		"motto":      "Safeguard your credentials",
+	}, nil
 }
