@@ -9,9 +9,8 @@ import (
 	"net/http"
 	"reflect"
 
-	"github.com/ShrewdSpirit/ezsec"
-
 	m "github.com/ShrewdSpirit/credman/interfaces/browser/methods"
+	"github.com/ShrewdSpirit/ezsec"
 	"github.com/labstack/echo/v4"
 )
 
@@ -19,11 +18,6 @@ var methods = make(map[string]interface{})
 var clientKeys = make(map[string][]byte)
 var rsaPublicKey string
 var rsaPrivateKey string
-
-type invokeData struct {
-	Method string      `json:"method"`
-	Args   interface{} `json:"args"`
-}
 
 func initInvokeHandler() {
 	priv, pub, err := ezsec.GenerateRSAKeyPair(2048)
@@ -40,13 +34,16 @@ func initInvokeHandler() {
 	rsaPublicKey = string(pubBytes)
 	rsaPrivateKey = string(privBytes)
 
-	methods["getinfo"] = m.GetInfo
-	methods["handshake_getkey"] = handshakeGetKey
-	methods["handshake_setkey"] = handshakeSetKey
+	methods["handshake_getkey"] = handshakeGetKey{}
+	methods["handshake_setkey"] = handshakeSetKey{}
+	methods["getinfo"] = m.GetInfo{}
+	methods["test"] = m.Test{}
 }
 
 func invokeErrorResult(clientId string, encrypt bool, ctx echo.Context, message string, err error) error {
 	msg := fmt.Sprintf("%s: %s", message, err.Error())
+	server.Logger.Error("INVOKE ERROR:", msg)
+
 	if encrypt {
 		data, err := invokeEncryptBody([]byte(msg), clientId)
 		if err != nil {
@@ -86,7 +83,12 @@ func invokeDecryptBody(body []byte, clientId string) ([]byte, error) {
 		return nil, errors.New("Client can't use encryption")
 	}
 
-	data, err := ezsec.CFBDecrypt(ezsec.ShaTypeSha512, body, clientKey)
+	decoded, err := ezsec.Base64Decode(string(body))
+	if err != nil {
+		return nil, err
+	}
+
+	data, err := ezsec.CFBDecrypt(ezsec.ShaTypeSha512, decoded, clientKey)
 	if err != nil {
 		return nil, err
 	}
@@ -106,6 +108,11 @@ func invokeEncryptBody(body []byte, clientId string) ([]byte, error) {
 	}
 
 	return data, nil
+}
+
+type invokeData struct {
+	Method string `json:"method"`
+	Args   string `json:"args"`
 }
 
 func invokeHandler(ctx echo.Context) error {
@@ -129,76 +136,49 @@ func invokeHandler(ctx echo.Context) error {
 		return invokeErrorResult(clientId, encrypted, ctx, "Invalid request JSON", err)
 	}
 
-	methodFunc, ok := methods[data.Method]
+	methodStructType, ok := methods[data.Method]
 	if !ok {
 		return invokeErrorResult(clientId, encrypted, ctx, "Invalid method", errors.New("Method "+data.Method+" not found"))
 	}
 
-	methodRef := reflect.ValueOf(methodFunc)
-	methodType := methodRef.Type()
-	numParams := methodType.NumIn()
-
-	argsRef := reflect.ValueOf(data.Args)
-
-	if argsRef.Len() != numParams {
-		return invokeErrorResult(clientId, encrypted, ctx, "Call error", errors.New("Invalid number of arguments to method "+data.Method))
+	methodInstance := reflect.New(reflect.TypeOf(methodStructType))
+	if err := json.Unmarshal([]byte(data.Args), methodInstance.Interface()); err != nil {
+		return invokeErrorResult(clientId, encrypted, ctx, "Invalid args", errors.New("Invalid arguments to method "+data.Method))
 	}
 
-	params := make([]reflect.Value, numParams)
-	for i := 0; i < numParams; i++ {
-		p := methodType.In(i)
-		argRef := argsRef.Index(i)
-		argType := reflect.TypeOf(argRef)
-
-		if p != argType {
-			if argType.Kind() == reflect.Slice {
-				fmt.Printf("Slice of %s\n", argRef.Type().Elem().Kind().String())
-			}
-			return invokeErrorResult(clientId, encrypted, ctx, "Call error", errors.New(
-				fmt.Sprintf("Invalid argument[%d] type for method %s. Expected %s got %s: %v",
-					i, data.Method, p.Kind().String(), argType.Kind().String(), argRef.Interface())))
-		}
-
-		params[i] = argRef
+	result, err := methodInstance.Interface().(m.MethodInterface).Do()
+	if err != nil {
+		return invokeErrorResult(clientId, encrypted, ctx, "Call error", err)
 	}
 
-	results := methodRef.Call(params)
-	if len(results) > 0 {
-		if err, ok := results[len(results)-1].Interface().(error); ok && err != nil {
-			return invokeErrorResult(clientId, encrypted, ctx, "Call error", err)
-		}
-
-		if _, ok := results[0].Interface().(error); !ok {
-			return invokeSuccessJsonResult(clientId, encrypted, ctx, results[0].Interface())
-		}
-	}
-
-	return invokeSuccessJsonResult(clientId, encrypted, ctx, map[string]string{})
+	return invokeSuccessJsonResult(clientId, encrypted, ctx, result)
 }
 
-func handshakeGetKey() map[string]string {
-	return map[string]string{
+type handshakeGetKey struct{}
+
+func (s handshakeGetKey) Do() (m.MethodResult, error) {
+	return m.MethodResult{
 		"publickey": rsaPublicKey,
-	}
+	}, nil
 }
 
-func handshakeSetKey(clientId string, clientKey []float64) error {
+type handshakeSetKey struct {
+	ClientId  string `json:"p0"`
+	ClientKey []byte `json:"p1"`
+}
+
+func (s handshakeSetKey) Do() (m.MethodResult, error) {
 	priv, err := ezsec.RSABytesToPrivateKey([]byte(rsaPrivateKey))
 	if err != nil {
-		return err
+		return nil, err
 	}
 
-	convertedKey := make([]byte, len(clientKey))
-	for i := 0; i < len(clientKey); i++ {
-		convertedKey[i] = byte(clientKey[i])
-	}
-
-	key, err := ezsec.RSADecrypt(ezsec.ShaTypeSha512, convertedKey, priv)
+	key, err := ezsec.RSADecrypt(ezsec.ShaTypeSha512, s.ClientKey, priv)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
-	clientKeys[clientId] = key
+	clientKeys[s.ClientId] = key
 
-	return nil
+	return nil, nil
 }
