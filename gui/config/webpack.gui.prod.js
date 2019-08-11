@@ -9,7 +9,7 @@ const webpack = require('webpack')
 
 module.exports = {
     mode: 'production',
-    entry: join(__dirname, '..', 'src', 'ts', 'main.tsx'),
+    entry: join(__dirname, '..', 'src', 'ts', 'Main.tsx'),
     output: {
         path: join(__dirname, '..', 'dist'),
         publicPath: '/',

@@ -7,7 +7,7 @@ const { join } = require('path')
 
 module.exports = {
     mode: 'development',
-    entry: join(__dirname, '..', 'src', 'ts', 'main.tsx'),
+    entry: join(__dirname, '..', 'src', 'ts', 'Main.tsx'),
     output: {
         path: join(__dirname, '..', 'dist'),
         publicPath: '/',
