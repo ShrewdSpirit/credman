@@ -4,7 +4,5 @@ module.exports = {
         'postcss-preset-env': {
             browserslist: ['last 2 versions'],
         },
-        'cssnano': {},
-        'oldie': {},
     }
 }
