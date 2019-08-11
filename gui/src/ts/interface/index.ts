@@ -1,2 +1,3 @@
-export * from './invoke'
-export * from './methods/getinfo'
+export * from './Invoke'
+export * from './methods/GetInfo'
+export * from './methods/Test'

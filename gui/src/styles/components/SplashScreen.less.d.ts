@@ -6,7 +6,10 @@ interface CssExports {
   'info': string;
   'infoText': string;
   'infoValue': string;
-  'motto': string;
+  'infoValueLoaded': string;
+  'mottoContainer': string;
+  'mottoText': string;
+  'mottoTextLoaded': string;
   'textCred': string;
   'textMan': string;
 }

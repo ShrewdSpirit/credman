@@ -1,13 +1,13 @@
 import React, { Component } from 'react'
 import { view } from 'react-easy-state'
-import styles from '../../styles/components/tools.less'
+import styles from '../../styles/components/Settings.less'
 
-class Tools extends Component {
+class Settings extends Component {
     render(): JSX.Element {
         return <div className={styles.container}>
-            TOOLS
+            SETTINGS
         </div>
     }
 }
 
-export default view(Tools)
+export default view(Settings)

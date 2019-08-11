@@ -1,13 +1,13 @@
 import React, { Component } from 'react'
 import { view } from 'react-easy-state'
-import styles from '../../styles/components/profiles.less'
+import styles from '../../styles/components/Tools.less'
 
-class Profiles extends Component {
+class Tools extends Component {
     render(): JSX.Element {
         return <div className={styles.container}>
-            PROFILES!
+            TOOLS
         </div>
     }
 }
 
-export default view(Profiles)
+export default view(Tools)

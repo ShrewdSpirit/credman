@@ -20,9 +20,18 @@
     color: rgb(230, 230, 230);
 }
 
-.motto {
-    font-size: 16px;
+.mottoContainer {
     margin-top: 30px;
+}
+
+.mottoText {
+    font-size: 16px;
+    opacity: 0;
+    transition: opacity 500ms linear;
+}
+
+.mottoTextLoaded {
+    opacity: 1;
 }
 
 .info {
@@ -37,4 +46,10 @@
 
 .infoValue {
     color: #dfdfdf;
+    opacity: 0;
+    transition: opacity 500ms linear;
+}
+
+.infoValueLoaded {
+    opacity: 1;
 }
