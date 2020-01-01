@@ -13,7 +13,7 @@ import (
 
 	"github.com/ShrewdSpirit/credman/cipher"
 	"github.com/ShrewdSpirit/credman/data"
-	"github.com/ShrewdSpirit/credman/interfaces/commands/cmdutility"
+	"github.com/ShrewdSpirit/credman/cmd/cmdutility"
 	"github.com/ShrewdSpirit/credman/utils"
 	"github.com/google/uuid"
 	"github.com/spf13/cobra"

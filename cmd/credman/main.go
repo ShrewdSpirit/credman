@@ -5,8 +5,8 @@ import (
 	"path"
 
 	"github.com/ShrewdSpirit/credman/data"
-	"github.com/ShrewdSpirit/credman/interfaces/commands"
-	"github.com/ShrewdSpirit/credman/interfaces/commands/cmdutility"
+	"github.com/ShrewdSpirit/credman/cmd"
+	"github.com/ShrewdSpirit/credman/cmd/cmdutility"
 	"github.com/ShrewdSpirit/credman/utils"
 )
 

@@ -5,7 +5,7 @@ import (
 	"os"
 
 	"github.com/ShrewdSpirit/credman/data"
-	"github.com/ShrewdSpirit/credman/interfaces/commands/cmdutility"
+	"github.com/ShrewdSpirit/credman/cmd/cmdutility"
 	"github.com/ShrewdSpirit/credman/utils"
 )
 

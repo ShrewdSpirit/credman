@@ -10,7 +10,7 @@ import (
 
 	"github.com/ShrewdSpirit/credman/cipher"
 	"github.com/ShrewdSpirit/credman/data"
-	"github.com/ShrewdSpirit/credman/interfaces/commands/cmdutility"
+	"github.com/ShrewdSpirit/credman/cmd/cmdutility"
 	"github.com/atotto/clipboard"
 	"github.com/spf13/cobra"
 )
