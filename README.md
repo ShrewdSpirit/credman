@@ -4,41 +4,43 @@ A simple, powerful, cross-platform and military grade (~~marketing bs~~!) secure
 
 <p align="center"><img src="/img/demo.gif?raw=true"/></p>
 
+## Next version 1.0.0 update
+This version brings updates (stuff in todo) and completely removes GUI because I'm neither a front-end dev nor planning to use CGO.
+- Implemented profile migration
+- Profile version 4 and profile interface (for building your own profile format, for fun)
+- Changed all crypto 256 functions to 512 alts in profile v4
+- Uses jsoniter
+- IPFS support (encrypted file creation, decrypting files, key store for file hashes and some IPFS utilities)
+- Sync your profile on IPFS instead of being decenteralized. Your profile will be encrypted with RSA no matter how large (so you have to keep your private key with you), compressed and pushed into a configured IPFS instance. You can also pull your profile from IPFS on other devices.
+- GraphQL for interfacing with daemon
+
 #### Features:
-- Multiple local profiles
 - Stateless (doesn't keep passwords in memory for later use)
-- AES-CFB-256 and AES-CTR-256 with HMAC-SHA-256 authenticity and integrity check for profiles and files
-- Multiple fields per site/serivce
-- CLI and GUI (WIP)
-- Standalone (single binary without any dependencies)
-- Easy to use
-- Auto generate password
-- Sync with custom server and user management (WIP)
-- Cross platform
-- Only one encrypted file per profile that you can carry around!
-- File encryption
-- Restoring profile's password in case you manage to forget it!
 - Directly connect to ssh server using fields in given site (**requires cygwin or a POSIX terminal emulator on windows**)
+- ~~AES-CFB-256 and AES-CTR-256 with HMAC-SHA-256~~ AES-CFB-512 and AES-CTR-512 with HMAC-SHA-512 authenticity and integrity check for profiles and files
+- Standalone (single binary without any dependencies)
+- Cross platform
+- File encryption
+- IPFS utilities and support
+- Multiple local profiles
+- Multiple fields per site/serivce
+- Auto generate a custom secure password
+- Only one encrypted file per profile ~~that you can carry around!~~ so it's portable!
+- Restoring profile's password in case you manage to forget it!
+- Easy to use
 
 ## Install
 Binary releases are available [here](https://github.com/ShrewdSpirit/credman/releases/latest). Make sure you add the binary's directory to your PATH.
 
 ## Build from source
 Requirements:
-- Go +1.11
-- nodejs +10 and yarn
-- gassets
+- [Go](https://golang.org/dl/) +1.11
 
 Run the following:
 ```bash
-go get -u github.com/ShrewdSpirit/credman/cmd/credman/...
-go get -u github.com/ShrewdSpirit/gassets/cmd/gassets/...
-cd $GOPATH/src/github.com/ShrewdSpirit/credman/gui
-yarn install
-yarn build
-gassets -d .
-cd ..
-./build_release.sh install # for building on windows you must provide version and commit hash variables for go. check lines 7 to 10 in build_release.sh to see how it works.
+git clone https://github.com/ShrewdSpirit/credman
+cd credman
+./build.sh install
 ```
 
 ## Notes
@@ -47,9 +49,7 @@ You can use it on your Android device if you have a terminal emulator (Termux is
 
 It requires 'xsel' or 'xclip' to be installed on Linux otherwise copy function will not work.
 
-To launch the web interface, simply execute credman without any arguments.
-
-## CLI Usage
+## Basic commandline usage
 
 First you must create a profile to store your sites in:
 
@@ -66,7 +66,7 @@ Next step is to add a site/service:
 
 OR
 
-`$ credman s a 'site name' -f=email='my email' -g`
+`$ credman s a sitename -f=email='my email' -g`
 
 It will create a site inside default profile with email, username and an auto generated password.
 You can use `-p="profile"` to set a specific profile for site or omit to use default profile.
@@ -74,32 +74,8 @@ Site's fields are optional data that you can add to store extra stuff for each s
 
 All credman configs and profiles will be created at user's home directory under .credman directory.
 
-You can add/delete/rename/change password for each site and profile.
-
 **Check `credman help` or read [docs](https://github.com/ShrewdSpirit/credman/blob/master/Docs.md) for details on commands and encryption details**
 
-## TODO
-- [x] Implement local management
-- [x] Pattern matching for site/profile names
-- [x] Colorful output!
-- [x] File encryption
-- [x] Password restore
-- [x] Site tags (for grouping)
-- [x] SSH
-- [x] Saving encrypted files info as sites
-- [x] Hide password field when getting site
-- [x] Use cryptographically secure random number generator
-- [x] Manually give path to profile file
-- [x] Clear clipboard after 10 seconds for copying a site's password
-- [x] Auto update and update check
-- [ ] Desktop GUI (in-browser) **WIP**
-- [ ] Server sync **WIP**
-- [ ] Use gob for profiles instead of JSON
-- [ ] Profile migration
-- [ ] RSA cert generation and digital signatures (ssh key and openpgp compatible)
-- [ ] Stdio interface
-
 ## Issues
-
-- Commandline output on windows console/ps doesn't show colors correctly (blame windows)
-- Password input doesn't work on windows git bash program
+- Commandline output on windows console/ps doesn't show colors correctly ~~(blame windows)~~ so I disabled them.
+- Password input doesn't work on windows git bash program idk why
