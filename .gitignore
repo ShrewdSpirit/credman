@@ -1,9 +1,11 @@
 release
 test
-node_modules
-yarn.lock
-gui/dist/app.js
-gui/dist/app.css
-gui/gassets.go
 cmd/credman/credman*
-gui/credman
+
+gui
+# node_modules
+# yarn.lock
+# gui/dist/app.js
+# gui/dist/app.css
+# gui/gassets.go
+# gui/credman
