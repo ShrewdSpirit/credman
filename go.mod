@@ -11,6 +11,7 @@ require (
 	github.com/go-qml/qml v0.0.0-20150209141031-2ee7e5ff7370 // indirect
 	github.com/google/uuid v1.1.1
 	github.com/gopherjs/gopherjs v0.0.0-20190430165422-3e4dfb77656c // indirect
+	github.com/json-iterator/go v1.1.9
 	github.com/kr/pretty v0.1.0 // indirect
 	github.com/labstack/echo/v4 v4.1.6
 	github.com/mitchellh/go-homedir v1.1.0

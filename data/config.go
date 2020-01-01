@@ -1,7 +1,6 @@
 package data
 
 import (
-	"encoding/json"
 	"io/ioutil"
 	"os"
 	"path"

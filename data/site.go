@@ -2,7 +2,6 @@ package data
 
 import (
 	"encoding/base64"
-	"encoding/json"
 	"strings"
 	"time"
 )
