@@ -14,7 +14,7 @@ This version brings updates (stuff in todo) and completely removes GUI because I
 - Sync your profile on IPFS instead of being decenteralized. Your profile will be encrypted with RSA no matter how large (so you have to keep your private key with you), compressed and pushed into a configured IPFS instance. You can also pull your profile from IPFS on other devices.
 - GraphQL for interfacing with daemon
 
-#### Features:
+## Features
 - Stateless (doesn't keep passwords in memory for later use)
 - Directly connect to ssh server using fields in given site (**requires cygwin or a POSIX terminal emulator on windows**)
 - ~~AES-CFB-256 and AES-CTR-256 with HMAC-SHA-256~~ AES-CFB-512 and AES-CTR-512 with HMAC-SHA-512 authenticity and integrity check for profiles and files
