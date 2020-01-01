@@ -1,6 +1,6 @@
 Credman
 =====
-A simple, powerful, cross-platform and military grade (marketing ~~bs~~!) secure credential management.
+A simple, powerful, cross-platform and military grade (~~marketing bs~~!) secure credential management.
 
 <p align="center"><img src="/img/demo.gif?raw=true"/></p>
 
@@ -27,6 +27,7 @@ Binary releases are available [here](https://github.com/ShrewdSpirit/credman/rel
 Requirements:
 - Go +1.11
 - nodejs +10 and yarn
+- gassets
 
 Run the following:
 ```bash
