@@ -4,7 +4,7 @@ CWD=$(pwd)
 
 PACKAGE='github.com/ShrewdSpirit/credman'
 
-VERSION='0.10.0'
+VERSION='0.11.0'
 COMMITHASH=$(git rev-parse HEAD)
 
 VERINFO="-X $PACKAGE/data.Version=$VERSION -X $PACKAGE/data.GitCommit=$COMMITHASH"
@@ -17,16 +17,14 @@ log() {
     echo -e "${cYellow}${msg}${cReset}"
 }
 
-cd gui
-log "Building GUI"
-yarn build
-log "Embedding assets"
-gassets -d .
-
-if [[ $# -eq 1 && $1 == "install" ]]; then
+if [[ $1 == "install" ]]; then
     cd "$CWD/cmd/credman"
     log "Compiling credman"
     go install -ldflags="$VERINFO -s -w"
+elif [[ $1 == "build" ]]; then
+    cd "$CWD/cmd/credman"
+    log "Compiling credman"
+    go build -ldflags="$VERINFO -s -w"
 else
     if [ -d "release" ]; then
         rm -fr release
