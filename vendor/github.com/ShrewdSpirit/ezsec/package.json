@@ -1,0 +1,37 @@
+{
+  "name": "ezsec",
+  "version": "1.1.2",
+  "description": "Javascript easy AES,RSA,Hashing",
+  "main": "index.js",
+  "scripts": {
+    "build": "gopherjs build main/main.go -m -o index.js",
+    "dev": "gopherjs build main/main.go -o index.js && yarn test",
+    "pub": "yarn test && yarn publish",
+    "test": "mocha"
+  },
+  "types": "types/index.d.ts",
+  "files": [
+    "index.js",
+    "types"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ShrewdSpirit/ezsec.git"
+  },
+  "keywords": [
+    "security",
+    "aes",
+    "rsa",
+    "javascript"
+  ],
+  "author": "ShrewdSpirit",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/ShrewdSpirit/ezsec/issues"
+  },
+  "homepage": "https://github.com/ShrewdSpirit/ezsec#readme",
+  "devDependencies": {
+    "chai": "^4.2.0",
+    "mocha": "^6.2.0"
+  }
+}

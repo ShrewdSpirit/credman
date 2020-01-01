@@ -2,6 +2,9 @@ package gassets
 
 import (
 	"bytes"
+	"io"
+	"io/ioutil"
+	"os"
 	"strings"
 )
 
@@ -40,11 +43,33 @@ func (e *Entry) IsDir() bool { return e.isDir }
 
 func (e *Entry) Ls() []*Entry { return e.children }
 
-func (e *Entry) Bytes() []byte { return e.data }
+func (e *Entry) Bytes() []byte {
+	r, err := ioutil.ReadAll(e.Reader())
+	if err != nil {
+		return nil
+	}
+
+	return r
+}
 
 func (e *Entry) String() string { return string(e.Bytes()) }
 
-func (e *Entry) Reader() *bytes.Reader { return bytes.NewReader(e.Bytes()) }
+func (e *Entry) Reader() io.Reader {
+	if e.overrideAliases != nil {
+		for _, alias := range e.overrideAliases {
+			if stat, err := os.Stat(alias); err != nil && !stat.IsDir() {
+				file, err := os.Open(alias)
+				if err != nil {
+					return nil
+				}
+
+				return file
+			}
+		}
+	}
+
+	return bytes.NewReader(e.data)
+}
 
 func (e *Entry) Path() string {
 	parts := make([]string, 1)

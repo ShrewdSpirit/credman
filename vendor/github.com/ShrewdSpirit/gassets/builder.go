@@ -108,7 +108,7 @@ func readTree(ac *assetConfig, parent *assetEntity, tree *toml.Tree, name string
 			return err
 		}
 
-		overrideAliases, ok := tree.Get("override-file").([]interface{})
+		overrideAliases, ok := tree.Get("override-files").([]interface{})
 		if ok {
 			entity.OverrideFiles = make([]string, 0)
 			for _, a := range overrideAliases {

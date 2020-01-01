@@ -80,7 +80,7 @@ func buildEntity(builder *strings.Builder, entity *assetEntity) {
 		dataBuffer.WriteString("[]byte{")
 		for i, b := range entity.Data {
 			dataBuffer.WriteString(strconv.FormatUint(uint64(b), 10))
-			if i != len(entity.OverrideFiles)-1 {
+			if i != len(entity.Data)-1 {
 				dataBuffer.WriteString(", ")
 			}
 		}

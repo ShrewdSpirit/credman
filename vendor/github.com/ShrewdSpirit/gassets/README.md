@@ -18,9 +18,9 @@ output-path="."
 [root]
 ```
 
-These are required keys for `gassets.toml`. `output-path` specifies where the generated go source will be. It's relative to the directory where `gassets.toml` is.
+These are required keys for `gassets.toml`. `output-path` specifies where the generated file is placed. It's relative to the given directory (`-d` commandline option).
 
-For each virtual directory and file you create a toml table. `root` is the root of all your vdirs and files. You can add as many vdirs and files to `root` since it's a vdir itself.
+For each virtual directory and file, a toml table is required. `root` is the root of all your virtual directories and files. You can add as many vdirs and files to `root` and any other vdir.
 
 **To add virtual directory** to `root` you should add:
 ```toml
@@ -32,17 +32,17 @@ You can add files to each vdir in two ways:
 2. Add a file table
 
 #### Glob file
-To use globing for adding files, you must add a `include` key to your vdir table with the value being an array of strings following go's glob format therefore globing isn't recursive.
+To add files by globs, `include` key must be supplied with an array of globs. See the example
 
-Each matching file in the list will be added directory to current vdir without any sub virtual directories.
+Only matching files will be included in current vdir.
 
 #### File table
-A file table has 2 keys, one being optional. The `path` key is required and it's the path to the file relative to `gassets.toml`
+A file table has 2 keys, one being optional. The `path` key is required and it's the path to the file relative to given directory.
 
-The other key is `override-files` which is an array of strings for files to be overriden by the current file if the given path exists at runtime. The path is relative to working directory.
+The other key is `override-files` which is an array of strings for files to be loaded instead if the given path exists at runtime. The path is relative to working directory.
 
 ## Command line
-Pass `-d` and your asset directory to `gassets`
+- `-d`: Assets directory (where `gassets.toml` is)
 
 ## Example
 ```toml
