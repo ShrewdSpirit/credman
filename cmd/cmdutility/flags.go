@@ -82,11 +82,11 @@ func ParsePasswordGenerationFlags(prompt string) (string, error) {
 		pmix := make([]utils.PasswordMix, 1)
 
 		switch strings.ToLower(FlagPcase) {
-		case "both":
+		case "both", "b":
 			pcase = utils.PasswordCaseBoth
-		case "lower":
+		case "lower", "l":
 			pcase = utils.PasswordCaseLower
-		case "upper":
+		case "upper", "u":
 			pcase = utils.PasswordCaseUpper
 		default:
 			return "", errors.New("Invalid password generator case")
@@ -94,13 +94,13 @@ func ParsePasswordGenerationFlags(prompt string) (string, error) {
 
 		for _, mix := range FlagPmix {
 			switch strings.ToLower(mix) {
-			case "letter":
+			case "letter", "l":
 				pmix = append(pmix, utils.PasswordMixLetter)
-			case "digit":
+			case "digit", "d":
 				pmix = append(pmix, utils.PasswordMixDigit)
-			case "punc":
+			case "punc", "p":
 				pmix = append(pmix, utils.PasswordMixPunc)
-			case "all":
+			case "all", "a":
 				pmix = []utils.PasswordMix{utils.PasswordMixAll}
 			default:
 				return "", errors.New("Invalid password generator mix")
