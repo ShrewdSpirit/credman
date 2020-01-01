@@ -1,0 +1,48 @@
+@borderShadowColor: #202020d8;
+@borderColor: #161616;
+
+.container {
+    opacity: 1;
+    position: relative;
+    min-width: 400px;
+}
+
+.managePanel {
+    border: 1px solid @borderColor;
+    border-radius: 5px;
+    box-shadow: 0 0 3px @borderShadowColor;
+    overflow: hidden;
+}
+
+.managePanelItems {
+    padding: 8px 10px;
+    min-width: 90px;
+    color: #dfd9d9;
+    font-size: 13px;
+    cursor: pointer;
+    transition: background-color 100ms linear;
+    flex-grow: 1;
+
+    >svg {
+        margin-right: 8px;
+    }
+
+    &:hover {
+        background-color: #2f2e2e;
+    }
+}
+
+.profilesContainer {
+    border: 1px solid @borderColor;
+    border-radius: 5px;
+    box-shadow: 0 0 2px @borderShadowColor;
+    overflow-y: auto;
+    position: absolute;
+    top: 50px;
+    bottom: 20px;
+    width: 100%;
+
+    > p {
+        min-width: 100px;
+    }
+}
