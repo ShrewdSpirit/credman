@@ -83,7 +83,7 @@ func LoadConfiguration() error {
 }
 
 func SaveConfiguration() error {
-	data, err := json.MarshalIndent(&Config, "", "\t")
+	data, err := json.MarshalIndent(&Config, "", " ")
 	if err != nil {
 		return err
 	}

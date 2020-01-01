@@ -12,7 +12,8 @@ import (
 	"github.com/ShrewdSpirit/credman/cipher"
 )
 
-var ProfileVersion byte = 3
+// past was 3
+var ProfileVersion byte = 4
 var ProfilesDir string
 
 type ProfileMeta struct {
