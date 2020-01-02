@@ -2,6 +2,7 @@ package cmdutility
 
 import (
 	"fmt"
+	"runtime"
 
 	"github.com/fatih/color"
 )
@@ -16,12 +17,22 @@ var (
 )
 
 func LogError(message string, err error) {
+	if runtime.GOOS == "windows" {
+		fmt.Printf("[ERROR] %s: %s\n", message, err)
+		return
+	}
+
 	basep := BoldHiWhite.SprintFunc()
 	secondp := BoldRed.SprintFunc()
 	fmt.Fprintf(color.Output, "%s %s: %s\n", secondp("[ERROR]"), basep(message), secondp(err))
 }
 
 func LogColor(c *color.Color, format string, params ...interface{}) {
+	if runtime.GOOS == "windows" {
+		fmt.Printf(format+"\n", params...)
+		return
+	}
+
 	newParams := make([]interface{}, 0)
 	cprint := c.SprintFunc()
 	for _, p := range params {
