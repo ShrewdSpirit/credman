@@ -12,12 +12,9 @@ import (
 	"github.com/ShrewdSpirit/credman/cipher"
 )
 
-// past was 3
-var ProfileVersion byte = 4
-var ProfilesDir string
+var ProfileVersion byte = 3
 
 type ProfileMeta struct {
-	Remote         []byte `json:"r"`
 	CreationDate   int64  `json:"c"`
 	LastModifyDate int64  `json:"m"`
 	Version        byte   `json:"v"`

@@ -7,8 +7,8 @@ import (
 )
 
 func TestBlock(t *testing.T) {
-	data := []byte("id qjwoidj qowidjqnk kjmqnd kjwqn kjqwh duhq8 9218h9 h9u2h diuhkjad")
-	pw := "mzdx"
+	data := []byte("Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam id vehicula augue. Integer dignissim maximus nisl in ultrices. Aenean ultrices ultricies tortor a iaculis.")
+	pw := "mzadax7786"
 
 	enc, err := BlockEncrypt(data, pw)
 	if err != nil {

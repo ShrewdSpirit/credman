@@ -14,6 +14,7 @@ var (
 )
 
 var DataDir string
+var ProfilesDir string
 var Config Configuration
 
 type Configuration struct {

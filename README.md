@@ -6,10 +6,7 @@ A simple, powerful, cross-platform and military grade (~~marketing bs~~!) secure
 
 ## Next version 1.0.0 update
 This version brings updates (stuff in todo) and completely removes GUI because I'm neither a front-end dev nor planning to use CGO.
-- Implemented profile migration
-- Profile version 4 and profile interface (for building your own profile format, for fun)
-- Changed all crypto 256 functions to 512 alts in profile v4
-- Uses jsoniter
+- Uses jsoniter for faster json serialization/deserialization
 - IPFS support (encrypted file creation, decrypting files, key store for file hashes and some IPFS utilities)
 - Sync your profile on IPFS instead of being decenteralized. Your profile will be encrypted with RSA no matter how large (so you have to keep your private key with you), compressed and pushed into a configured IPFS instance. You can also pull your profile from IPFS on other devices.
 - GraphQL for interfacing with daemon
@@ -17,7 +14,7 @@ This version brings updates (stuff in todo) and completely removes GUI because I
 ## Features
 - Stateless (doesn't keep passwords in memory for later use)
 - Directly connect to ssh server using fields in given site (**requires cygwin or a POSIX terminal emulator on windows**)
-- ~~AES-CFB-256 and AES-CTR-256 with HMAC-SHA-256~~ AES-CFB-512 and AES-CTR-512 with HMAC-SHA-512 authenticity and integrity check for profiles and files
+- AES-CFB-256 and AES-CTR-256 with HMAC-SHA-256 authenticity and integrity check for profiles and files
 - Standalone (single binary without any dependencies)
 - Cross platform
 - File encryption
