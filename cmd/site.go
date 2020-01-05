@@ -213,7 +213,7 @@ func siteGet(cmd *cobra.Command, args []string) {
 	cmdutility.LogColor(cmdutility.Green, "Site %s fields:", siteName)
 	tw := tabwriter.NewWriter(os.Stdout, 10, 0, 1, ' ', 0)
 	for field, value := range fields {
-		if field == "password" {
+		if field == "password" && !siteGetShowPassword {
 			value = "*****"
 		}
 
