@@ -1,9 +1,7 @@
 package commands
 
 import (
-	"bufio"
 	"bytes"
-	"encoding/base64"
 	"os"
 	"path"
 	"path/filepath"
@@ -12,8 +10,8 @@ import (
 	"time"
 
 	"github.com/ShrewdSpirit/credman/cipher"
-	"github.com/ShrewdSpirit/credman/data"
 	"github.com/ShrewdSpirit/credman/cmd/cmdutility"
+	"github.com/ShrewdSpirit/credman/data"
 	"github.com/ShrewdSpirit/credman/utils"
 	"github.com/google/uuid"
 	"github.com/spf13/cobra"
@@ -108,6 +106,8 @@ func fileEncrypt(cmd *cobra.Command, args []string) {
 		fileName := filepath.Base(inputFilename)
 
 		var site data.Site
+		fstype := data.FileStoreTypeHex
+
 		found := false
 		for _, siteresult := range profile.Sites {
 			if siteresult.IsFile() {
@@ -132,6 +132,7 @@ func fileEncrypt(cmd *cobra.Command, args []string) {
 			site = data.NewSiteFile(fileName, fileAbs, fileUuidStr)
 		} else {
 			fileUuidStr = site[data.FileFieldUUID]
+			fstype = site.FileStoreType()
 		}
 
 		siteName := rawFilename + "-" + fileUuidStr[len(fileUuidStr)-4:]
@@ -139,20 +140,16 @@ func fileEncrypt(cmd *cobra.Command, args []string) {
 		site[data.FileFieldSize] = utils.Kbmbgb(stat.Size())
 		site[data.FileFieldUpdate] = time.Now().Local().Format("2006 Jan 2 15:04:05 MST")
 
-		encryptedBytes := bytes.Buffer{}
-		encryptStream := bufio.NewWriter(&encryptedBytes)
-
+		encryptedBytes := &bytes.Buffer{}
 		cmdutility.LogColor(cmdutility.Green, "Encrypting file %s", inputFilename)
-		if err := cipher.StreamEncrypt(inputFile, encryptStream, profilePassword); err != nil {
+		if err := cipher.StreamEncrypt(inputFile, encryptedBytes, profilePassword); err != nil {
 			os.Remove(cmdutility.FlagOutput)
 			cmdutility.LogError("Failed to encrypt file", err)
 			return
 		}
 
-		encryptStream.Flush()
-
-		site[data.SpecialFieldFileData] = base64.URLEncoding.EncodeToString(encryptedBytes.Bytes())
-
+		// site[data.SpecialFieldFileData] = base64.URLEncoding.EncodeToString(encryptedBytes.Bytes())
+		site.WriteFileBytes(encryptedBytes.Bytes(), fstype)
 		profile.AddSite(siteName, site)
 
 		if err := profile.Save(profilePassword); err != nil {
@@ -217,12 +214,17 @@ func fileDecrypt(cmd *cobra.Command, args []string) {
 				return
 			}
 
-			fileBytes := bytes.Buffer{}
-			fileBytes.Write(site.GetFileBytes())
-			inputReader := bufio.NewReader(&fileBytes)
+			b, err := site.GetFileBytes(site.FileStoreType())
+			if err != nil {
+				cmdutility.LogError("Failed to read file contents", err)
+				return
+			}
+
+			fileBytes := &bytes.Buffer{}
+			fileBytes.Write(b)
 
 			cmdutility.LogColor(cmdutility.Green, "Decrypting site file %s", site[data.FileFieldName])
-			if err := cipher.StreamDecrypt(inputReader, outputFile, profilePassword); err != nil {
+			if err := cipher.StreamDecrypt(fileBytes, outputFile, profilePassword); err != nil {
 				os.Remove(cmdutility.FlagOutput)
 				cmdutility.LogError("Failed to decrypt file", err)
 				return

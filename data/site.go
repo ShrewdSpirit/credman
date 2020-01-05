@@ -2,16 +2,20 @@ package data
 
 import (
 	"encoding/base64"
+	"encoding/hex"
 	"strings"
 	"time"
+
+	"github.com/ShrewdSpirit/credman/utils/vars"
 )
 
 type Site map[string]string // fields
 
-const SpecialFieldTags = "$$$TAGS"
-const SpecialFieldFileData = "$$$FBYTES"
-
 const (
+	SpecialFieldTags          = "$$$TAGS"
+	SpecialFieldFileData      = "$$$FBYTES"
+	SpecialFieldFileStoreType = "$$$FSTO"
+
 	FileFieldName     string = "name"
 	FileFieldAbsolute string = "path"
 	FileFieldUUID     string = "uuid"
@@ -19,6 +23,13 @@ const (
 	FileFieldLastDec  string = "decrypted"
 	FileFieldUpdate   string = "updated"
 	FileFieldSize     string = "size"
+)
+
+type FileStoreType string
+
+const (
+	FileStoreTypeBase64 FileStoreType = "base64" // it's the default
+	FileStoreTypeHex    FileStoreType = "hex"
 )
 
 func IsSpecialField(name string) bool {
@@ -177,7 +188,7 @@ func NewSiteFile(fileName, absPath, uuid string) (site Site) {
 	site[FileFieldName] = fileName
 	site[FileFieldAbsolute] = absPath
 	site[FileFieldUUID] = uuid
-	site[FileFieldAddDate] = time.Now().Local().Format("2006 Jan 2 15:04:05 MST")
+	site[FileFieldAddDate] = time.Now().Local().Format(vars.TimeStringFormat)
 	site.AddTags([]string{"file"})
 	return
 }
@@ -187,7 +198,36 @@ func (s Site) IsFile() bool {
 	return ok
 }
 
-func (s Site) GetFileBytes() []byte {
-	b, _ := base64.URLEncoding.DecodeString(s[SpecialFieldFileData])
-	return b
+func (s Site) GetFileBytes(fs FileStoreType) (result []byte, err error) {
+	switch fs {
+	case FileStoreTypeBase64:
+		result, err = base64.URLEncoding.DecodeString(s[SpecialFieldFileData])
+		if err != nil {
+			return
+		}
+	case FileStoreTypeHex:
+		result, err = hex.DecodeString(s[SpecialFieldFileData])
+		if err != nil {
+			return
+		}
+	}
+
+	return
+}
+
+func (s Site) WriteFileBytes(data []byte, fs FileStoreType) {
+	switch fs {
+	case FileStoreTypeBase64:
+		s[SpecialFieldFileData] = base64.URLEncoding.EncodeToString(data)
+	case FileStoreTypeHex:
+		s[SpecialFieldFileData] = hex.EncodeToString(data)
+	}
+}
+
+func (s Site) FileStoreType() FileStoreType {
+	if fs, ok := s[SpecialFieldFileStoreType]; ok {
+		return FileStoreType(fs)
+	}
+
+	return FileStoreTypeBase64
 }
