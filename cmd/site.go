@@ -3,11 +3,12 @@ package commands
 import (
 	"fmt"
 	"os"
+	"runtime"
 	"strings"
 	"text/tabwriter"
 
-	"github.com/ShrewdSpirit/credman/data"
 	"github.com/ShrewdSpirit/credman/cmd/cmdutility"
+	"github.com/ShrewdSpirit/credman/data"
 	"github.com/ShrewdSpirit/credman/utils"
 	"github.com/atotto/clipboard"
 	"github.com/fatih/color"
@@ -69,16 +70,18 @@ var siteGetCmd = &cobra.Command{
 	Run:     siteGet,
 }
 
-var siteFieldsMap map[string]string
-var siteFieldsList []string
-var siteFieldsDelete []string
-var siteGetCopy bool
-var siteSetPassword bool
-var siteAddNoPassword bool
-var siteTags []string
-var siteDeleteTags []string
-var siteGetTags bool
-var siteGroup bool
+var (
+	siteFieldsMap       map[string]string
+	siteFieldsList      []string
+	siteFieldsDelete    []string
+	siteGetCopy         bool
+	siteSetPassword     bool
+	siteAddNoPassword   bool
+	siteTags            []string
+	siteDeleteTags      []string
+	siteGroup           bool
+	siteGetShowPassword bool
+)
 
 func init() {
 	rootCmd.AddCommand(siteCmd)
@@ -109,8 +112,8 @@ func init() {
 
 	siteCmd.AddCommand(siteGetCmd)
 	siteFlagsFields(siteGetCmd, true)
-	siteGetCmd.Flags().BoolVarP(&siteGetTags, "tags", "t", false, "Gets tags")
-	siteGetCmd.Flags().BoolVarP(&siteGetCopy, "copy", "c", false, "Copy first selected field into clipboard")
+	siteGetCmd.Flags().BoolVarP(&siteGetCopy, "copy", "c", false, "Copy first selected field into clipboard. If no field is specified, will copy password")
+	siteGetCmd.Flags().BoolVarP(&siteGetShowPassword, "show-password", "s", false, "By default credman won't show password unless this flag is set")
 }
 
 func siteFlagsTags(cmd *cobra.Command) {
@@ -213,12 +216,19 @@ func siteGet(cmd *cobra.Command, args []string) {
 		if field == "password" {
 			value = "*****"
 		}
-		fmt.Fprintf(tw, " %s:\t%s\n", strings.Title(field), color.HiGreenString(value))
+
+		if runtime.GOOS != "windows" {
+			value = color.HiGreenString(value)
+		}
+		fmt.Fprintf(tw, " %s:\t%s\n", strings.Title(field), value)
 	}
 
 	if tags != nil && len(tags) > 0 {
 		tagsString := "#" + strings.Replace(strings.Join(tags, " "), " ", " #", -1)
-		fmt.Fprintf(tw, " Tags:\t%s\n", color.CyanString(tagsString))
+		if runtime.GOOS != "windows" {
+			tagsString = color.CyanString(tagsString)
+		}
+		fmt.Fprintf(tw, " Tags:\t%s\n", tagsString)
 	}
 
 	tw.Flush()
@@ -248,15 +258,19 @@ func siteList(cmd *cobra.Command, args []string) {
 		if site.Tags == nil || len(site.Tags) == 0 {
 			tagsString = ""
 		}
-		tags := color.CyanString(tagsString)
+
+		if runtime.GOOS != "windows" {
+			tagsString = color.CyanString(tagsString)
+		}
 
 		if site.Name == site.MatchParts[0] {
-			fmt.Fprintf(tw, "%s\t%s\n", site.Name, tags)
+			fmt.Fprintf(tw, "%s\t%s\n", site.Name, tagsString)
 		} else {
 			matchPart := color.HiRedString(site.MatchParts[1])
-			fmt.Fprintf(tw, "%s%s%s\t%s\n", site.MatchParts[0], matchPart, site.MatchParts[2], tags)
+			fmt.Fprintf(tw, "%s%s%s\t%s\n", site.MatchParts[0], matchPart, site.MatchParts[2], tagsString)
 		}
 	}
+
 	tw.Flush()
 }
 
