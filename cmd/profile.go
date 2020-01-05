@@ -2,11 +2,16 @@ package commands
 
 import (
 	"fmt"
+	"github.com/ShrewdSpirit/credman/utils"
 	"os"
 	"path"
+	"strconv"
+	"time"
 
-	"github.com/ShrewdSpirit/credman/data"
+	"github.com/ShrewdSpirit/credman/utils/vars"
+
 	"github.com/ShrewdSpirit/credman/cmd/cmdutility"
+	"github.com/ShrewdSpirit/credman/data"
 	"github.com/spf13/cobra"
 )
 
@@ -63,6 +68,14 @@ var profileListCmd = &cobra.Command{
 	Run:     profileList,
 }
 
+var profileInfoCmd = &cobra.Command{
+	Use:     "info",
+	Aliases: []string{"i", "inf"},
+	Args:    cobra.ExactArgs(1),
+	Short:   "Shows information about profile",
+	Run:     profileInfo,
+}
+
 func init() {
 	rootCmd.AddCommand(profileCmd)
 	profileCmd.AddCommand(profileAddCmd)
@@ -71,6 +84,7 @@ func init() {
 	profileCmd.AddCommand(profilePasswdCmd)
 	profileCmd.AddCommand(profileDefaultCmd)
 	profileCmd.AddCommand(profileListCmd)
+	profileCmd.AddCommand(profileInfoCmd)
 }
 
 func profileAdd(cmd *cobra.Command, args []string) {
@@ -226,5 +240,57 @@ func profileRename(cmd *cobra.Command, args []string) {
 	if data.Config.DefaultProfile == profileName {
 		data.Config.DefaultProfile = newName
 		cmdutility.LogColor(cmdutility.Green, "Default profile changed to %s", newName)
+	}
+}
+
+func profileInfo(cmd *cobra.Command, args []string) {
+	profileName := args[0]
+
+	if !data.ProfileExists(profileName) {
+		cmdutility.LogColor(cmdutility.BoldHiYellow, "Profile %s doesnt exist.", profileName)
+		return
+	}
+
+	password, err := cmdutility.PasswordPrompt("Profile password")
+	if err != nil {
+		cmdutility.LogError("Failed reading password", err)
+		return
+	}
+
+	profile, err := data.LoadProfile(profileName, password)
+	if err != nil {
+		cmdutility.LogError("Failed loading profile", err)
+		return
+	}
+
+	sites, err := profile.GetSites("", []string{})
+	if err != nil {
+		cmdutility.LogError("Failed to get sites", err)
+		return
+	}
+
+	totalFileSize := 0
+	for _, siteResult := range sites {
+		site := profile.Sites[siteResult.Name]
+		if site.IsFile() {
+			b, err := site.GetFileBytes(site.FileStoreType())
+			if err != nil {
+				cmdutility.LogError("Failed to read file contents", err)
+				return
+			}
+
+			totalFileSize += len(b)
+		}
+	}
+
+	cmdutility.LogColor(cmdutility.Green, "Profile %s:", profileName)
+	cmdutility.LogColor(cmdutility.BoldHiYellow, "  Contains %s sites", strconv.FormatInt(int64(len(sites)), 10))
+	cmdutility.LogColor(cmdutility.BoldHiYellow, "  Created at %s", time.Unix(0, profile.Meta.CreationDate).Format(vars.TimeStringFormat))
+	cmdutility.LogColor(cmdutility.BoldHiYellow, "  Last modify at %s", time.Unix(0, profile.Meta.LastModifyDate).Format(vars.TimeStringFormat))
+	if profile.Meta.Restore != nil {
+		cmdutility.LogColor(cmdutility.BoldHiYellow, "  Password restore is %s", "enabled")
+	}
+	if totalFileSize > 0 {
+		cmdutility.LogColor(cmdutility.BoldHiYellow, "  Total files stored is %s", utils.Kbmbgb(int64(totalFileSize)))
 	}
 }

@@ -4,13 +4,6 @@ A simple, powerful, cross-platform and military grade (~~marketing bs~~!) secure
 
 <p align="center"><img src="/img/demo.gif?raw=true"/></p>
 
-## Next version 1.0.0 update
-This version brings updates (stuff in todo) and completely removes GUI because I'm neither a front-end dev nor planning to use CGO.
-- Uses jsoniter for faster json serialization/deserialization
-- IPFS support (encrypted file creation, decrypting files, key store for file hashes and some IPFS utilities)
-- Sync your profile on IPFS instead of being decenteralized. Your profile will be encrypted with RSA no matter how large (so you have to keep your private key with you), compressed and pushed into a configured IPFS instance. You can also pull your profile from IPFS on other devices.
-- GraphQL for interfacing with daemon
-
 ## Features
 - Stateless (doesn't keep passwords in memory for later use)
 - Directly connect to ssh server using fields in given site (**requires cygwin or a POSIX terminal emulator on windows**)
@@ -18,13 +11,14 @@ This version brings updates (stuff in todo) and completely removes GUI because I
 - Standalone (single binary without any dependencies)
 - Cross platform
 - File encryption
-- IPFS utilities and support
+- IPFS utilities and support (**WIP**)
 - Multiple local profiles
 - Multiple fields per site/serivce
 - Auto generate a custom secure password
 - Only one encrypted file per profile ~~that you can carry around!~~ so it's portable!
 - Restoring profile's password in case you manage to forget it!
 - Easy to use
+- GraphQL interface for remotely interacting with credman daemon (**WIP**)
 
 ## Install
 Binary releases are available [here](https://github.com/ShrewdSpirit/credman/releases/latest). Make sure you add the binary's directory to your PATH.
