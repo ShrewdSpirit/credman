@@ -77,6 +77,7 @@ var (
 	siteGetCopy         bool
 	siteSetPassword     bool
 	siteAddNoPassword   bool
+	siteCopyNewPassword bool
 	siteTags            []string
 	siteDeleteTags      []string
 	siteGroup           bool
@@ -89,6 +90,7 @@ func init() {
 
 	siteCmd.AddCommand(siteAddCmd)
 	siteAddCmd.Flags().BoolVarP(&siteAddNoPassword, "no-password", "n", false, "Doesn't prompt for site password. Useful for sites that you don't want any password for.")
+	siteAddCmd.Flags().BoolVar(&siteCopyNewPassword, "copy", false, "Copies the generated password to clipboard.")
 	siteFlagsFields(siteAddCmd, false)
 	siteFlagsTags(siteAddCmd)
 	cmdutility.FlagsAddPasswordOptions(siteAddCmd)
@@ -160,6 +162,10 @@ func siteAdd(cmd *cobra.Command, args []string) {
 	}
 
 	cmdutility.LogColor(cmdutility.Green, "Site %s has been added to profile %s", siteName, profile.Name)
+
+	if siteCopyNewPassword && cmdutility.FlagPgen {
+		cmdutility.SetClipboardAndClear(password)
+	}
 }
 
 func siteGet(cmd *cobra.Command, args []string) {
@@ -180,13 +186,7 @@ func siteGet(cmd *cobra.Command, args []string) {
 
 	if siteGetCopy {
 		if len(siteFieldsList) == 0 {
-			if err := clipboard.WriteAll(site["password"]); err != nil {
-				cmdutility.LogError("Failed write to clipboard", err)
-				return
-			}
-
-			fmt.Println("Password copied to clipboard.")
-			utils.RunClearClipboardDelayed()
+			cmdutility.SetClipboardAndClear(site["password"])
 			return
 		} else {
 			field := siteFieldsList[0]
@@ -418,4 +418,8 @@ func siteSet(cmd *cobra.Command, args []string) {
 	}
 
 	cmdutility.LogColor(cmdutility.Green, "Site %s has been updated.", siteName)
+
+	if siteCopyNewPassword && cmdutility.FlagPgen {
+		cmdutility.SetClipboardAndClear(password)
+	}
 }

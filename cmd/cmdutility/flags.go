@@ -3,6 +3,7 @@ package cmdutility
 import (
 	"errors"
 	"fmt"
+	"github.com/atotto/clipboard"
 	"strings"
 
 	"github.com/ShrewdSpirit/credman/data"
@@ -117,4 +118,14 @@ func ParsePasswordGenerationFlags(prompt string) (string, error) {
 	}
 
 	return password, nil
+}
+
+func SetClipboardAndClear(value string) {
+	if err := clipboard.WriteAll(value); err != nil {
+		LogError("Failed write to clipboard", err)
+		return
+	}
+
+	fmt.Println("Password copied to clipboard")
+	utils.RunClearClipboardDelayed()
 }
